@@ -919,6 +919,22 @@ function renderAcciones(f, estado) {
   }
 
   if (currentMode === 'salida') {
+    if (estado === 'Rentado') {
+      return `<div class="accion-buttons">
+        <div style="background:#2a1a1a; border:1px solid #c0392b; border-radius:6px; padding:14px; margin-bottom:12px; font-size:11px; color:#e74c3c; letter-spacing:1px;">
+          ⚠️ Este prop ya está RENTADO — no puede registrarse otra salida.
+        </div>
+        <button class="btn-accion btn-secondary" onclick="goHome()">Volver al inicio</button>
+      </div>`;
+    }
+    if (estado === 'En reparación') {
+      return `<div class="accion-buttons">
+        <div style="background:#2a2a1a; border:1px solid #f39c12; border-radius:6px; padding:14px; margin-bottom:12px; font-size:11px; color:#f1c40f; letter-spacing:1px;">
+          ⚠️ Este prop está EN REPARACIÓN — no puede salir.
+        </div>
+        <button class="btn-accion btn-secondary" onclick="goHome()">Volver al inicio</button>
+      </div>`;
+    }
     const rentaOptions = currentRentas.map(r =>
       `<option value="${r.id}">${r.fields['ID de renta']} — ${r.fields['Cliente'] ? 'Cliente vinculado' : 'Sin cliente'}</option>`
     ).join('');
@@ -939,6 +955,22 @@ function renderAcciones(f, estado) {
   }
 
   if (currentMode === 'entrada') {
+    if (estado === 'Disponible') {
+      return `<div class="accion-buttons">
+        <div style="background:#1a2a1a; border:1px solid #27ae60; border-radius:6px; padding:14px; margin-bottom:12px; font-size:11px; color:#2ecc71; letter-spacing:1px;">
+          ✓ Este prop ya está DISPONIBLE en bodega — no necesita entrada.
+        </div>
+        <button class="btn-accion btn-secondary" onclick="goHome()">Volver al inicio</button>
+      </div>`;
+    }
+    if (estado === 'En reparación') {
+      return `<div class="accion-buttons">
+        <div style="background:#2a2a1a; border:1px solid #f39c12; border-radius:6px; padding:14px; margin-bottom:12px; font-size:11px; color:#f1c40f; letter-spacing:1px;">
+          ⚠️ Este prop está EN REPARACIÓN — actualiza su estado manualmente en Airtable.
+        </div>
+        <button class="btn-accion btn-secondary" onclick="goHome()">Volver al inicio</button>
+      </div>`;
+    }
     return `<div class="accion-buttons">
       <button class="btn-accion btn-entrada" onclick="confirmAccion('entrada')">
         📥 Registrar entrada
