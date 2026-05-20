@@ -350,11 +350,6 @@
 
     <div class="section-title">Acciones rápidas</div>
     <div class="quick-actions">
-      <button class="quick-btn gold" onclick="showOrdenView()">
-        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        <span class="quick-btn-label">Generar orden de renta</span>
-        <span class="quick-btn-arrow">›</span>
-      </button>
       <button class="quick-btn" onclick="showPagosView()">
         <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         <span class="quick-btn-label">Registrar pago</span>
@@ -1036,15 +1031,31 @@ function showSetup() {
 }
 
 // ── NAVEGACIÓN POR TABS ─────────────────────────────────
+// ── PIN FINANZAS ─────────────────────────────────────────
+const PIN_MAESTRO = '2404';
+let pinBuffer = '';
+let pinMode = 'acceso';
+let pinSesionActiva = false;
+let pinNuevoTemp = '';
+
 function navGo(tab) {
-  // Actualizar tabs activos
+  if (tab === 'finanzas' && !pinSesionActiva) {
+    // Verificar si ya tiene PIN configurado
+    const pinGuardado = localStorage.getItem('hd_pin');
+    if (!pinGuardado) {
+      pinAbrir('cambiar_nuevo'); // Primera vez — crear PIN
+    } else {
+      pinAbrir('acceso');
+    }
+    return;
+  }
+  _navGoInterno(tab);
+}
+
+function _navGoInterno(tab) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-' + tab)?.classList.add('active');
-
-  // Ocultar todo
   hideAllViews();
-
-  // Mostrar vista correcta
   if (tab === 'inicio') {
     document.getElementById('home-view').style.display = 'block';
   } else if (tab === 'inventario') {
@@ -1054,6 +1065,99 @@ function navGo(tab) {
   } else if (tab === 'finanzas') {
     document.getElementById('finanzas-menu-view').style.display = 'block';
   }
+}
+
+function pinAbrir(mode) {
+  pinBuffer = '';
+  pinNuevoTemp = '';
+  pinMode = mode;
+  document.getElementById('pin-overlay').style.display = 'flex';
+  document.getElementById('pin-error').textContent = '';
+  document.getElementById('pin-label').textContent =
+    mode === 'maestro' ? 'Ingresa el PIN maestro' :
+    mode === 'cambiar_nuevo' ? 'Elige tu nuevo PIN de 4 dígitos' :
+    mode === 'confirmar_nuevo' ? 'Confirma tu nuevo PIN' :
+    'Finanzas — ingresa tu PIN';
+  document.getElementById('pin-change-link').style.display =
+    mode === 'acceso' ? 'block' : 'none';
+  pinActualizarDots();
+}
+
+function pinCerrar() {
+  document.getElementById('pin-overlay').style.display = 'none';
+  pinBuffer = '';
+  pinNuevoTemp = '';
+}
+
+function pinKey(digit) {
+  if (pinBuffer.length >= 4) return;
+  pinBuffer += digit;
+  pinActualizarDots();
+  if (pinBuffer.length === 4) setTimeout(pinVerificar, 150);
+}
+
+function pinDelete() {
+  pinBuffer = pinBuffer.slice(0, -1);
+  pinActualizarDots();
+  document.getElementById('pin-error').textContent = '';
+}
+
+function pinActualizarDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function pinVerificar() {
+  const pinGuardado = localStorage.getItem('hd_pin') || '';
+  const err = document.getElementById('pin-error');
+
+  if (pinMode === 'acceso') {
+    if (pinBuffer === pinGuardado) {
+      pinSesionActiva = true;
+      pinCerrar();
+      _navGoInterno('finanzas');
+    } else {
+      err.textContent = 'PIN incorrecto';
+      pinBuffer = '';
+      pinActualizarDots();
+    }
+
+  } else if (pinMode === 'maestro') {
+    if (pinBuffer === PIN_MAESTRO) {
+      pinBuffer = '';
+      pinAbrir('cambiar_nuevo');
+    } else {
+      err.textContent = 'PIN maestro incorrecto';
+      pinBuffer = '';
+      pinActualizarDots();
+    }
+
+  } else if (pinMode === 'cambiar_nuevo') {
+    pinNuevoTemp = pinBuffer;
+    pinBuffer = '';
+    pinAbrir('confirmar_nuevo');
+
+  } else if (pinMode === 'confirmar_nuevo') {
+    if (pinBuffer === pinNuevoTemp) {
+      localStorage.setItem('hd_pin', pinBuffer);
+      pinSesionActiva = true;
+      pinCerrar();
+      showToast('✓ PIN configurado');
+      _navGoInterno('finanzas');
+    } else {
+      err.textContent = 'Los PINs no coinciden';
+      pinBuffer = '';
+      pinNuevoTemp = '';
+      pinActualizarDots();
+    }
+  }
+}
+
+function pinCambiarMode() {
+  // Pide PIN maestro para poder cambiar el PIN
+  pinBuffer = '';
+  pinAbrir('maestro');
 }
 
 function setNavActive(tab) {
