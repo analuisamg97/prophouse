@@ -964,6 +964,34 @@
   </div>
 </div>
 
+<!-- PIN OVERLAY FINANZAS -->
+<div id="pin-overlay" class="pin-overlay" style="display:none;">
+  <div class="pin-logo">Hora Dorada</div>
+  <div class="pin-label" id="pin-label">Finanzas — ingresa tu PIN</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key" onclick="pinCerrar()" style="font-size:11px;color:var(--text-dim);">✕</button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key delete" onclick="pinDelete()">⌫</button>
+  </div>
+  <div class="pin-change-link" id="pin-change-link" onclick="pinCambiarMode()">Cambiar PIN</div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="nav-item active" id="nav-inicio" onclick="navGo('inicio')">
