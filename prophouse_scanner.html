@@ -1181,10 +1181,10 @@ let pinNuevoTemp = '';
 
 function navGo(tab) {
   if (tab === 'finanzas' && !pinSesionActiva) {
-    // Verificar si ya tiene PIN configurado
     const pinGuardado = localStorage.getItem('hd_pin');
     if (!pinGuardado) {
-      pinAbrir('cambiar_nuevo'); // Primera vez — crear PIN
+      // Primera vez — pedir PIN maestro antes de crear PIN
+      pinAbrir('maestro');
     } else {
       pinAbrir('acceso');
     }
@@ -1269,6 +1269,7 @@ function pinVerificar() {
   } else if (pinMode === 'maestro') {
     if (pinBuffer === PIN_MAESTRO) {
       pinBuffer = '';
+      pinNuevoTemp = '';
       pinAbrir('cambiar_nuevo');
     } else {
       err.textContent = 'PIN maestro incorrecto';
