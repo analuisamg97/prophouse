@@ -1081,15 +1081,18 @@ async function db_registrarPago({ rentaRecordId, montoTotal, adelanto, fechaAdel
   const fields = {
     'Estado del pago': db_calcEstadoPago(montoTotal, adelanto, liquidacion)
   };
+  // Siempre mandar los montos aunque sean 0 si el otro tiene valor
   if (adelanto > 0) {
-    fields['Monto Adelanto'] = adelanto;
+    fields['Monto Adelanto'] = parseFloat(adelanto);
     if (fechaAdelanto) fields['Fecha de adelanto'] = fechaAdelanto;
   }
   if (liquidacion > 0) {
-    fields['Monto liquidación'] = liquidacion;
+    fields['Monto liquidación'] = parseFloat(liquidacion);
     if (fechaLiquidacion) fields['Fecha de liquidación'] = fechaLiquidacion;
   }
-  return airtablePatch('RENTAS', rentaRecordId, fields);
+  const res = await airtablePatch('RENTAS', rentaRecordId, fields);
+  if (res.error) throw new Error(res.error.message || 'Error al guardar pago');
+  return res;
 }
 
 // ── INVENTARIO ───────────────────────────────────────
@@ -1493,7 +1496,7 @@ async function loadPropDetail(code) {
     return;
   }
   currentProp = prop;
-  // Timestamp de verificación física al consultar
+  // Timestamp al consultar — temporal hasta tener QRs físicos
   registrarVerificacion(prop.id, null, null);
   showPropDetail(prop, false);
 }
@@ -1783,11 +1786,11 @@ async function crearNuevaRenta() {
       monto, deposito, clienteId, propsIds, notas
     });
 
-    showToast(`✓ Renta ${rentaId} creada`);
+    showToast(`✓ Renta ${rentaId} registrada`);
 
     // Ofrecer generar orden — NO entrar al flujo de salida
     currentRenta = newRenta;
-    orPrecargarDesdRenta(newRenta, rentaId, fields);
+    orPrecargarDesdRenta(newRenta, rentaId, newRenta.fields || {});
 
     // Mostrar confirmación con opción de generar orden o ir al inicio
     showView('nueva-renta-view');
@@ -1984,7 +1987,7 @@ async function orGenerarId() {
 async function orGenerarOrden() {
   const btn = document.getElementById('or-btn-generar');
   btn.disabled = true;
-  btn.textContent = '⏳ Generando documento…';
+  btn.textContent = '⏳ Generando orden…';
 
   // ── SOLO LEER datos — NO crear nada en Airtable ──────
   // La renta ya existe. currentRenta tiene todos los datos.
