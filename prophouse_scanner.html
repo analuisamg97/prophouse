@@ -313,6 +313,9 @@
       <button class="btn-accion" onclick="showOrdenView()" style="background:none;border:1px solid var(--gold);color:var(--gold);margin-bottom:8px">
         🌅 Generar orden de renta
       </button>
+      <button class="btn-accion" onclick="showPagosView()" style="background:none;border:1px solid var(--green);color:var(--green);margin-bottom:8px">
+        💳 Registrar pago
+      </button>
       <button class="btn-accion" onclick="showAltaProp()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:0">
         ＋ Dar de alta prop
       </button>
@@ -428,8 +431,9 @@
       </div>
     </div>
 
-    <div class="setup-label">Depósito recibido (MXN)</div>
+    <div class="setup-label">Monto Adelanto (MXN)</div>
     <input type="number" class="setup-input" id="nr-deposito" placeholder="0">
+
 
     <div class="setup-label">Notas</div>
     <input type="text" class="setup-input" id="nr-notas" placeholder="Detalles de la renta...">
@@ -438,6 +442,66 @@
       Crear renta →
     </button>
     <button class="btn-accion btn-secondary" onclick="backToRentas()">Cancelar</button>
+  </div>
+</div>
+
+<!-- PAGOS VIEW -->
+<div id="pagos-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="goHome()">←</button>
+    <div class="view-title">Registrar pago</div>
+    <div class="mode-badge" style="background:rgba(39,174,96,0.2);color:#2ecc71;border:1px solid #27ae60;">Pagos</div>
+  </div>
+
+  <!-- Selector de renta -->
+  <div id="pagos-selector">
+    <div class="section-title" style="margin-top:0">¿A qué renta?</div>
+    <div id="pagos-rentas-list"><div class="loading"><div class="spinner"></div>Cargando rentas…</div></div>
+  </div>
+
+  <!-- Formulario de pago -->
+  <div id="pagos-form" style="display:none;">
+    <div class="pago-section" id="pagos-renta-info"></div>
+
+    <div class="section-title">Registrar adelanto</div>
+    <div class="alta-field">
+      <div class="alta-label">Monto Adelanto (MXN)</div>
+      <input type="number" class="alta-input" id="pago-monto-adelanto" placeholder="0" oninput="pagosCalcEstado()">
+    </div>
+
+    <div class="section-title">Registrar liquidación</div>
+    <div class="alta-field">
+      <div class="alta-label">Monto liquidación (MXN)</div>
+      <input type="number" class="alta-input" id="pago-monto-liq" placeholder="0" oninput="pagosCalcEstado()">
+    </div>
+
+    <!-- Preview de estado -->
+    <div style="background:var(--gray);border:1px solid var(--gray-light);border-radius:8px;padding:14px;margin:16px 0;">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase;">Resumen de pago</div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
+        <span style="color:var(--text-dim);">Monto total</span><span id="pagos-total">$0 MXN</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
+        <span style="color:var(--text-dim);">Monto Adelanto</span><span id="pagos-adelanto-preview">$0 MXN</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
+        <span style="color:var(--text-dim);">Liquidación</span><span id="pagos-liq-preview">$0 MXN</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
+        <span style="color:var(--text-dim);">Saldo pendiente</span><span id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;margin-top:4px;">
+        <span>Estado</span>
+        <span id="pagos-estado-preview" style="font-weight:500;letter-spacing:1px;">—</span>
+      </div>
+    </div>
+
+    <button class="btn-alta-guardar" id="pagos-btn-guardar" onclick="pagosGuardar()">
+      Guardar pago
+    </button>
+    <button class="btn-accion" onclick="pagosCancelar()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);margin-top:8px;">
+      Cancelar
+    </button>
   </div>
 </div>
 
@@ -656,9 +720,9 @@
     <div class="section-title" style="margin-top:16px">Pago</div>
     <div class="orden-total-box">
       <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="or-t-subtotal">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span class="lbl">Depósito sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
+      <div class="orden-total-row"><span class="lbl">Monto Adelanto sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
       <div class="orden-total-row">
-        <span class="lbl">Depósito recibido</span>
+        <span class="lbl">Monto Adelanto</span>
         <input type="number" class="orden-input" id="or-deposito" placeholder="0" style="width:100px;text-align:right;padding:4px 8px;" oninput="orCalcTotales()">
       </div>
       <div class="orden-total-row"><span class="lbl">Saldo pendiente</span><span id="or-t-saldo">$0.00 MXN</span></div>
@@ -734,6 +798,16 @@ function loadCredentials() {
     document.getElementById('baseid-input').value = b;
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'block';
+    probarConexion();
+  }
+}
+
+async function probarConexion() {
+  try {
+    await airtableGet('INVENTARIO', '?maxRecords=1');
+    showToast(`✓ Airtable conectado`);
+  } catch(e) {
+    showToast(`⚠ Sin conexión: ${e.message}`, true);
   }
 }
 
@@ -775,9 +849,14 @@ function backFromDetail() {
 
 // ── AIRTABLE API ────────────────────────────────────────
 async function airtableGet(table, params = '') {
-  const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}${params}`;
+  const url = `https://api.airtable.com/v0/${BASE_ID}/${table}${params}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
-  return res.json();
+  const data = await res.json();
+  if (data.error) {
+    console.error('Airtable error en', table, ':', data.error);
+    throw new Error(data.error.message || data.error.type || 'Error Airtable');
+  }
+  return data;
 }
 
 async function airtablePatch(table, recordId, fields) {
@@ -800,18 +879,161 @@ async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
   return airtablePatch("INVENTARIO", recordId, fields);
 }
 
+// ══════════════════════════════════════════════════════
+// CAPA CENTRAL DE DATOS — toda la app usa estas funciones
+// Si cambia un campo en Airtable, solo se edita aquí
+// ══════════════════════════════════════════════════════
+
+// ── POST helper central ─────────────────────────────
+async function airtablePost(table, fields) {
+  const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${table}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fields })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || data.error.type);
+  return data;
+}
+
+// ── CLIENTES ─────────────────────────────────────────
+async function db_getClientes() {
+  const data = await airtableGet('CLIENTES', '?maxRecords=200');
+  return data.records || [];
+}
+
+async function db_crearCliente({ nombre, tel = '', email = '', tipo = 'Producción' }) {
+  if (!nombre) throw new Error('Nombre de cliente requerido');
+  return airtablePost('CLIENTES', {
+    'Nombre o empresa': nombre,
+    'Teléfono': tel,
+    'Email': email,
+    'Tipo de cliente': tipo
+  });
+}
+
+// Busca cliente por nombre exacto, si no existe lo crea
+async function db_buscarOCrearCliente({ nombre, tel = '', email = '' }) {
+  const clientes = await db_getClientes();
+  const match = clientes.find(c =>
+    (c.fields['Nombre o empresa'] || '').toLowerCase().trim() === nombre.toLowerCase().trim()
+  );
+  if (match) return match;
+  return db_crearCliente({ nombre, tel, email });
+}
+
+// ── RENTAS ───────────────────────────────────────────
+async function db_getRentas({ soloActivas = false, maxRecords = 200 } = {}) {
+  const params = soloActivas
+    ? `?filterByFormula=${encodeURIComponent('{Estado de la renta}="Activa"')}&maxRecords=${maxRecords}`
+    : `?maxRecords=${maxRecords}`;
+  const data = await airtableGet('RENTAS', params);
+  return data.records || [];
+}
+
+async function db_getRenta(recordId) {
+  return airtableGet('RENTAS', '/' + recordId);
+}
+
+async function db_generarRentaId() {
+  const year = new Date().getFullYear();
+  const rentas = await db_getRentas({ maxRecords: 500 });
+  const ids = rentas
+    .map(r => r.fields['ID de renta'] || '')
+    .filter(id => id.startsWith('RNT-' + year))
+    .map(id => parseInt(id.split('-')[2]) || 0)
+    .filter(n => n > 0);
+  const next = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+  return `RNT-${year}-${String(next).padStart(3, '0')}`;
+}
+
+async function db_crearRenta({ rentaId, salida, regreso, monto, deposito, fechaAdelanto, clienteId, propsIds = [], notas = '' }) {
+  const fields = {
+    'ID de renta': rentaId,
+    'Fecha de salida': salida,
+    'Fecha de regreso': regreso || salida,
+    'Monto total': monto,
+    'Estado de la renta': 'Activa',
+    'Fecha de registro': new Date().toISOString().split('T')[0],
+    'Estado del pago': db_calcEstadoPago(monto, deposito, 0)
+  };
+  if (deposito > 0) {
+    fields['Monto Adelanto'] = deposito;
+    fields['Fecha de adelanto'] = fechaAdelanto || new Date().toISOString().split('T')[0];
+  }
+  if (notas) fields['Notas'] = notas;
+  if (clienteId) fields['Cliente'] = [clienteId];
+  if (propsIds.length > 0) fields['Props rentados'] = propsIds;
+  return airtablePost('RENTAS', fields);
+}
+
+// Lógica central de estado del pago
+function db_calcEstadoPago(montoTotal, adelanto, liquidacion) {
+  const total = parseFloat(montoTotal) || 0;
+  const adel = parseFloat(adelanto) || 0;
+  const liq = parseFloat(liquidacion) || 0;
+  const pagado = adel + liq;
+  if (total <= 0) return 'Pendiente';
+  if (pagado >= total) return 'Pagado';
+  if (adel > 0) return 'Adelanto depositado';
+  return 'Pendiente';
+}
+
+// Actualizar pagos de una renta existente en Airtable
+async function db_registrarPago({ rentaRecordId, montoTotal, adelanto, fechaAdelanto, liquidacion, fechaLiquidacion }) {
+  const fields = {
+    'Estado del pago': db_calcEstadoPago(montoTotal, adelanto, liquidacion)
+  };
+  if (adelanto > 0) {
+    fields['Monto Adelanto'] = adelanto;
+    if (fechaAdelanto) fields['Fecha de adelanto'] = fechaAdelanto;
+  }
+  if (liquidacion > 0) {
+    fields['Monto liquidación'] = liquidacion;
+    if (fechaLiquidacion) fields['Fecha de liquidación'] = fechaLiquidacion;
+  }
+  return airtablePatch('RENTAS', rentaRecordId, fields);
+}
+
+// ── INVENTARIO ───────────────────────────────────────
+async function db_getProps({ maxRecords = 500 } = {}) {
+  let all = [], offset = '';
+  do {
+    const params = `?pageSize=100${offset ? '&offset=' + offset : ''}`;
+    const data = await airtableGet('INVENTARIO', params);
+    all = all.concat(data.records || []);
+    offset = data.offset || '';
+  } while (offset);
+  return all;
+}
+
+async function db_getProp(recordId) {
+  return airtableGet('INVENTARIO', '/' + recordId);
+}
+
+async function db_crearProp(fields) {
+  return airtablePost('INVENTARIO', fields);
+}
+
+async function db_actualizarEstadoProps(propsIds, nuevoEstado) {
+  if (!propsIds.length) return;
+  const updates = propsIds.map(id => ({ id, fields: { 'Estado': nuevoEstado } }));
+  for (let i = 0; i < updates.length; i += 10) {
+    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/INVENTARIO`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ records: updates.slice(i, i + 10) })
+    });
+    const d = await res.json();
+    if (d.error) throw new Error(d.error.message);
+  }
+}
+
 // ── FIND PROP BY CODE ───────────────────────────────────
 async function findPropByCode(code) {
-  const data = await airtableGet('INVENTARIO', '?maxRecords=200');
-  if (!data.records) return null;
-  return data.records.find(r => {
-    for (const [k, v] of Object.entries(r.fields)) {
-      if (k.toLowerCase().includes('digo') && typeof v === 'string') {
-        if (v.toUpperCase().trim() === code.toUpperCase().trim()) return true;
-      }
-    }
-    return false;
-  }) || null;
+  const all = await db_getProps();
+  const target = code.toUpperCase().trim();
+  return all.find(r => (r.fields['Código único'] || '').toUpperCase().trim() === target) || null;
 }
 
 // ── FLOW: SALIDA / ENTRADA ──────────────────────────────
@@ -854,6 +1076,7 @@ async function loadRentasFiltradas() {
     const data = await airtableGet('RENTAS', `?filterByFormula=${encodeURIComponent(formula)}&maxRecords=50`);
     const rentas = data.records || [];
 
+
     if (rentas.length === 0) {
       document.getElementById('renta-list-content').innerHTML = `
         <div class="empty-state">
@@ -879,8 +1102,8 @@ async function loadTodasRentas() {
   document.getElementById('renta-list-content').innerHTML =
     '<div class="loading"><div class="spinner"></div>Cargando...</div>';
   try {
-    const data = await airtableGet('RENTAS', `?filterByFormula=${encodeURIComponent('{Estado de la renta}="Activa"')}&maxRecords=100`);
-    renderRentaList(data.records || []);
+    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 100 });
+    renderRentaList(rentas);
   } catch(e) {
     showToast('Error de conexión', true);
   }
@@ -900,7 +1123,7 @@ function renderRentaList(rentas) {
   const html = rentas.map(r => {
     const f = r.fields;
     const total = f['Monto total'] || 0;
-    const deposito = f['Depósito recibido'] || 0;
+    const deposito = f['Monto Adelanto'] || 0;
     const deuda = total - deposito;
     const propsCount = (f['Props rentados'] || []).length;
     return `<div class="renta-card">
@@ -928,8 +1151,7 @@ async function selectRenta(rentaId) {
     '<div class="loading"><div class="spinner"></div>Cargando props...</div>';
 
   // Cargar renta
-  const data = await airtableGet('RENTAS', `/${rentaId}`);
-  currentRenta = data;
+  currentRenta = await db_getRenta(rentaId);
 
   const propsIds = data.fields['Props rentados'] || [];
   const badge = document.getElementById('props-mode-badge');
@@ -952,7 +1174,7 @@ async function selectRenta(rentaId) {
   rentaProps = [];
   for (const pid of propsIds) {
     try {
-      const p = await airtableGet('INVENTARIO', `/${pid}`);
+      const p = await db_getProp(pid);
       rentaProps.push({ ...p, scanned: false });
     } catch(e) {}
   }
@@ -968,7 +1190,7 @@ function renderPropsFlow() {
   // Pago info
   const f = currentRenta.fields;
   const totalPago = f['Monto total'] || 0;
-  const deposito = f['Depósito recibido'] || 0;
+  const deposito = f['Monto Adelanto'] || 0;
   const deuda = totalPago - deposito;
 
   const propsHtml = rentaProps.map(p => {
@@ -997,7 +1219,7 @@ function renderPropsFlow() {
     <div class="pago-section">
       <div class="pago-title">💳 Estado de pago</div>
       <div class="pago-row"><span class="label">Total</span><span class="value">$${totalPago.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Depósito</span><span class="value">$${deposito.toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Monto Adelanto</span><span class="value">$${deposito.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'SALDADO ✓'}</span></div>
     </div>
 
@@ -1204,8 +1426,7 @@ async function executeAction() {
 async function showRentasActivas() {
   showView('rentas-view');
   try {
-    const data = await airtableGet('RENTAS', `?filterByFormula=${encodeURIComponent('{Estado de la renta}="Activa"')}&maxRecords=50`);
-    const rentas = data.records || [];
+    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 50 });
     if (rentas.length === 0) {
       document.getElementById('rentas-content').innerHTML = '<div class="empty-state">No hay rentas activas</div>';
       return;
@@ -1213,14 +1434,14 @@ async function showRentasActivas() {
     document.getElementById('rentas-content').innerHTML = rentas.map(r => {
       const f = r.fields;
       const total = f['Monto total'] || 0;
-      const dep = f['Depósito recibido'] || 0;
+      const dep = f['Monto Adelanto'] || 0;
       const deuda = total - dep;
       return `<div class="pago-section" style="margin-bottom:12px">
         <div class="pago-title">${f['ID de renta'] || '—'}</div>
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>`;
     }).join('');
@@ -1264,8 +1485,7 @@ async function showNuevaRenta() {
   nrCalcMonto();
 
   try {
-    const data = await airtableGet('CLIENTES', '?maxRecords=100');
-    clientesCache = data.records || [];
+    clientesCache = await db_getClientes();
     const select = document.getElementById('nr-cliente-select');
     const options = clientesCache.map(c =>
       `<option value="${c.id}">${c.fields['Nombre o empresa'] || 'Sin nombre'}</option>`
@@ -1326,13 +1546,7 @@ async function nrAgregarProp() {
   document.getElementById('nr-prop-status').textContent = `Buscando ${codigo}…`;
 
   try {
-    // Cargar todos y filtrar client-side (igual que el resto de la app)
-    const data = await airtableGet('INVENTARIO', '?maxRecords=500');
-    const records = data.records || [];
-    const prop = records.find(r => {
-      const c = (r.fields['Código único'] || '').trim().toUpperCase();
-      return c === codigo;
-    });
+    const prop = await findPropByCode(codigo);
 
     if (!prop) {
       document.getElementById('nr-prop-status').textContent = `No se encontró "${codigo}" en inventario`;
@@ -1349,7 +1563,8 @@ async function nrAgregarProp() {
     nrCalcMonto();
     setTimeout(() => { document.getElementById('nr-prop-status').textContent = ''; }, 2000);
   } catch(e) {
-    document.getElementById('nr-prop-status').textContent = `Error al buscar prop`;
+    console.error('Error buscando prop:', e);
+    document.getElementById('nr-prop-status').textContent = `Error: ${e.message}`;
   }
 }
 
@@ -1395,54 +1610,21 @@ async function crearNuevaRenta() {
     const tel = document.getElementById('nr-cliente-tel').value.trim();
     if (!nombre) { showToast('Ingresa el nombre del cliente', true); return; }
     try {
-      const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/CLIENTES`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Nombre o empresa': nombre, 'Teléfono': tel } })
-      });
-      const d = await res.json();
-      clienteId = d.id;
+      const nuevo = await db_crearCliente({ nombre, tel });
+      clienteId = nuevo.id;
       showToast('✓ Cliente creado');
     } catch(e) { showToast('Error al crear cliente', true); return; }
   } else if (clienteSelect) {
     clienteId = clienteSelect;
   }
 
-  // Generar ID de renta
-  const year = new Date().getFullYear();
-  let nextNum = 1;
-  try {
-    const rentasData = await airtableGet('RENTAS', '?maxRecords=200');
-    const ids = (rentasData.records || [])
-      .map(r => r.fields['ID de renta'] || '')
-      .filter(id => id.startsWith('RNT-' + year))
-      .map(id => parseInt(id.split('-')[2]) || 0);
-    if (ids.length > 0) nextNum = Math.max(...ids) + 1;
-  } catch(e) {}
-
-  const rentaId = `RNT-${year}-${String(nextNum).padStart(3, '0')}`;
+  const rentaId = await db_generarRentaId();
 
   try {
-    const fields = {
-      'ID de renta': rentaId,
-      'Fecha de salida': fechaSalida,
-      'Fecha de regreso': fechaRegreso,
-      'Monto total': monto,
-      'Depósito recibido': deposito,
-      'Estado del pago': deposito >= monto && monto > 0 ? 'Pagado' : 'Pendiente',
-      'Estado de la renta': 'Activa',
-      'Notas': notas
-    };
-    if (clienteId) fields['Cliente'] = [clienteId];
-    if (propsIds.length > 0) fields['Props rentados'] = propsIds;
-
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/RENTAS`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields })
+    const newRenta = await db_crearRenta({
+      rentaId, salida: fechaSalida, regreso: fechaRegreso,
+      monto, deposito, clienteId, propsIds, notas
     });
-    const newRenta = await res.json();
-    if (newRenta.error) throw new Error(newRenta.error.message);
 
     showToast(`✓ Renta ${rentaId} creada`);
 
@@ -1501,8 +1683,7 @@ async function showOrdenView() {
     <div id="or-sel-list"><div class="loading"><div class="spinner"></div>Cargando rentas…</div></div>`;
 
   try {
-    const data = await airtableGet('RENTAS', '?maxRecords=100');
-    const rentas = (data.records || []).filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
+    const rentas = (await db_getRentas({ maxRecords: 100 })).filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
     if (rentas.length === 0) {
       document.getElementById('or-sel-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
       return;
@@ -1646,57 +1827,26 @@ async function orGenerarId() {
 async function orGenerarOrden() {
   const btn = document.getElementById('or-btn-generar');
   btn.disabled = true;
-  btn.textContent = '⏳ Guardando en Airtable…';
+  btn.textContent = '⏳ Generando documento…';
 
-  // Recolectar datos
-  const clienteSelect = document.getElementById('or-cliente-select').value;
+  // ── SOLO LEER datos — NO crear nada en Airtable ──────
+  // La renta ya existe. currentRenta tiene todos los datos.
+  const f = currentRenta?.fields || {};
+  const rentaId = f['ID de renta'] || orRentaIdGenerado || '—';
+  orRentaIdGenerado = rentaId;
+
   const recibe = document.getElementById('or-recibe').value || '—';
-  const salida = document.getElementById('or-fecha-salida').value;
-  const regreso = document.getElementById('or-fecha-regreso').value;
-  const deposito = parseFloat(document.getElementById('or-deposito').value) || 0;
+  const salida = f['Fecha de salida'] || document.getElementById('or-fecha-salida').value;
+  const regreso = f['Fecha de regreso'] || document.getElementById('or-fecha-regreso').value;
+  const deposito = f['Monto Adelanto'] || parseFloat(document.getElementById('or-deposito').value) || 0;
 
-  if (!salida) { showToast('Ingresa fecha de salida', true); btn.disabled=false; btn.textContent='🌅 Crear orden en Airtable y generar documento'; return; }
-
-  // Recolectar props
-  let subtotal = 0;
-  let propsData = [];
-  let propsAirtableIds = [];
-  orPropRows.forEach(id => {
-    const nombre = document.getElementById('or-p-nombre-' + id)?.value?.trim();
-    const codigo = document.getElementById('or-p-codigo-' + id)?.value?.trim() || '—';
-    const dias = parseFloat(document.getElementById('or-p-dias-' + id)?.value) || 1;
-    const precio = parseFloat(document.getElementById('or-p-precio-' + id)?.value) || 0;
-    const rowEl = document.getElementById('or-prop-row-' + id);
-    const airtableId = rowEl?.dataset?.airtableId || '';
-    if (nombre) {
-      subtotal += dias * precio;
-      propsData.push({ nombre, codigo, dias, precio, total: dias*precio });
-      if (airtableId) propsAirtableIds.push(airtableId);
-    }
-  });
-
-  // 1. Resolver cliente
-  let clienteId = null;
+  // Resolver nombre del cliente desde cache
   let clienteNombre = '—';
   let clienteEmail = '—';
   let clienteTel = '—';
-
-  if (clienteSelect === '__nuevo__') {
-    clienteNombre = document.getElementById('or-cliente-nombre').value.trim() || 'Sin nombre';
-    clienteTel = document.getElementById('or-cliente-tel').value.trim();
-    clienteEmail = document.getElementById('or-cliente-email').value.trim();
-    try {
-      const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/CLIENTES`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fields: { 'Nombre o empresa': clienteNombre, 'Teléfono': clienteTel, 'Email': clienteEmail, 'Tipo de cliente': 'Producción' } })
-      });
-      const d = await res.json();
-      clienteId = d.id || null;
-    } catch(e) {}
-  } else if (clienteSelect) {
-    clienteId = clienteSelect;
-    const clienteRec = orClientesCache.find(c => c.id === clienteSelect);
+  const clienteIds = f['Cliente'] || [];
+  if (clienteIds.length > 0) {
+    const clienteRec = orClientesCache.find(c => c.id === clienteIds[0]);
     if (clienteRec) {
       clienteNombre = clienteRec.fields['Nombre o empresa'] || '—';
       clienteEmail = clienteRec.fields['Email'] || '—';
@@ -1704,61 +1854,33 @@ async function orGenerarOrden() {
     }
   }
 
-  // 2. Generar ID de renta
-  const rentaId = await orGenerarId();
-  orRentaIdGenerado = rentaId;
-
-  // 3. Crear renta en RENTAS
-  let airtableStatus = '';
-  try {
-    const fields = {
-      'ID de renta': rentaId,
-      'Fecha de salida': salida,
-      'Fecha de regreso': regreso || salida,
-      'Monto total': subtotal,
-      'Depósito recibido': deposito,
-      'Estado del pago': deposito >= subtotal ? 'Pagado' : 'Pendiente',
-      'Estado de la renta': 'Activa',
-      'Fecha de registro': new Date().toISOString().split('T')[0]
-    };
-    if (clienteId) fields['Cliente'] = [clienteId];
-    if (propsAirtableIds.length > 0) fields['Props rentados'] = propsAirtableIds;
-
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/RENTAS`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields })
-    });
-    const d = await res.json();
-    if (d.error) throw new Error(d.error.message);
-
-    airtableStatus = `<div class="airtable-ok">✓ Guardado en Airtable · ${rentaId}</div>`;
-
-    // 4. Actualizar estado de props a "Rentado"
-    if (propsAirtableIds.length > 0) {
-      const updates = propsAirtableIds.map(id => ({ id, fields: { 'Estado': 'Rentado' } }));
-      for (let i = 0; i < updates.length; i += 10) {
-        await fetch(`https://api.airtable.com/v0/${BASE_ID}/INVENTARIO`, {
-          method: 'PATCH',
-          headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ records: updates.slice(i, i+10) })
-        });
-      }
+  // Recolectar props del formulario (ya prellenados desde Airtable)
+  let subtotal = 0;
+  let propsData = [];
+  orPropRows.forEach(id => {
+    const nombre = document.getElementById('or-p-nombre-' + id)?.value?.trim();
+    const codigo = document.getElementById('or-p-codigo-' + id)?.value?.trim() || '—';
+    const dias = parseFloat(document.getElementById('or-p-dias-' + id)?.value) || 1;
+    const precio = parseFloat(document.getElementById('or-p-precio-' + id)?.value) || 0;
+    if (nombre) {
+      subtotal += dias * precio;
+      propsData.push({ nombre, codigo, dias, precio, total: dias * precio });
     }
+  });
 
-  } catch(e) {
-    airtableStatus = `<div class="airtable-err">⚠ Error Airtable: ${e.message}</div>`;
-  }
+  // Usar monto de Airtable si no hay props desglosados
+  const montoFinal = subtotal || f['Monto total'] || 0;
+  const airtableStatus = `<div class="airtable-ok">✓ Renta ${rentaId} · Hora Dorada Prop House</div>`;
 
-  // 5. Generar documento HTML
+  // Generar documento HTML — solo lectura
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' MXN';
-  const fmtF = f => {
-    if (!f) return '—';
-    const [y, m, d] = f.split('-');
+  const fmtF = fecha => {
+    if (!fecha) return '—';
+    const [y, m, d] = fecha.split('-');
     return `${d} ${'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m)-1]} ${y}`;
   };
-  const saldo = Math.max(0, subtotal - deposito);
-  const estadoPago = deposito >= subtotal ? 'badge-pagado">PAGADO' : 'badge-pendiente">PENDIENTE';
+  const saldo = Math.max(0, montoFinal - deposito);
+  const estadoPago = deposito >= montoFinal ? 'badge-pagado">PAGADO' : 'badge-pendiente">PENDIENTE';
   const hoy = new Date().toISOString().split('T')[0];
   const factura = document.getElementById('or-factura')?.value === 'si' ? 'Con factura' : 'Sin factura';
 
@@ -1820,10 +1942,10 @@ async function orGenerarOrden() {
         <tbody>${propsRowsHtml}</tbody>
       </table>
       <div class="doc-totals">
-        <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmtM(subtotal)}</span></div>
-        <div class="doc-total-row"><span class="doc-total-label">Depósito recibido</span><span>${fmtM(deposito)}</span></div>
+        <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmtM(montoFinal)}</span></div>
+        <div class="doc-total-row"><span class="doc-total-label">Monto Adelanto</span><span>${fmtM(deposito)}</span></div>
         <div class="doc-total-row"><span class="doc-total-label">Saldo pendiente</span><span>${fmtM(saldo)}</span></div>
-        <div class="doc-total-row"><span>TOTAL</span><span>${fmtM(subtotal)}</span></div>
+        <div class="doc-total-row"><span>TOTAL</span><span>${fmtM(montoFinal)}</span></div>
       </div>
     </div>
 
@@ -1874,7 +1996,7 @@ async function orGenerarOrden() {
   document.getElementById('orden-form-section').style.display = 'none';
   document.getElementById('orden-preview').style.display = 'block';
   btn.disabled = false;
-  btn.textContent = '🌅 Crear orden en Airtable y generar documento';
+  btn.textContent = '🌅 Generar orden de renta';
   showToast(`✓ ${rentaId} creada`);
 }
 
@@ -1896,9 +2018,137 @@ function orCompartirWhatsApp() {
   const saldo = Math.max(0, subtotal - deposito);
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
-  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(subtotal)}\n✅ Depósito: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
+  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(subtotal)}\n✅ Monto Adelanto: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
 
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
+// ── PAGOS ────────────────────────────────────────────────
+let pagosRentaActual = null;
+
+async function showPagosView() {
+  showView('pagos-view');
+  document.getElementById('pagos-selector').style.display = 'block';
+  document.getElementById('pagos-form').style.display = 'none';
+  pagosRentaActual = null;
+
+  try {
+    const rentas = await db_getRentas({ maxRecords: 100 });
+    const activas = rentas.filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
+    if (activas.length === 0) {
+      document.getElementById('pagos-rentas-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
+      return;
+    }
+    document.getElementById('pagos-rentas-list').innerHTML = activas.map(r => {
+      const f = r.fields;
+      const total = f['Monto total'] || 0;
+      const saldo = f['Monto a liquidar'] || 0;
+      const estado = f['Estado del pago'] || 'Pendiente';
+      const estadoColor = estado === 'Pagado' ? '#2ecc71' : estado === 'Adelanto depositado' ? '#f1c40f' : '#e74c3c';
+      return `<div class="renta-card" onclick="pagosSeleccionarRenta('${r.id}')">
+        <div class="renta-card-id">${f['ID de renta'] || '—'}</div>
+        <div class="renta-card-info">
+          Total: <span>$${total.toLocaleString()} MXN</span> &nbsp;·&nbsp;
+          Saldo: <span style="color:${estadoColor}">$${saldo.toLocaleString()} MXN</span><br>
+          Estado: <span style="color:${estadoColor}">${estado}</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('pagos-rentas-list').innerHTML = `<div class="empty-state" style="color:#e74c3c;">Error: ${e.message}</div>`;
+  }
+}
+
+async function pagosSeleccionarRenta(recordId) {
+  try {
+    pagosRentaActual = await db_getRenta(recordId);
+    const f = pagosRentaActual.fields;
+    const total = f['Monto total'] || 0;
+    const saldo = f['Monto a liquidar'] || 0;
+
+    // Mostrar info de la renta
+    document.getElementById('pagos-renta-info').innerHTML = `
+      <div class="pago-title">${f['ID de renta'] || '—'}</div>
+      <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
+      <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
+      <div class="pago-row"><span class="label">Monto total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${saldo.toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
+
+    // Pre-llenar con valores existentes
+    document.getElementById('pago-monto-adelanto').value = adel || '';
+    document.getElementById('pago-fecha-adelanto').value = f['Fecha de adelanto'] || '';
+    document.getElementById('pago-monto-liq').value = liq || '';
+    document.getElementById('pago-fecha-liq').value = f['Fecha de liquidación'] || '';
+    document.getElementById('pagos-total').textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+
+    pagosCalcEstado();
+
+    document.getElementById('pagos-selector').style.display = 'none';
+    document.getElementById('pagos-form').style.display = 'block';
+  } catch(e) {
+    showToast('Error al cargar renta: ' + e.message, true);
+  }
+}
+
+function pagosCalcEstado() {
+  const total = parseFloat(pagosRentaActual?.fields?.['Monto total']) || 0;
+  const adel = parseFloat(document.getElementById('pago-monto-adelanto').value) || 0;
+  const liq = parseFloat(document.getElementById('pago-monto-liq').value) || 0;
+  // Monto a liquidar viene de Airtable como fórmula; recalculamos en tiempo real
+  const saldo = Math.max(0, total - adel - liq);
+  const estado = db_calcEstadoPago(total, adel, liq);
+
+  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+  document.getElementById('pagos-adelanto-preview').textContent = fmtM(adel);
+  document.getElementById('pagos-liq-preview').textContent = fmtM(liq);
+  document.getElementById('pagos-saldo').textContent = fmtM(saldo);
+  document.getElementById('pagos-saldo').style.color = saldo > 0 ? '#e74c3c' : '#2ecc71';
+
+  const estadoEl = document.getElementById('pagos-estado-preview');
+  estadoEl.textContent = estado;
+  estadoEl.style.color = estado === 'Pagado' ? '#2ecc71' : estado === 'Adelanto depositado' ? '#f1c40f' : '#e74c3c';
+}
+
+async function pagosGuardar() {
+  if (!pagosRentaActual) return;
+  const btn = document.getElementById('pagos-btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando…';
+
+  const total = parseFloat(pagosRentaActual.fields['Monto total']) || 0;
+  const adel = parseFloat(document.getElementById('pago-monto-adelanto').value) || 0;
+  const liq = parseFloat(document.getElementById('pago-monto-liq').value) || 0;
+  const hoy = new Date().toISOString().split('T')[0];
+
+  // Validación
+  if (adel + liq > total) { showToast('El total de pagos supera el monto de la renta', true); btn.disabled=false; btn.textContent='Guardar pago'; return; }
+
+  try {
+    await db_registrarPago({
+      rentaRecordId: pagosRentaActual.id,
+      montoTotal: total,
+      adelanto: adel,
+      fechaAdelanto: adel > 0 ? hoy : '',
+      liquidacion: liq,
+      fechaLiquidacion: liq > 0 ? hoy : ''
+    });
+
+    const estado = db_calcEstadoPago(total, adel, liq);
+    showToast(`✓ Pago guardado · ${estado}`);
+    setTimeout(() => goHome(), 1500);
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar pago';
+  }
+}
+
+function pagosCancelar() {
+  document.getElementById('pagos-selector').style.display = 'block';
+  document.getElementById('pagos-form').style.display = 'none';
+  pagosRentaActual = null;
 }
 
 // ── ALTA DE PROP ────────────────────────────────────────
@@ -1950,19 +2200,14 @@ async function altaGenerarCodigo() {
   document.getElementById('alta-codigo-sub').textContent = 'Calculando número…';
 
   try {
-    // Fetch directo para evitar problemas de encoding/CORS
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/INVENTARIO?maxRecords=500`, {
-      headers: { Authorization: `Bearer ${TOKEN}` }
-    });
-    const data = await res.json();
-    const records = data.records || [];
+    const allRecords = await db_getProps();
 
     // Encontrar todos los números usados para este prefijo
-    const usados = records
-      .map(r => r.fields['Código único'] || '')
+    const usados = allRecords
+      .map(r => (r.fields['Código único'] || '').toUpperCase().trim())
       .filter(c => c.startsWith(prefijo + '-'))
       .map(c => parseInt(c.split('-')[1]) || 0)
-      .filter(n => !isNaN(n));
+      .filter(n => !isNaN(n) && n > 0);
 
     const siguiente = usados.length > 0 ? Math.max(...usados) + 1 : 1;
     const codigo = `${prefijo}-${String(siguiente).padStart(3, '0')}`;
@@ -1971,7 +2216,8 @@ async function altaGenerarCodigo() {
     document.getElementById('alta-codigo-preview').textContent = codigo;
     document.getElementById('alta-codigo-sub').textContent = `Siguiente disponible · ${usados.length} props en ${categoria}`;
   } catch(e) {
-    document.getElementById('alta-codigo-sub').textContent = 'Error al calcular — verifica conexión';
+    console.error('Error generando código:', e);
+    document.getElementById('alta-codigo-sub').textContent = `Error: ${e.message}`;
   }
 }
 
@@ -1990,8 +2236,8 @@ async function altaGuardarProp() {
 
   // Doble verificación: asegurarse que el código no existe ya
   try {
-    const data = await airtableGet('INVENTARIO', '?maxRecords=500');
-    const existe = (data.records || []).some(r => r.fields['Código único'] === altaCodigoGenerado);
+    const all = await db_getProps();
+    const existe = all.some(r => r.fields['Código único'] === altaCodigoGenerado);
     if (existe) {
       showToast('Código ya existe — recalculando…', true);
       await altaGenerarCodigo();
@@ -2014,14 +2260,7 @@ async function altaGuardarProp() {
     if (rentaDia > 0) fields['Renta x 1 día'] = rentaDia;
     if (valorRepo > 0) fields['Valor de reposición'] = valorRepo;
 
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/INVENTARIO`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fields })
-    });
-
-    const d = await res.json();
-    if (d.error) throw new Error(d.error.message);
+    const d = await db_crearProp(fields);
 
     // Mostrar éxito
     document.getElementById('alta-form').style.display = 'none';
@@ -2058,8 +2297,7 @@ function altaNuevoOtro() {
 async function orAbrirDesdeRentaId(rentaRecordId) {
   showToast('Cargando renta…');
   try {
-    const data = await airtableGet('RENTAS', '/' + rentaRecordId);
-    currentRenta = data;
+    currentRenta = await db_getRenta(rentaRecordId);
     await orAbrirDesdeRenta();
   } catch(e) {
     showToast('Error al cargar renta', true);
@@ -2089,15 +2327,14 @@ async function orAbrirDesdeRenta() {
   // Fechas
   document.getElementById('or-fecha-salida').value = f['Fecha de salida'] || new Date().toISOString().split('T')[0];
   document.getElementById('or-fecha-regreso').value = f['Fecha de regreso'] || new Date().toISOString().split('T')[0];
-  document.getElementById('or-deposito').value = f['Depósito recibido'] || 0;
+  document.getElementById('or-deposito').value = f['Monto Adelanto'] || 0;
 
   // Pre-set ID de renta para que orGenerarId() no duplique
   window._orRentaIdFijo = rentaId;
 
   // Cargar clientes y preseleccionar el de la renta
   try {
-    const data = await airtableGet('CLIENTES', '?maxRecords=200');
-    orClientesCache = data.records || [];
+    orClientesCache = await db_getClientes();
     const select = document.getElementById('or-cliente-select');
     const opts = orClientesCache.map(c =>
       `<option value="${c.id}">${c.fields['Nombre o empresa'] || 'Sin nombre'}</option>`
@@ -2117,7 +2354,7 @@ async function orAbrirDesdeRenta() {
   if (propsIds.length > 0) {
     for (const pid of propsIds) {
       try {
-        const p = await airtableGet('INVENTARIO', '/' + pid);
+        const p = await db_getProp(pid);
         const pf = p.fields;
         const codigo = pf['Código único'] || '';
         const nombre = pf['Nombre del prop'] || '';
@@ -2134,16 +2371,7 @@ async function orAbrirDesdeRenta() {
   orCalcTotales();
 }
 
-// Override de orGenerarId para reutilizar el ID de renta existente
-const _orGenerarIdOriginal = orGenerarId;
-async function orGenerarId() {
-  if (window._orRentaIdFijo) {
-    const id = window._orRentaIdFijo;
-    window._orRentaIdFijo = null; // reset para próxima vez
-    return id;
-  }
-  return _orGenerarIdOriginal();
-}
+// orGenerarId eliminado — usar db_generarRentaId() directamente
 
 loadCredentials();
 </script>
