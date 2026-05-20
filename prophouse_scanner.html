@@ -1212,7 +1212,8 @@ function _navGoInterno(tab) {
 
 function pinAbrir(mode) {
   pinBuffer = '';
-  pinNuevoTemp = '';
+  // Solo resetear pinNuevoTemp si NO estamos pasando de cambiar_nuevo a confirmar_nuevo
+  if (mode !== 'confirmar_nuevo') pinNuevoTemp = '';
   pinMode = mode;
   document.getElementById('pin-overlay').style.display = 'flex';
   document.getElementById('pin-error').textContent = '';
