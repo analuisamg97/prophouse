@@ -291,6 +291,26 @@
   .alta-success-name { font-size:12px; color:var(--white); }
   .alta-success-sub { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:8px; }
 
+  /* ── PIN OVERLAY ──────────────────────────────────── */
+  .pin-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.97); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
+  .pin-logo { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); letter-spacing:2px; margin-bottom:4px; }
+  .pin-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); text-align:center; }
+  .pin-dots { display:flex; gap:14px; margin:8px 0; }
+  .pin-dot { width:14px; height:14px; border-radius:50%; border:1px solid #333; background:transparent; transition:background 0.15s,border-color 0.15s; }
+  .pin-dot.filled { background:var(--gold); border-color:var(--gold); }
+  .pin-error { font-size:10px; color:#e74c3c; letter-spacing:1px; min-height:16px; text-align:center; }
+  .pin-pad { display:grid; grid-template-columns:repeat(3,72px); gap:10px; }
+  .pin-key { background:#141414; border:1px solid #1e1e1e; border-radius:10px; height:58px; font-family:'Playfair Display',serif; font-size:22px; color:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.1s; -webkit-tap-highlight-color:transparent; }
+  .pin-key:active { background:#2a2a2a; }
+  .pin-key.delete { font-family:'DM Mono',monospace; font-size:14px; color:var(--text-dim); }
+  .pin-key.cancel { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim); }
+  .pin-change-link { font-size:9px; color:var(--text-dim); letter-spacing:1px; text-decoration:underline; cursor:pointer; margin-top:4px; }
+
+  /* ── FINANZAS ───────────────────────────────────────── */
+  .fin-card { background:#141414; border:1px solid #1e1e1e; border-radius:10px; padding:16px; }
+  .fin-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
+  .fin-card-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); }
+
   @media print {
     body { background:white; }
     #app-screen > .header, #orden-view > .view-header, .orden-preview-actions, .btn-preview-home { display:none !important; }
@@ -421,14 +441,107 @@
     </div>
   </div>
 
-  <!-- SUBMENU FINANZAS -->
+  <!-- FINANZAS VIEW -->
   <div id="finanzas-menu-view" class="view">
     <div class="view-header">
       <div class="view-title" style="font-size:18px;">Finanzas</div>
+      <button onclick="pinSesionActiva=false;navGo('inicio')" style="margin-left:auto;background:none;border:none;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;">🔒 cerrar</button>
     </div>
-    <div class="alert alert-yellow">
-      Esta sección está en construcción. Pronto podrás ver ingresos, costos y balance de Hora Dorada.
+
+    <!-- Selector de mes -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <button onclick="finMesAnterior()" style="background:none;border:1px solid #1e1e1e;color:var(--text-dim);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">‹</button>
+      <div style="font-size:13px;color:var(--white);letter-spacing:1px;" id="fin-mes-label">—</div>
+      <button onclick="finMesSiguiente()" style="background:none;border:1px solid #1e1e1e;color:var(--text-dim);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">›</button>
     </div>
+
+    <!-- Flashcards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:16px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#27ae60;margin-bottom:6px;">Ingresos</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--white);" id="fin-ingresos">—</div>
+      </div>
+      <div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:16px;">
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#e74c3c;margin-bottom:6px;">Gastos</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--white);" id="fin-gastos">—</div>
+      </div>
+    </div>
+    <div style="background:#141414;border:1px solid var(--gold-dim);border-radius:10px;padding:16px;margin-bottom:20px;">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Ganancia</div>
+      <div style="font-family:'Playfair Display',serif;font-size:26px;" id="fin-ganancia">—</div>
+      <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-top:4px;" id="fin-equilibrio"></div>
+    </div>
+
+    <!-- Botón agregar gasto -->
+    <button class="quick-btn gold" onclick="showAgregarGasto()" style="margin-bottom:16px;">
+      <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span class="quick-btn-label">Registrar gasto</span>
+      <span class="quick-btn-arrow">›</span>
+    </button>
+
+    <!-- Lista de gastos del mes -->
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;">Gastos del mes</div>
+    <div id="fin-lista-gastos">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+  </div>
+
+  <!-- AGREGAR GASTO VIEW -->
+  <div id="agregar-gasto-view" class="view">
+    <div class="view-header">
+      <button class="btn-back" onclick="showFinanzas()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <div class="view-title">Registrar gasto</div>
+    </div>
+
+    <div class="alta-field">
+      <div class="alta-label">Nombre del gasto <span style="color:#e74c3c">*</span></div>
+      <input type="text" class="alta-input" id="gasto-nombre" placeholder="Renta bodega mayo">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+      <div class="alta-field" style="margin:0">
+        <div class="alta-label">Tipo <span style="color:#e74c3c">*</span></div>
+        <select class="alta-select" id="gasto-tipo">
+          <option value="">— Tipo —</option>
+          <option value="Fijo">Fijo</option>
+          <option value="Variable">Variable</option>
+        </select>
+      </div>
+      <div class="alta-field" style="margin:0">
+        <div class="alta-label">Categoría <span style="color:#e74c3c">*</span></div>
+        <select class="alta-select" id="gasto-categoria">
+          <option value="">— Categoría —</option>
+          <option value="Bodega">Bodega</option>
+          <option value="Materiales">Materiales</option>
+          <option value="Transporte">Transporte</option>
+          <option value="Asistentes">Asistentes</option>
+          <option value="Suscripciones">Suscripciones</option>
+          <option value="Mi tiempo">Mi tiempo</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="alta-field">
+      <div class="alta-label">Monto (MXN) <span style="color:#e74c3c">*</span></div>
+      <div class="alta-currency">
+        <input type="number" class="alta-input" id="gasto-monto" placeholder="0">
+      </div>
+    </div>
+    <div class="alta-field">
+      <div class="alta-label">Fecha</div>
+      <input type="date" class="alta-input" id="gasto-fecha">
+    </div>
+    <div class="alta-field">
+      <div class="alta-label">Notas</div>
+      <input type="text" class="alta-input" id="gasto-notas" placeholder="Opcional">
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+      <input type="checkbox" id="gasto-recurrente" style="width:18px;height:18px;accent-color:var(--gold);">
+      <label for="gasto-recurrente" style="font-size:11px;color:var(--text-dim);letter-spacing:1px;">Es un gasto recurrente (fijo mensual)</label>
+    </div>
+    <button class="btn-alta-guardar" id="gasto-btn-guardar" onclick="gastoGuardar()">
+      Guardar gasto
+    </button>
+    <button class="btn-accion btn-secondary" onclick="showFinanzas()" style="margin-top:8px;">Cancelar</button>
   </div>
 
   <!-- STEP 1: SELECCIONAR RENTA -->
@@ -1092,6 +1205,8 @@ function _navGoInterno(tab) {
     document.getElementById('rentas-menu-view').style.display = 'block';
   } else if (tab === 'finanzas') {
     document.getElementById('finanzas-menu-view').style.display = 'block';
+    finMesActual = new Date().toISOString().slice(0, 7);
+    finCargarDatos();
   }
 }
 
@@ -3165,6 +3280,165 @@ async function orAbrirDesdeRentaId(rentaRecordId) {
     await orAbrirDesdeRenta();
   } catch(e) {
     showToast('Error al cargar renta', true);
+  }
+}
+
+// ── FINANZAS ─────────────────────────────────────────────
+let finMesActual = new Date().toISOString().slice(0, 7); // YYYY-MM
+
+function showFinanzas() {
+  showView('finanzas-menu-view');
+  setNavActive('finanzas');
+  finCargarDatos();
+}
+
+function finMesLabel(mesStr) {
+  const [y, m] = mesStr.split('-');
+  const meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  return `${meses[parseInt(m)-1]} ${y}`;
+}
+
+function finMesAnterior() {
+  const [y, m] = finMesActual.split('-').map(Number);
+  const d = new Date(y, m - 2, 1);
+  finMesActual = d.toISOString().slice(0, 7);
+  finCargarDatos();
+}
+
+function finMesSiguiente() {
+  const [y, m] = finMesActual.split('-').map(Number);
+  const d = new Date(y, m, 1);
+  finMesActual = d.toISOString().slice(0, 7);
+  finCargarDatos();
+}
+
+async function finCargarDatos() {
+  document.getElementById('fin-mes-label').textContent = finMesLabel(finMesActual);
+  document.getElementById('fin-ingresos').textContent = '…';
+  document.getElementById('fin-gastos').textContent = '…';
+  document.getElementById('fin-ganancia').textContent = '…';
+  document.getElementById('fin-lista-gastos').innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+
+  const fmtM = n => '$' + Math.round(n).toLocaleString('es-MX') + ' MXN';
+  const [y, m] = finMesActual.split('-').map(Number);
+  const inicioMes = new Date(y, m - 1, 1).toISOString().split('T')[0];
+  const finMes = new Date(y, m, 0).toISOString().split('T')[0];
+
+  try {
+    // Ingresos: rentas del mes
+    const rentas = await db_getRentas({ maxRecords: 500 });
+    const rentasMes = rentas.filter(r => {
+      const salida = r.fields['Fecha de salida'] || '';
+      return salida >= inicioMes && salida <= finMes;
+    });
+    const ingresos = rentasMes.reduce((sum, r) => sum + (r.fields['Monto total'] || 0), 0);
+
+    // Gastos del mes
+    const gastosData = await airtableGet('GASTOS', `?maxRecords=500`);
+    const gastosMes = (gastosData.records || []).filter(r => {
+      const mes = r.fields['Mes'] || '';
+      return mes === finMesActual;
+    });
+    const totalGastos = gastosMes.reduce((sum, r) => sum + (r.fields['Monto'] || 0), 0);
+    const ganancia = ingresos - totalGastos;
+
+    document.getElementById('fin-ingresos').textContent = fmtM(ingresos);
+    document.getElementById('fin-gastos').textContent = fmtM(totalGastos);
+    document.getElementById('fin-ganancia').textContent = fmtM(ganancia);
+    document.getElementById('fin-ganancia').style.color = ganancia >= 0 ? '#2ecc71' : '#e74c3c';
+    document.getElementById('fin-equilibrio').textContent = ganancia >= 0
+      ? `✓ Mes rentable`
+      : `Faltan ${fmtM(Math.abs(ganancia))} para el punto de equilibrio`;
+
+    // Renderizar lista de gastos
+    if (gastosMes.length === 0) {
+      document.getElementById('fin-lista-gastos').innerHTML =
+        '<div class="empty-state">Sin gastos registrados este mes</div>';
+    } else {
+      // Agrupar por categoría
+      const porCategoria = {};
+      gastosMes.forEach(r => {
+        const cat = r.fields['Categoría'] || 'Otro';
+        if (!porCategoria[cat]) porCategoria[cat] = [];
+        porCategoria[cat].push(r);
+      });
+
+      document.getElementById('fin-lista-gastos').innerHTML = Object.entries(porCategoria).map(([cat, items]) => {
+        const totalCat = items.reduce((s, r) => s + (r.fields['Monto'] || 0), 0);
+        const itemsHtml = items.map(r => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1a1a1a;">
+            <div>
+              <div style="font-size:11px;color:var(--white);">${r.fields['Nombre'] || '—'}</div>
+              <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-top:2px;">${r.fields['Tipo'] || '—'}${r.fields['Recurrente'] ? ' · Recurrente' : ''}</div>
+            </div>
+            <div style="font-size:12px;color:var(--white);">$${(r.fields['Monto'] || 0).toLocaleString('es-MX')} MXN</div>
+          </div>`).join('');
+
+        return `<div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">${cat}</div>
+            <div style="font-size:11px;color:var(--text-dim);">$${totalCat.toLocaleString('es-MX')} MXN</div>
+          </div>
+          ${itemsHtml}
+        </div>`;
+      }).join('');
+    }
+
+  } catch(e) {
+    document.getElementById('fin-lista-gastos').innerHTML =
+      `<div class="alert alert-red">Error: ${e.message}</div>`;
+  }
+}
+
+function showAgregarGasto() {
+  showView('agregar-gasto-view');
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('gasto-fecha').value = hoy;
+  document.getElementById('gasto-nombre').value = '';
+  document.getElementById('gasto-monto').value = '';
+  document.getElementById('gasto-notas').value = '';
+  document.getElementById('gasto-tipo').value = '';
+  document.getElementById('gasto-categoria').value = '';
+  document.getElementById('gasto-recurrente').checked = false;
+}
+
+async function gastoGuardar() {
+  const nombre = document.getElementById('gasto-nombre').value.trim();
+  const tipo = document.getElementById('gasto-tipo').value;
+  const categoria = document.getElementById('gasto-categoria').value;
+  const monto = parseFloat(document.getElementById('gasto-monto').value) || 0;
+  const fecha = document.getElementById('gasto-fecha').value;
+  const notas = document.getElementById('gasto-notas').value.trim();
+  const recurrente = document.getElementById('gasto-recurrente').checked;
+
+  if (!nombre) { showToast('Ingresa el nombre del gasto', true); return; }
+  if (!tipo) { showToast('Selecciona el tipo', true); return; }
+  if (!categoria) { showToast('Selecciona la categoría', true); return; }
+  if (monto <= 0) { showToast('Ingresa un monto válido', true); return; }
+
+  const btn = document.getElementById('gasto-btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando…';
+
+  try {
+    const fields = {
+      'Nombre': nombre,
+      'Tipo': tipo,
+      'Categoría': categoria,
+      'Monto': monto,
+      'Fecha': fecha || new Date().toISOString().split('T')[0],
+      'Recurrente': recurrente
+    };
+    if (notas) fields['Notas'] = notas;
+
+    await airtablePost('GASTOS', fields);
+    showToast('✓ Gasto registrado');
+    showFinanzas();
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar gasto';
   }
 }
 
