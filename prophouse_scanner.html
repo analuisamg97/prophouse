@@ -26,33 +26,68 @@
   .setup-note { font-size:10px; color:var(--text-dim); text-align:center; margin-top:16px; line-height:1.6; }
 
   /* APP */
-  #app-screen { display:none; }
-  .header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--gray-light); }
-  .header-logo { font-family:'Playfair Display',serif; font-size:18px; color:var(--gold); letter-spacing:1px; }
-  .btn-settings { background:none; border:1px solid var(--gray-light); color:var(--text-dim); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; padding:6px 12px; border-radius:3px; cursor:pointer; }
+  #app-screen { display:none; padding-bottom:72px; }
+  body { overflow-x:hidden; }
+
+  /* HEADER */
+  .header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid #1a1a1a; }
+  .header-logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); letter-spacing:1px; cursor:pointer; }
+  .header-right { display:flex; gap:10px; align-items:center; }
+  .header-icon-btn { background:none; border:none; color:var(--text-dim); cursor:pointer; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+  .header-icon-btn:active { background:var(--gray); }
+  .header-icon-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+
+  /* BOTTOM NAV */
+  .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:#0d0d0d; border-top:1px solid #1a1a1a; display:flex; justify-content:space-around; padding:10px 0 24px; z-index:50; }
+  .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 16px; border:none; background:none; }
+  .nav-item svg { width:22px; height:22px; stroke:var(--text-dim); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; transition:stroke 0.2s; }
+  .nav-item span { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); font-family:'DM Mono',monospace; transition:color 0.2s; }
+  .nav-item.active svg { stroke:var(--gold); }
+  .nav-item.active span { color:var(--gold); }
+  .nav-dot { width:4px; height:4px; border-radius:50%; background:var(--gold); margin:0 auto; opacity:0; transition:opacity 0.2s; }
+  .nav-item.active .nav-dot { opacity:1; }
 
   /* HOME */
-  #home-view { padding:24px; }
-  .section-title { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:16px; }
-  .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px; }
-  .action-card { background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:20px 16px; cursor:pointer; text-align:center; transition:all 0.2s; }
-  .action-card:hover { border-color:var(--gold); }
-  .action-card.salida { border-left:3px solid var(--red); }
-  .action-card.entrada { border-left:3px solid var(--green); }
-  .action-card.buscar { border-left:3px solid var(--gold); }
-  .action-card.rentas { border-left:3px solid var(--blue); }
-  .action-icon { font-size:24px; margin-bottom:8px; }
-  .action-label { font-size:11px; letter-spacing:1px; text-transform:uppercase; }
+  #home-view { padding:20px 24px; }
+  .home-greeting { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:3px; }
+  .home-date { font-size:12px; color:var(--white); margin-bottom:24px; }
+  .section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:12px; margin-top:24px; }
+  .section-title:first-of-type { margin-top:0; }
+
+  /* HOME ACTION GRID */
+  .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0; }
+  .action-card { background:#141414; border:1px solid #1e1e1e; border-radius:10px; padding:18px 14px; cursor:pointer; transition:border-color 0.2s; }
+  .action-card:active { border-color:var(--gold); background:#1a1a0d; }
+  .action-card svg { width:22px; height:22px; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; margin-bottom:8px; }
+  .action-card.salida svg { stroke:var(--red); }
+  .action-card.entrada svg { stroke:var(--green); }
+  .action-card.buscar svg { stroke:var(--gold); }
+  .action-card.nueva svg { stroke:var(--blue); }
+  .action-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); }
+  .action-label.gold { color:var(--gold); }
+
+  /* HOME QUICK ACTIONS */
+  .quick-actions { display:flex; flex-direction:column; gap:8px; }
+  .quick-btn { background:#141414; border:1px solid #1e1e1e; border-radius:8px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--white); transition:border-color 0.2s; text-align:left; width:100%; }
+  .quick-btn:active { border-color:var(--gold); }
+  .quick-btn svg { width:16px; height:16px; flex-shrink:0; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+  .quick-btn.gold { border-color:var(--gold-dim); color:var(--gold); }
+  .quick-btn.gold svg { stroke:var(--gold); }
+  .quick-btn.red { border-color:#c0392b44; color:#e74c3c; }
+  .quick-btn.red svg { stroke:#e74c3c; }
+  .quick-btn-label { flex:1; }
+  .quick-btn-arrow { color:var(--text-dim); font-size:14px; }
 
   /* VIEWS */
-  .view { display:none; padding:24px; }
-  .view-header { display:flex; align-items:center; gap:12px; margin-bottom:24px; }
-  .btn-back { background:none; border:1px solid var(--gray-light); color:var(--white); font-size:18px; width:36px; height:36px; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .view-title { font-size:14px; letter-spacing:1px; }
-  .mode-badge { margin-left:auto; font-size:10px; letter-spacing:1px; padding:4px 10px; border-radius:12px; text-transform:uppercase; }
-  .mode-salida { background:rgba(192,57,43,0.2); color:#e74c3c; border:1px solid #c0392b; }
-  .mode-entrada { background:rgba(39,174,96,0.2); color:#2ecc71; border:1px solid #27ae60; }
-  .mode-buscar { background:rgba(201,168,76,0.2); color:var(--gold); border:1px solid var(--gold-dim); }
+  .view { display:none; padding:0 24px 24px; }
+  .view-header { display:flex; align-items:center; gap:12px; padding:16px 0 20px; border-bottom:1px solid #1a1a1a; margin-bottom:20px; }
+  .btn-back { background:none; border:1px solid #1e1e1e; color:var(--white); width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .view-title { font-size:15px; letter-spacing:0.5px; color:var(--white); font-family:'Playfair Display',serif; }
+  .mode-badge { margin-left:auto; font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:20px; text-transform:uppercase; }
+  .mode-salida { background:rgba(192,57,43,0.15); color:#e74c3c; border:1px solid #c0392b44; }
+  .mode-entrada { background:rgba(39,174,96,0.15); color:#2ecc71; border:1px solid #27ae6044; }
+  .mode-buscar { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid var(--gold-dim); }
 
   /* RENTA CARDS */
   .renta-card { background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s; }
@@ -280,58 +315,131 @@
 <!-- APP -->
 <div id="app-screen">
   <div class="header">
-    <div class="header-logo">Hora Dorada</div>
-    <button class="btn-settings" onclick="showSetup()">⚙ Config</button>
+    <div class="header-logo" onclick="goHome()">Hora Dorada</div>
+    <div class="header-right">
+      <button class="header-icon-btn" onclick="showSetup()" aria-label="Configuración">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
   </div>
 
   <!-- HOME -->
   <div id="home-view">
-    <div style="padding:24px 0 16px;">
-      <div class="section-title">¿Qué quieres hacer?</div>
-      <div class="action-grid">
-        <div class="action-card salida" onclick="startFlow('salida')">
-          <div class="action-icon">📤</div>
-          <div class="action-label">Salida</div>
-        </div>
-        <div class="action-card entrada" onclick="startFlow('entrada')">
-          <div class="action-icon">📥</div>
-          <div class="action-label">Entrada</div>
-        </div>
-        <div class="action-card buscar" onclick="startFlow('buscar')">
-          <div class="action-icon">🔍</div>
-          <div class="action-label">Consultar</div>
-        </div>
-        <div class="action-card rentas" onclick="showRentasActivas()">
-          <div class="action-icon">📋</div>
-          <div class="action-label">Rentas</div>
-        </div>
+    <div class="home-greeting">Bienvenida</div>
+    <div class="home-date" id="home-date">—</div>
+
+    <div class="section-title">Movimientos</div>
+    <div class="action-grid">
+      <div class="action-card salida" onclick="startFlow('salida')">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="action-label">Salida</div>
       </div>
-      <div class="section-title" style="margin-top:8px;margin-bottom:16px">Acciones rápidas</div>
-      <button class="btn-accion btn-salida" onclick="quickNuevaRenta()" style="margin-bottom:8px">
-        ＋ Nueva renta
+      <div class="action-card entrada" onclick="startFlow('entrada')">
+        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <div class="action-label">Entrada</div>
+      </div>
+      <div class="action-card buscar" onclick="startFlow('buscar')">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div class="action-label gold">Consultar</div>
+      </div>
+      <div class="action-card nueva" onclick="quickNuevaRenta()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <div class="action-label">Nueva renta</div>
+      </div>
+    </div>
+
+    <div class="section-title">Acciones rápidas</div>
+    <div class="quick-actions">
+      <button class="quick-btn gold" onclick="showOrdenView()">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span class="quick-btn-label">Generar orden de renta</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="btn-accion" onclick="showOrdenView()" style="background:none;border:1px solid var(--gold);color:var(--gold);margin-bottom:8px">
-        🌅 Generar orden de renta
+      <button class="quick-btn" onclick="showPagosView()">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span class="quick-btn-label">Registrar pago</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="btn-accion" onclick="showPagosView()" style="background:none;border:1px solid var(--green);color:var(--green);margin-bottom:8px">
-        💳 Registrar pago
+      <button class="quick-btn red" onclick="showDanosView()">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="quick-btn-label">Registrar daño</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="btn-accion" onclick="showInventarioView()" style="background:none;border:1px solid var(--text-dim);color:var(--text-dim);margin-bottom:8px">
-        📦 Hacer inventario
+    </div>
+  </div>
+
+  <!-- SUBMENU INVENTARIO -->
+  <div id="inventario-menu-view" class="view">
+    <div class="view-header">
+      <div class="view-title" style="font-size:18px;">Inventario</div>
+    </div>
+    <div class="quick-actions">
+      <button class="quick-btn gold" onclick="startFlow('buscar')">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <span class="quick-btn-label">Consultar prop</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="btn-accion" onclick="showDanosView()" style="background:none;border:1px solid #e74c3c;color:#e74c3c;margin-bottom:8px">
-        ⚠️ Registrar daño
+      <button class="quick-btn" onclick="showAltaProp()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span class="quick-btn-label">Dar de alta prop</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="btn-accion" onclick="showAltaProp()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:0">
-        ＋ Dar de alta prop
+      <button class="quick-btn" onclick="showInventarioView()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <span class="quick-btn-label">Inventario físico</span>
+        <span class="quick-btn-arrow">›</span>
       </button>
+      <button class="quick-btn red" onclick="showDanosView()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="quick-btn-label">Registrar daño</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUBMENU RENTAS -->
+  <div id="rentas-menu-view" class="view">
+    <div class="view-header">
+      <div class="view-title" style="font-size:18px;">Rentas</div>
+    </div>
+    <div class="quick-actions">
+      <button class="quick-btn gold" onclick="quickNuevaRenta()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span class="quick-btn-label">Nueva renta</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
+      <button class="quick-btn" onclick="showRentasActivas()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span class="quick-btn-label">Rentas activas</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
+      <button class="quick-btn" onclick="showOrdenView()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <span class="quick-btn-label">Generar orden de renta</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
+      <button class="quick-btn" onclick="showPagosView()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <span class="quick-btn-label">Registrar pago</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SUBMENU FINANZAS -->
+  <div id="finanzas-menu-view" class="view">
+    <div class="view-header">
+      <div class="view-title" style="font-size:18px;">Finanzas</div>
+    </div>
+    <div class="alert alert-yellow">
+      Esta sección está en construcción. Pronto podrás ver ingresos, costos y balance de Hora Dorada.
     </div>
   </div>
 
   <!-- STEP 1: SELECCIONAR RENTA -->
   <div id="renta-select-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()">←</button>
+      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Seleccionar renta</div>
       <div class="mode-badge" id="renta-mode-badge"></div>
     </div>
@@ -343,7 +451,7 @@
   <!-- STEP 2: LISTA DE PROPS + SCANNER -->
   <div id="props-flow-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="backToRentas()">←</button>
+      <button class="btn-back" onclick="backToRentas()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title" id="props-flow-title">Props de la renta</div>
       <div class="mode-badge" id="props-mode-badge"></div>
     </div>
@@ -353,7 +461,7 @@
   <!-- CONSULTAR VIEW -->
   <div id="buscar-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()">←</button>
+      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Consultar prop</div>
       <div class="mode-badge mode-buscar">Consulta</div>
     </div>
@@ -369,7 +477,7 @@
   <!-- PROP DETAIL VIEW -->
   <div id="prop-detail-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="backFromDetail()">←</button>
+      <button class="btn-back" onclick="backFromDetail()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title" id="detail-view-title">Detalle del prop</div>
     </div>
     <div id="prop-detail-content"></div>
@@ -378,7 +486,7 @@
   <!-- RENTAS ACTIVAS VIEW -->
   <div id="rentas-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()">←</button>
+      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Rentas activas</div>
     </div>
     <div id="rentas-content">
@@ -390,10 +498,27 @@
 <!-- NUEVA RENTA VIEW -->
 <div id="nueva-renta-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Nueva renta</div>
   </div>
-  <div style="margin-bottom:16px">
+
+  <!-- Pantalla de éxito — oculta por defecto -->
+  <div id="nr-success" style="display:none;text-align:center;padding:12px 0;">
+    <div style="font-size:32px;margin-bottom:12px;">✅</div>
+    <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:6px;">RENTA CREADA</div>
+    <div style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="nr-success-id">—</div>
+    <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="nr-success-monto">—</div>
+    <div style="font-size:10px;color:var(--text-dim);margin-bottom:24px;" id="nr-success-detalle">—</div>
+    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:8px;">
+      🌅 Generar orden de renta
+    </button>
+    <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);">
+      Ir al inicio
+    </button>
+  </div>
+
+  <!-- Formulario -->
+  <div id="nr-form" style="margin-bottom:16px">
     <div class="alert alert-yellow" style="margin-bottom:20px">
       ⚡ Renta de último momento — se creará en Airtable automáticamente
     </div>
@@ -411,6 +536,8 @@
       <input type="text" class="setup-input" id="nr-cliente-nombre" placeholder="Productora XYZ">
       <div class="setup-label">Teléfono</div>
       <input type="text" class="setup-input" id="nr-cliente-tel" placeholder="81 1234 5678">
+      <div class="setup-label">Email</div>
+      <input type="text" class="setup-input" id="nr-cliente-email" placeholder="cliente@email.com">
       <div class="setup-label">¿Cómo nos encontró?</div>
       <select class="setup-input" id="nr-cliente-origen">
         <option value="">— Seleccionar —</option>
@@ -457,13 +584,13 @@
       Crear renta →
     </button>
     <button class="btn-accion btn-secondary" onclick="goHome()">Cancelar</button>
-  </div>
+  </div><!-- fin nr-form -->
 </div>
 
 <!-- INVENTARIO RÁPIDO VIEW -->
 <div id="inventario-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Inventario físico</div>
     <div class="mode-badge mode-buscar">Verificando</div>
   </div>
@@ -490,7 +617,7 @@
 <!-- DAÑOS VIEW -->
 <div id="danos-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Registrar daño</div>
     <div class="mode-badge" style="background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid #c0392b;">Daño</div>
   </div>
@@ -542,7 +669,7 @@
 <!-- PAGOS VIEW -->
 <div id="pagos-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Registrar pago</div>
     <div class="mode-badge" style="background:rgba(39,174,96,0.2);color:#2ecc71;border:1px solid #27ae60;">Pagos</div>
   </div>
@@ -602,7 +729,7 @@
 <!-- ALTA DE PROP VIEW -->
 <div id="alta-prop-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Dar de alta prop</div>
     <div class="mode-badge mode-buscar">Nuevo</div>
   </div>
@@ -727,7 +854,7 @@
 <!-- ORDEN DE RENTA VIEW -->
 <div id="orden-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()">←</button>
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Orden de renta</div>
     <div class="mode-badge mode-buscar">Nuevo</div>
   </div>
@@ -834,13 +961,37 @@
   <div id="orden-preview">
     <div class="orden-preview-actions">
       <button class="btn-preview-back" onclick="orVolverForm()">← Editar</button>
-      <button class="btn-preview-print" onclick="window.print()">🖨 PDF</button>
+      <button class="btn-preview-print" onclick="window.print()">💾 Guardar PDF</button>
       <button class="btn-preview-wha" id="btn-wha" onclick="orCompartirWhatsApp()">💬 WhatsApp</button>
     </div>
     <div class="document" id="or-documento"></div>
     <button class="btn-preview-home" onclick="goHome()">← Volver al inicio</button>
   </div>
 </div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" id="nav-inicio" onclick="navGo('inicio')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Inicio</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-item" id="nav-inventario" onclick="navGo('inventario')">
+    <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <span>Inventario</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-item" id="nav-rentas" onclick="navGo('rentas')">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span>Rentas</span>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-item" id="nav-finanzas" onclick="navGo('finanzas')">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    <span>Finanzas</span>
+    <div class="nav-dot"></div>
+  </button>
+</nav>
 
 <!-- CONFIRM MODAL -->
 <div id="confirm-modal">
@@ -884,6 +1035,32 @@ function showSetup() {
   document.getElementById('setup-screen').style.display = 'flex';
 }
 
+// ── NAVEGACIÓN POR TABS ─────────────────────────────────
+function navGo(tab) {
+  // Actualizar tabs activos
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + tab)?.classList.add('active');
+
+  // Ocultar todo
+  hideAllViews();
+
+  // Mostrar vista correcta
+  if (tab === 'inicio') {
+    document.getElementById('home-view').style.display = 'block';
+  } else if (tab === 'inventario') {
+    document.getElementById('inventario-menu-view').style.display = 'block';
+  } else if (tab === 'rentas') {
+    document.getElementById('rentas-menu-view').style.display = 'block';
+  } else if (tab === 'finanzas') {
+    document.getElementById('finanzas-menu-view').style.display = 'block';
+  }
+}
+
+function setNavActive(tab) {
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + tab)?.classList.add('active');
+}
+
 function loadCredentials() {
   const t = localStorage.getItem('ph_token');
   const b = localStorage.getItem('ph_base');
@@ -893,6 +1070,7 @@ function loadCredentials() {
     document.getElementById('baseid-input').value = b;
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'block';
+    goHome();
     probarConexion();
   }
 }
@@ -925,6 +1103,13 @@ function goHome() {
   rentaProps = [];
   hideAllViews();
   document.getElementById('home-view').style.display = 'block';
+  setNavActive('inicio');
+  // Actualizar fecha
+  const ahora = new Date();
+  const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('home-date').textContent =
+    `${dias[ahora.getDay()]} ${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}`;
 }
 
 function backToRentas() {
@@ -997,13 +1182,12 @@ async function db_getClientes() {
   return data.records || [];
 }
 
-async function db_crearCliente({ nombre, tel = '', email = '', tipo = 'Producción', origen = '' }) {
+async function db_crearCliente({ nombre, tel = '', email = '', origen = '' }) {
   if (!nombre) throw new Error('Nombre de cliente requerido');
   const fields = {
     'Nombre o empresa': nombre,
     'Teléfono': tel,
-    'Email': email,
-    'Tipo de cliente': tipo
+    'Email': email
   };
   if (origen) fields['Origen'] = origen;
   return airtablePost('CLIENTES', fields);
@@ -1278,8 +1462,18 @@ async function selectRenta(rentaId) {
   for (const pid of propsIds) {
     try {
       const p = await db_getProp(pid);
-      rentaProps.push({ ...p, scanned: false });
-    } catch(e) {}
+      if (p && p.fields) rentaProps.push({ ...p, scanned: false });
+    } catch(e) {
+      console.error('Error cargando prop', pid, e);
+    }
+  }
+
+  if (rentaProps.length === 0 && propsIds.length > 0) {
+    document.getElementById('props-flow-content').innerHTML = `
+      <div class="alert alert-red">No se pudieron cargar los props de esta renta. Verifica la conexión.</div>
+      ${renderScannerSection()}`;
+    initFlowScanner();
+    return;
   }
 
   renderPropsFlow();
@@ -1506,7 +1700,10 @@ function showPropDetail(prop, fromFlow) {
   const f = prop.fields;
   const estado = f['Estado'] || 'Desconocido';
   const statusClass = estado === 'Disponible' ? 'status-disponible' : estado === 'Rentado' ? 'status-rentado' : 'status-reparacion';
-  const code = Object.entries(f).find(([k]) => k.toLowerCase().includes('digo'))?.[1] || '';
+  const code = String(f['Código único'] || '');
+
+  // Opciones de estado disponibles
+  const estados = ['Disponible', 'Rentado', 'En reparación', 'En mantenimiento', 'Baja'];
 
   let accionHTML = '';
   if (fromFlow) {
@@ -1516,10 +1713,28 @@ function showPropDetail(prop, fromFlow) {
     accionHTML = `<button class="btn-accion btn-secondary" onclick="goHome()">Volver al inicio</button>`;
   }
 
+  // Selector de estado — permite cambiar desde aquí
+  const estadoSelector = `
+    <div style="background:var(--gray);border:1px solid var(--gray-light);border-radius:8px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Cambiar estado</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${estados.map(e => `
+          <button onclick="propCambiarEstado('${prop.id}', '${e}', this)"
+            style="background:${e===estado?'var(--gold)':'var(--gray-light)'};
+                   color:${e===estado?'var(--black)':'var(--white)'};
+                   border:none;border-radius:4px;padding:8px 12px;
+                   font-family:'DM Mono',monospace;font-size:9px;
+                   letter-spacing:1px;text-transform:uppercase;cursor:pointer;">
+            ${e}
+          </button>`).join('')}
+      </div>
+      <div id="estado-change-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
+    </div>`;
+
   document.getElementById('prop-detail-content').innerHTML = `
     <div class="prop-name">${f['Nombre del prop'] || 'Sin nombre'}</div>
     <div class="prop-code">${code}</div>
-    <div class="status-badge ${statusClass}">${estado}</div>
+    <div class="status-badge ${statusClass}" id="prop-estado-badge">${estado}</div>
     <div class="info-grid">
       <div class="info-card"><div class="info-card-label">Categoría</div><div class="info-card-value">${f['Categoría'] || '—'}</div></div>
       <div class="info-card"><div class="info-card-label">Nivel visual</div><div class="info-card-value gold">${f['Nivel Visual'] || '—'}</div></div>
@@ -1527,8 +1742,43 @@ function showPropDetail(prop, fromFlow) {
       <div class="info-card"><div class="info-card-label">Veces rentado</div><div class="info-card-value">${f['Veces rentado'] || '0'}</div></div>
     </div>
     ${f['Notas cinematográficas'] ? `<div class="notes-section">${f['Notas cinematográficas']}</div>` : ''}
+    ${estadoSelector}
     ${accionHTML}
   `;
+}
+
+async function propCambiarEstado(recordId, nuevoEstado, btn) {
+  const statusEl = document.getElementById('estado-change-status');
+  statusEl.textContent = 'Guardando…';
+
+  try {
+    await registrarVerificacion(recordId, nuevoEstado, null);
+
+    // Actualizar UI — resaltar botón seleccionado
+    btn.closest('div').querySelectorAll('button').forEach(b => {
+      b.style.background = 'var(--gray-light)';
+      b.style.color = 'var(--white)';
+    });
+    btn.style.background = 'var(--gold)';
+    btn.style.color = 'var(--black)';
+
+    // Actualizar badge de estado
+    const badge = document.getElementById('prop-estado-badge');
+    if (badge) {
+      badge.textContent = nuevoEstado;
+      badge.className = 'status-badge ' + (
+        nuevoEstado === 'Disponible' ? 'status-disponible' :
+        nuevoEstado === 'Rentado' ? 'status-rentado' : 'status-reparacion'
+      );
+    }
+
+    statusEl.style.color = '#2ecc71';
+    statusEl.textContent = `✓ Estado actualizado a "${nuevoEstado}"`;
+    showToast(`✓ ${nuevoEstado}`);
+  } catch(e) {
+    statusEl.style.color = '#e74c3c';
+    statusEl.textContent = `Error: ${e.message}`;
+  }
 }
 
 // ── FINALIZAR RENTA ─────────────────────────────────────
@@ -1556,6 +1806,76 @@ async function executeAction() {
   // Los props ya fueron actualizados uno por uno al escanear
   showToast('✓ ' + (currentMode === 'salida' ? 'Salida registrada' : 'Entrada registrada'));
   setTimeout(() => goHome(), 1500);
+}
+
+// ── VER DETALLE DE RENTA DESDE RENTAS ACTIVAS ──────────
+async function rentasVerDetalle(rentaRecordId) {
+  showView('props-flow-view');
+  document.getElementById('props-flow-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando renta...</div>';
+
+  try {
+    const renta = await db_getRenta(rentaRecordId);
+    const f = renta.fields;
+    const total = f['Monto total'] || 0;
+    const saldo = f['Monto a liquidar'] || 0;
+    const propsIds = f['Props rentados'] || [];
+
+    // Cargar nombre de cliente
+    let clienteNombre = '—';
+    const clienteIds = f['Cliente'] || [];
+    if (clienteIds.length > 0) {
+      try {
+        const clientes = await db_getClientes();
+        const c = clientes.find(c => c.id === clienteIds[0]);
+        if (c) clienteNombre = c.fields['Nombre o empresa'] || '—';
+      } catch(e) {}
+    }
+
+    // Cargar props
+    let propsHtml = '';
+    for (const pid of propsIds) {
+      try {
+        const p = await db_getProp(pid);
+        const pf = p.fields;
+        propsHtml += `<div class="prop-list-item">
+          <div class="prop-info">
+            <div class="prop-item-name">${pf['Nombre del prop'] || '—'}</div>
+            <div class="prop-item-code">${pf['Código único'] || '—'}</div>
+          </div>
+          <div class="prop-item-status ${pf['Estado']==='Disponible'?'ok':'pending'}">${pf['Estado'] || '—'}</div>
+        </div>`;
+      } catch(e) {}
+    }
+
+    document.getElementById('props-flow-title').textContent = f['ID de renta'] || '—';
+    document.getElementById('props-mode-badge').textContent = f['Estado de la renta'] || '—';
+    document.getElementById('props-mode-badge').className = 'mode-badge mode-buscar';
+
+    document.getElementById('props-flow-content').innerHTML = `
+      <div class="pago-section">
+        <div class="pago-title">Datos de la renta</div>
+        <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
+        <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
+        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+      </div>
+
+      ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
+
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--black);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
+        <button class="btn-accion" onclick="pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid var(--green);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
+      </div>
+      ${f['Estado de la renta']==='Activa' ? `<button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
+    `;
+  } catch(e) {
+    document.getElementById('props-flow-content').innerHTML =
+      `<div class="alert alert-red">Error al cargar renta: ${e.message}</div>`;
+  }
 }
 
 // ── CANCELAR RENTA DESDE RENTAS ACTIVAS ─────────────────
@@ -1588,21 +1908,28 @@ async function showRentasActivas() {
       document.getElementById('rentas-content').innerHTML = '<div class="empty-state">No hay rentas activas</div>';
       return;
     }
+    // Cargar nombres de clientes para mostrar en cards
+    const clientesAll = await db_getClientes();
     document.getElementById('rentas-content').innerHTML = rentas.map(r => {
       const f = r.fields;
       const total = f['Monto total'] || 0;
-      const dep = f['Monto Adelanto'] || 0;
-      const deuda = total - dep;
-      return `<div class="pago-section" style="margin-bottom:12px">
-        <div class="pago-title">${f['ID de renta'] || '—'}</div>
+      const saldo = f['Monto a liquidar'] || 0;
+      const clienteIds = f['Cliente'] || [];
+      const clienteRec = clientesAll.find(c => c.id === clienteIds[0]);
+      const clienteNombre = clienteRec ? (clienteRec.fields['Nombre o empresa'] || '—') : '—';
+      return `<div class="pago-section" style="margin-bottom:12px;cursor:pointer;" onclick="rentasVerDetalle('${r.id}')">
+        <div class="pago-title" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>${f['ID de renta'] || '—'}</span>
+          <span style="font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;">ver →</span>
+        </div>
+        <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
+        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + saldo.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
-      ${f['Estado de la renta'] === 'Activa' ? `<button onclick="rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:6px 0 4px 0;display:block;">✕ Cancelar renta</button>` : ''}
-      `;
+      ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
     }).join('');
   } catch(e) { showToast('Error de conexión', true); }
 }
@@ -1632,6 +1959,9 @@ let nrProps = []; // { nombre, codigo, rentaDia, airtableId }
 
 async function showNuevaRenta() {
   showView('nueva-renta-view');
+  // Siempre mostrar form, ocultar éxito
+  document.getElementById('nr-success').style.display = 'none';
+  document.getElementById('nr-form').style.display = 'block';
   nrProps = [];
   nrRenderProps();
 
@@ -1641,6 +1971,8 @@ async function showNuevaRenta() {
   document.getElementById('nr-deposito').value = '';
   document.getElementById('nr-notas').value = '';
   document.getElementById('nr-prop-status').textContent = '';
+  const emailEl = document.getElementById('nr-cliente-email');
+  if (emailEl) emailEl.value = '';
   nrCalcMonto();
 
   try {
@@ -1769,8 +2101,9 @@ async function crearNuevaRenta() {
     const tel = document.getElementById('nr-cliente-tel').value.trim();
     if (!nombre) { showToast('Ingresa el nombre del cliente', true); return; }
     try {
+      const email = document.getElementById('nr-cliente-email')?.value.trim() || '';
       const origen = document.getElementById('nr-cliente-origen')?.value || '';
-      const nuevo = await db_crearCliente({ nombre, tel, origen });
+      const nuevo = await db_crearCliente({ nombre, tel, email, origen });
       clienteId = nuevo.id;
       showToast('✓ Cliente creado');
     } catch(e) { showToast('Error al crear cliente: ' + e.message, true); return; }
@@ -1788,26 +2121,16 @@ async function crearNuevaRenta() {
 
     showToast(`✓ Renta ${rentaId} registrada`);
 
-    // Ofrecer generar orden — NO entrar al flujo de salida
+    // Guardar renta y precargar para orden
     currentRenta = newRenta;
     orPrecargarDesdRenta(newRenta, rentaId, newRenta.fields || {});
 
-    // Mostrar confirmación con opción de generar orden o ir al inicio
-    showView('nueva-renta-view');
-    document.querySelector('#nueva-renta-view > div').innerHTML = `
-      <div style="text-align:center;padding:12px 0;">
-        <div style="font-size:32px;margin-bottom:12px;">✅</div>
-        <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:6px;">RENTA CREADA</div>
-        <div style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:500;margin-bottom:4px;">${rentaId}</div>
-        <div style="font-size:11px;color:var(--white);margin-bottom:4px;">${monto > 0 ? '$' + monto.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN' : 'Sin monto calculado'}</div>
-        <div style="font-size:10px;color:var(--text-dim);margin-bottom:24px;">${diasCobrados} día${diasCobrados>1?'s':''} cobrados · ${propsIds.length} prop${propsIds.length!==1?'s':''}</div>
-        <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:8px;">
-          🌅 Generar orden de renta
-        </button>
-        <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);">
-          Ir al inicio
-        </button>
-      </div>`;
+    // Mostrar pantalla de éxito sin destruir el form
+    document.getElementById('nr-form').style.display = 'none';
+    document.getElementById('nr-success').style.display = 'block';
+    document.getElementById('nr-success-id').textContent = rentaId;
+    document.getElementById('nr-success-monto').textContent = monto > 0 ? '$' + monto.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN' : 'Sin monto calculado';
+    document.getElementById('nr-success-detalle').textContent = `${diasCobrados} día${diasCobrados>1?'s':''} cobrados · ${propsIds.length} prop${propsIds.length!==1?'s':''}`;
 
   } catch(e) {
     showToast('Error al crear renta: ' + e.message, true);
@@ -2295,14 +2618,23 @@ async function showDanosView() {
   document.getElementById('danos-descripcion').value = '';
   document.getElementById('danos-costo').value = '';
 
-  // Cargar rentas activas para el selector
+  // Cargar rentas para el selector
   try {
     const rentas = await db_getRentas({ soloActivas: false, maxRecords: 100 });
+    const clientes = await db_getClientes();
     const select = document.getElementById('danos-renta-select');
-    const opts = rentas.map(r =>
-      `<option value="${r.id}">${r.fields['ID de renta'] || '—'} · ${r.fields['Fecha de salida'] || ''}</option>`
-    ).join('');
+    const opts = rentas.map(r => {
+      const clienteIds = r.fields['Cliente'] || [];
+      const c = clientes.find(c => c.id === clienteIds[0]);
+      const nombre = c ? (c.fields['Nombre o empresa'] || '') : '';
+      return `<option value="${r.id}" data-cliente="${nombre}">${r.fields['ID de renta'] || '—'}${nombre ? ' · ' + nombre : ''}</option>`;
+    }).join('');
     select.innerHTML = '<option value="">— Sin renta asociada —</option>' + opts;
+    select.onchange = () => {
+      const opt = select.options[select.selectedIndex];
+      const cliente = opt?.dataset?.cliente || '';
+      document.getElementById('danos-cliente-auto').textContent = cliente ? `Cliente: ${cliente}` : '';
+    };
   } catch(e) {}
 }
 
