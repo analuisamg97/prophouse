@@ -316,6 +316,12 @@
       <button class="btn-accion" onclick="showPagosView()" style="background:none;border:1px solid var(--green);color:var(--green);margin-bottom:8px">
         💳 Registrar pago
       </button>
+      <button class="btn-accion" onclick="showInventarioView()" style="background:none;border:1px solid var(--text-dim);color:var(--text-dim);margin-bottom:8px">
+        📦 Hacer inventario
+      </button>
+      <button class="btn-accion" onclick="showDanosView()" style="background:none;border:1px solid #e74c3c;color:#e74c3c;margin-bottom:8px">
+        ⚠️ Registrar daño
+      </button>
       <button class="btn-accion" onclick="showAltaProp()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:0">
         ＋ Dar de alta prop
       </button>
@@ -355,7 +361,8 @@
     <div class="divider">o busca por código</div>
     <div class="search-row">
       <input type="text" class="search-input" id="buscar-code" placeholder="Ej: RT-001, MU-003..." onkeyup="if(event.key==='Enter') buscarProp()">
-      <button class="btn-search" onclick="buscarProp()">Buscar</button>
+      <button class="btn-search" onclick="abrirScannerUniversal('buscar-code', buscarProp)">📷</button>
+      <button class="btn-search" onclick="buscarProp()">→</button>
     </div>
   </div>
 
@@ -404,6 +411,13 @@
       <input type="text" class="setup-input" id="nr-cliente-nombre" placeholder="Productora XYZ">
       <div class="setup-label">Teléfono</div>
       <input type="text" class="setup-input" id="nr-cliente-tel" placeholder="81 1234 5678">
+      <div class="setup-label">¿Cómo nos encontró?</div>
+      <select class="setup-input" id="nr-cliente-origen">
+        <option value="">— Seleccionar —</option>
+        <option value="Instagram">Instagram</option>
+        <option value="Recomendación">Recomendación</option>
+        <option value="Otro">Otro</option>
+      </select>
     </div>
 
     <div class="setup-label">Fecha de salida</div>
@@ -418,6 +432,7 @@
     <div id="nr-props-list" style="margin-bottom:8px;"></div>
     <div style="display:flex;gap:8px;margin-bottom:16px;">
       <input type="text" class="search-input" id="nr-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') nrAgregarProp()">
+      <button class="btn-search" onclick="abrirScannerUniversal('nr-prop-codigo', nrAgregarProp)">📷</button>
       <button class="btn-search" onclick="nrAgregarProp()">＋</button>
     </div>
     <div id="nr-prop-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;min-height:16px;margin-bottom:12px;"></div>
@@ -442,6 +457,85 @@
       Crear renta →
     </button>
     <button class="btn-accion btn-secondary" onclick="backToRentas()">Cancelar</button>
+  </div>
+</div>
+
+<!-- INVENTARIO RÁPIDO VIEW -->
+<div id="inventario-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="goHome()">←</button>
+    <div class="view-title">Inventario físico</div>
+    <div class="mode-badge mode-buscar">Verificando</div>
+  </div>
+  <div class="progress-section" id="inv-progress" style="display:none">
+    <div class="progress-label">Props verificados</div>
+    <div class="progress-bar"><div class="progress-fill buscar" id="inv-progress-bar" style="width:0%;background:var(--gold)"></div></div>
+    <div class="progress-text" id="inv-progress-text">0 props verificados</div>
+  </div>
+  <div class="search-row" style="margin-bottom:12px;">
+    <input type="text" class="search-input" id="inv-codigo" placeholder="Código ej. RT-001" onkeyup="if(event.key==='Enter') invVerificar()">
+    <button class="btn-search" onclick="abrirScannerUniversal('inv-codigo', invVerificar)">📷</button>
+    <button class="btn-search" onclick="invVerificar()">✓</button>
+  </div>
+  <div id="inv-status" style="font-size:11px;color:var(--text-dim);letter-spacing:1px;min-height:20px;margin-bottom:16px;text-align:center;"></div>
+  <div id="inv-lista"></div>
+  <div id="inv-resumen" style="display:none">
+    <div class="alert alert-green" id="inv-resumen-ok"></div>
+  </div>
+  <button onclick="invFinalizar()" id="inv-btn-finalizar" style="display:none;" class="btn-accion" style="background:var(--gold);color:var(--black);border:none;margin-top:16px;">
+    Finalizar inventario
+  </button>
+</div>
+
+<!-- DAÑOS VIEW -->
+<div id="danos-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="goHome()">←</button>
+    <div class="view-title">Registrar daño</div>
+    <div class="mode-badge" style="background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid #c0392b;">Daño</div>
+  </div>
+
+  <!-- Éxito -->
+  <div id="danos-success" style="display:none;text-align:center;padding:20px 0;">
+    <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+    <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:6px;">DAÑO REGISTRADO</div>
+    <div style="font-size:20px;color:#e74c3c;letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="danos-success-id">—</div>
+    <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="danos-success-prop">—</div>
+    <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:20px;">Prop cambiado a En reparación</div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-accion" onclick="danosNuevoOtro()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid #e74c3c;color:#e74c3c;">⚠️ Otro daño</button>
+      <button class="btn-accion" onclick="goHome()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid var(--gray-light);color:var(--text-dim);">Ir al inicio</button>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div id="danos-form">
+    <div class="section-title" style="margin-top:0;">Prop afectado</div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <input type="text" class="search-input" id="danos-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') danossBuscarProp()">
+      <button class="btn-search" onclick="abrirScannerUniversal('danos-prop-codigo', danossBuscarProp)">📷</button>
+      <button class="btn-search" onclick="danossBuscarProp()">→</button>
+    </div>
+    <div id="danos-prop-info" style="display:none;background:var(--gray);border:1px solid var(--gray-light);border-radius:6px;padding:12px;margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--white);" id="danos-prop-nombre">—</div>
+      <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:2px;" id="danos-prop-codigo-display">—</div>
+    </div>
+
+    <div class="section-title">Renta relacionada</div>
+    <select class="search-input" id="danos-renta-select" style="width:100%;margin-bottom:16px;">
+      <option value="">— Sin renta asociada —</option>
+    </select>
+
+    <div class="section-title">Descripción del daño</div>
+    <textarea class="search-input" id="danos-descripcion" placeholder="Describe el daño..." style="width:100%;height:80px;resize:none;padding:12px;font-family:'DM Mono',monospace;margin-bottom:16px;"></textarea>
+
+    <div class="section-title">Costo de reparación (opcional)</div>
+    <input type="number" class="search-input" id="danos-costo" placeholder="0" style="width:100%;margin-bottom:20px;">
+
+    <button class="btn-accion" onclick="danosGuardar()" id="danos-btn-guardar" style="background:#e74c3c;color:white;border:none;">
+      ⚠️ Registrar daño
+    </button>
+    <button class="btn-accion btn-secondary" onclick="goHome()" style="margin-top:8px;">Cancelar</button>
   </div>
 </div>
 
@@ -712,6 +806,7 @@
       <div class="divider">o busca por código</div>
       <div class="search-row">
         <input type="text" class="search-input" id="or-scan-code" placeholder="RT-001" onkeyup="if(event.key==='Enter') orScanCode()">
+        <button class="btn-search" onclick="abrirScannerUniversal('or-scan-code', orScanCode)">📷</button>
         <button class="btn-search" onclick="orScanCode()">→</button>
       </div>
       <div id="or-scan-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
@@ -902,14 +997,16 @@ async function db_getClientes() {
   return data.records || [];
 }
 
-async function db_crearCliente({ nombre, tel = '', email = '', tipo = 'Producción' }) {
+async function db_crearCliente({ nombre, tel = '', email = '', tipo = 'Producción', origen = '' }) {
   if (!nombre) throw new Error('Nombre de cliente requerido');
-  return airtablePost('CLIENTES', {
+  const fields = {
     'Nombre o empresa': nombre,
     'Teléfono': tel,
     'Email': email,
     'Tipo de cliente': tipo
-  });
+  };
+  if (origen) fields['Origen'] = origen;
+  return airtablePost('CLIENTES', fields);
 }
 
 // Busca cliente por nombre exacto, si no existe lo crea
@@ -997,12 +1094,15 @@ async function db_registrarPago({ rentaRecordId, montoTotal, adelanto, fechaAdel
 
 // ── INVENTARIO ───────────────────────────────────────
 async function db_getProps({ maxRecords = 500 } = {}) {
-  let all = [], offset = '';
+  let all = [], offset = '', pages = 0;
   do {
     const params = `?pageSize=100${offset ? '&offset=' + offset : ''}`;
     const data = await airtableGet('INVENTARIO', params);
-    all = all.concat(data.records || []);
+    if (!data.records) break;
+    all = all.concat(data.records);
     offset = data.offset || '';
+    pages++;
+    if (pages > 20) break; // seguro: máximo 2000 props
   } while (offset);
   return all;
 }
@@ -1033,7 +1133,7 @@ async function db_actualizarEstadoProps(propsIds, nuevoEstado) {
 async function findPropByCode(code) {
   const all = await db_getProps();
   const target = code.toUpperCase().trim();
-  return all.find(r => (r.fields['Código único'] || '').toUpperCase().trim() === target) || null;
+  return all.find(r => String(r.fields['Código único'] || '').toUpperCase().trim() === target) || null;
 }
 
 // ── FLOW: SALIDA / ENTRADA ──────────────────────────────
@@ -1248,6 +1348,7 @@ function renderScannerSection() {
     <div class="divider">o busca por código</div>
     <div class="search-row">
       <input type="text" class="search-input" id="flow-code" placeholder="Ej: RT-001" onkeyup="if(event.key==='Enter') scanFlowCode()">
+      <button class="btn-search" onclick="abrirScannerUniversal('flow-code', scanFlowCode)">📷</button>
       <button class="btn-search" onclick="scanFlowCode()">→</button>
     </div>
   </div>`;
@@ -1321,6 +1422,38 @@ async function handleFlowScan(code) {
 }
 
 // ── CONSULTAR PROP ──────────────────────────────────────
+// ── SCANNER UNIVERSAL ────────────────────────────────────
+// Abre la cámara y al detectar QR llama el callback con el código
+function abrirScannerUniversal(inputId, onScan) {
+  const readerId = 'qr-universal-' + inputId;
+
+  // Crear o mostrar el contenedor del scanner
+  let container = document.getElementById(readerId);
+  if (!container) {
+    container = document.createElement('div');
+    container.id = readerId;
+    container.style.cssText = 'margin:8px 0;border-radius:8px;overflow:hidden;border:1px solid var(--gold);';
+    const inputEl = document.getElementById(inputId);
+    inputEl.parentElement.insertAdjacentElement('afterend', container);
+  }
+  container.style.display = 'block';
+
+  if (html5QrCode) { html5QrCode.stop().catch(()=>{}); html5QrCode = null; }
+  html5QrCode = new Html5Qrcode(readerId);
+  html5QrCode.start(
+    { facingMode: 'environment' },
+    { fps: 10, qrbox: { width: 200, height: 200 } },
+    (code) => {
+      html5QrCode.stop().catch(()=>{});
+      html5QrCode = null;
+      container.style.display = 'none';
+      document.getElementById(inputId).value = code;
+      onScan(code);
+    },
+    () => {}
+  ).catch(() => { showToast('No se pudo acceder a la cámara', true); });
+}
+
 function startScanner(target) {
   scannerTarget = target;
   const readerId = target === 'buscar' ? 'qr-reader-buscar' : 'qr-reader-flow';
@@ -1422,6 +1555,27 @@ async function executeAction() {
   setTimeout(() => goHome(), 1500);
 }
 
+// ── CANCELAR RENTA DESDE RENTAS ACTIVAS ─────────────────
+async function rentasCancelarFlow(rentaRecordId, fechaSalida) {
+  const ahora = new Date();
+  const salida = new Date(fechaSalida);
+  const diffHoras = (salida - ahora) / (1000 * 60 * 60);
+  const conCargo = diffHoras < 48;
+  const msg = conCargo
+    ? `⚠️ Faltan menos de 48hrs para la salida. Se aplicará cargo y se retendrá el adelanto. ¿Confirmas cancelación?`
+    : `¿Confirmas cancelación? La salida es en más de 48hrs, no hay cargo.`;
+
+  if (!confirm(msg)) return;
+
+  try {
+    const result = await cancelarRenta(rentaRecordId, fechaSalida);
+    showToast(`✓ Renta ${result.nuevoEstado}`);
+    showRentasActivas(); // recargar lista
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  }
+}
+
 // ── RENTAS ACTIVAS ──────────────────────────────────────
 async function showRentasActivas() {
   showView('rentas-view');
@@ -1443,7 +1597,9 @@ async function showRentasActivas() {
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
-      </div>`;
+      </div>
+      ${f['Estado de la renta'] === 'Activa' ? `<button onclick="rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:6px 0 4px 0;display:block;">✕ Cancelar renta</button>` : ''}
+      `;
     }).join('');
   } catch(e) { showToast('Error de conexión', true); }
 }
@@ -1610,7 +1766,8 @@ async function crearNuevaRenta() {
     const tel = document.getElementById('nr-cliente-tel').value.trim();
     if (!nombre) { showToast('Ingresa el nombre del cliente', true); return; }
     try {
-      const nuevo = await db_crearCliente({ nombre, tel });
+      const origen = document.getElementById('nr-cliente-origen')?.value || '';
+      const nuevo = await db_crearCliente({ nombre, tel, origen });
       clienteId = nuevo.id;
       showToast('✓ Cliente creado');
     } catch(e) { showToast('Error al crear cliente', true); return; }
@@ -2023,6 +2180,245 @@ function orCompartirWhatsApp() {
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
 
+// ── INVENTARIO RÁPIDO ───────────────────────────────────
+let invVerificados = [];
+let invTotal = 0;
+
+async function showInventarioView() {
+  showView('inventario-view');
+  invVerificados = [];
+  document.getElementById('inv-codigo').value = '';
+  document.getElementById('inv-status').textContent = '';
+  document.getElementById('inv-lista').innerHTML = '';
+  document.getElementById('inv-resumen').style.display = 'none';
+  document.getElementById('inv-btn-finalizar').style.display = 'none';
+  document.getElementById('inv-progress').style.display = 'none';
+
+  // Cargar total de props para el progreso
+  try {
+    const all = await db_getProps();
+    invTotal = all.length;
+    document.getElementById('inv-progress').style.display = 'block';
+    invActualizarProgreso();
+  } catch(e) {
+    showToast('Error al cargar inventario', true);
+  }
+}
+
+function invActualizarProgreso() {
+  const pct = invTotal > 0 ? Math.round((invVerificados.length / invTotal) * 100) : 0;
+  document.getElementById('inv-progress-bar').style.width = pct + '%';
+  document.getElementById('inv-progress-text').textContent =
+    `${invVerificados.length} de ${invTotal} props verificados`;
+}
+
+async function invVerificar() {
+  const codigo = document.getElementById('inv-codigo').value.trim().toUpperCase();
+  if (!codigo) return;
+
+  // Evitar duplicados
+  if (invVerificados.find(p => p.codigo === codigo)) {
+    document.getElementById('inv-status').textContent = `⚠ ${codigo} ya verificado`;
+    document.getElementById('inv-codigo').value = '';
+    return;
+  }
+
+  document.getElementById('inv-status').textContent = `Buscando ${codigo}…`;
+
+  try {
+    const prop = await findPropByCode(codigo);
+    if (!prop) {
+      document.getElementById('inv-status').style.color = '#e74c3c';
+      document.getElementById('inv-status').textContent = `✗ ${codigo} no encontrado en inventario`;
+      return;
+    }
+
+    const nombre = prop.fields['Nombre del prop'] || codigo;
+
+    // Registrar verificación física en Airtable
+    await registrarVerificacion(prop.id, null, null);
+
+    invVerificados.push({ codigo, nombre, id: prop.id });
+    document.getElementById('inv-codigo').value = '';
+    document.getElementById('inv-status').style.color = '#2ecc71';
+    document.getElementById('inv-status').textContent = `✓ ${nombre}`;
+    invActualizarProgreso();
+
+    // Agregar a lista visual
+    const item = document.createElement('div');
+    item.className = 'prop-list-item';
+    item.innerHTML = `
+      <div class="prop-check done">✓</div>
+      <div class="prop-info">
+        <div class="prop-item-name">${nombre}</div>
+        <div class="prop-item-code">${codigo}</div>
+      </div>
+      <div class="prop-item-status ok">VERIFICADO</div>`;
+    document.getElementById('inv-lista').prepend(item);
+
+    // Mostrar botón finalizar cuando hay al menos 1
+    document.getElementById('inv-btn-finalizar').style.display = 'block';
+
+    setTimeout(() => {
+      document.getElementById('inv-status').textContent = '';
+    }, 1500);
+
+  } catch(e) {
+    document.getElementById('inv-status').style.color = '#e74c3c';
+    document.getElementById('inv-status').textContent = `Error: ${e.message}`;
+  }
+}
+
+function invFinalizar() {
+  const resumen = document.getElementById('inv-resumen');
+  const faltantes = invTotal - invVerificados.length;
+  resumen.style.display = 'block';
+  document.getElementById('inv-resumen-ok').textContent =
+    `✓ Inventario completado · ${invVerificados.length} props verificados · ${faltantes > 0 ? faltantes + ' sin verificar' : 'todos verificados'}`;
+  document.getElementById('inv-btn-finalizar').style.display = 'none';
+  showToast(`✓ ${invVerificados.length} props verificados`);
+}
+
+// ── DAÑOS ─────────────────────────────────────────────
+let danosPropActual = null;
+
+async function showDanosView() {
+  showView('danos-view');
+  danosPropActual = null;
+  document.getElementById('danos-success').style.display = 'none';
+  document.getElementById('danos-form').style.display = 'block';
+  document.getElementById('danos-prop-codigo').value = '';
+  document.getElementById('danos-prop-info').style.display = 'none';
+  document.getElementById('danos-descripcion').value = '';
+  document.getElementById('danos-costo').value = '';
+
+  // Cargar rentas activas para el selector
+  try {
+    const rentas = await db_getRentas({ soloActivas: false, maxRecords: 100 });
+    const select = document.getElementById('danos-renta-select');
+    const opts = rentas.map(r =>
+      `<option value="${r.id}">${r.fields['ID de renta'] || '—'} · ${r.fields['Fecha de salida'] || ''}</option>`
+    ).join('');
+    select.innerHTML = '<option value="">— Sin renta asociada —</option>' + opts;
+  } catch(e) {}
+}
+
+async function danossBuscarProp() {
+  const codigo = document.getElementById('danos-prop-codigo').value.trim().toUpperCase();
+  if (!codigo) return;
+  try {
+    const prop = await findPropByCode(codigo);
+    if (!prop) { showToast('Prop no encontrado', true); return; }
+    danosPropActual = prop;
+    document.getElementById('danos-prop-nombre').textContent = prop.fields['Nombre del prop'] || codigo;
+    document.getElementById('danos-prop-codigo-display').textContent = codigo;
+    document.getElementById('danos-prop-info').style.display = 'block';
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  }
+}
+
+async function danosGuardar() {
+  if (!danosPropActual) { showToast('Busca el prop afectado primero', true); return; }
+  const descripcion = document.getElementById('danos-descripcion').value.trim();
+  if (!descripcion) { showToast('Describe el daño', true); return; }
+
+  const btn = document.getElementById('danos-btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Registrando…';
+
+  const rentaId = document.getElementById('danos-renta-select').value;
+  const costo = parseFloat(document.getElementById('danos-costo').value) || 0;
+  const nombre = danosPropActual.fields['Nombre del prop'] || '';
+  const hoy = new Date().toISOString().split('T')[0];
+
+  // Generar ID de daño: DMG-RNT2026001-01
+  let rentaCode = 'SINRENTA';
+  if (rentaId) {
+    const rentaSel = document.getElementById('danos-renta-select');
+    const rentaText = rentaSel.options[rentaSel.selectedIndex].text;
+    rentaCode = rentaText.split(' · ')[0].replace('RNT-', '').replace(/-/g, '') || 'X';
+  }
+
+  // Contar daños existentes de esta renta para el consecutivo
+  let consecutivo = 1;
+  try {
+    const allDanos = await airtableGet('DAÑOS', '?maxRecords=500');
+    const mismos = (allDanos.records || []).filter(r =>
+      (r.fields['ID daño'] || '').includes(rentaCode)
+    );
+    consecutivo = mismos.length + 1;
+  } catch(e) {}
+
+  const danoId = `DMG-${rentaCode}-${String(consecutivo).padStart(2, '0')}`;
+
+  try {
+    const fields = {
+      'ID daño': danoId,
+      'Descripción del daño': descripcion,
+      'Estado del cobro': 'Pendiente',
+      'Fecha del reporte': hoy
+    };
+    if (danosPropActual.id) fields['Prop afectado'] = [danosPropActual.id];
+    if (rentaId) fields['Renta relacionada'] = [rentaId];
+    if (costo > 0) fields['Costo de reparación'] = costo;
+
+    // Buscar cliente de la renta para linkear
+    if (rentaId) {
+      const renta = await db_getRenta(rentaId);
+      const clienteIds = renta.fields['Cliente'] || [];
+      if (clienteIds.length > 0) fields['Cliente relacionado'] = [clienteIds[0]];
+    }
+
+    await airtablePost('DAÑOS', fields);
+
+    // Cambiar prop a "En reparación" automáticamente
+    await airtablePatch('INVENTARIO', danosPropActual.id, { 'Estado': 'En reparación' });
+
+    document.getElementById('danos-success-id').textContent = danoId;
+    document.getElementById('danos-success-prop').textContent = nombre;
+    document.getElementById('danos-form').style.display = 'none';
+    document.getElementById('danos-success').style.display = 'block';
+    showToast(`✓ ${danoId} registrado`);
+
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '⚠️ Registrar daño';
+  }
+}
+
+function danosNuevoOtro() {
+  danosPropActual = null;
+  document.getElementById('danos-success').style.display = 'none';
+  document.getElementById('danos-form').style.display = 'block';
+  document.getElementById('danos-prop-codigo').value = '';
+  document.getElementById('danos-prop-info').style.display = 'none';
+  document.getElementById('danos-descripcion').value = '';
+  document.getElementById('danos-costo').value = '';
+}
+
+// ── CANCELACIÓN DE RENTA ─────────────────────────────
+async function cancelarRenta(rentaRecordId, fechaSalida) {
+  const ahora = new Date();
+  const salida = new Date(fechaSalida);
+  const diffHoras = (salida - ahora) / (1000 * 60 * 60);
+  const conCargo = diffHoras < 48;
+  const nuevoEstado = conCargo ? 'Cancelada con cargo' : 'Cancelada';
+  const hoy = ahora.toISOString().split('T')[0];
+
+  await airtablePatch('RENTAS', rentaRecordId, {
+    'Estado de la renta': nuevoEstado,
+    'Fecha de cancelación': hoy
+  });
+
+  return { nuevoEstado, conCargo };
+}
+
+// ── ORIGEN en db_crearCliente ─────────────────────────
+// Ya soporta el campo — solo hay que pasarlo desde los forms
+
 // ── PAGOS ────────────────────────────────────────────────
 let pagosRentaActual = null;
 
@@ -2076,10 +2472,10 @@ async function pagosSeleccionarRenta(recordId) {
       <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
 
     // Pre-llenar con valores existentes
+    const adel = f['Monto Adelanto'] || 0;
+    const liq = f['Monto liquidación'] || 0;
     document.getElementById('pago-monto-adelanto').value = adel || '';
-    document.getElementById('pago-fecha-adelanto').value = f['Fecha de adelanto'] || '';
     document.getElementById('pago-monto-liq').value = liq || '';
-    document.getElementById('pago-fecha-liq').value = f['Fecha de liquidación'] || '';
     document.getElementById('pagos-total').textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
     pagosCalcEstado();
@@ -2204,7 +2600,7 @@ async function altaGenerarCodigo() {
 
     // Encontrar todos los números usados para este prefijo
     const usados = allRecords
-      .map(r => (r.fields['Código único'] || '').toUpperCase().trim())
+      .map(r => String(r.fields['Código único'] || '').toUpperCase().trim())
       .filter(c => c.startsWith(prefijo + '-'))
       .map(c => parseInt(c.split('-')[1]) || 0)
       .filter(n => !isNaN(n) && n > 0);
@@ -2237,7 +2633,7 @@ async function altaGuardarProp() {
   // Doble verificación: asegurarse que el código no existe ya
   try {
     const all = await db_getProps();
-    const existe = all.some(r => r.fields['Código único'] === altaCodigoGenerado);
+    const existe = all.some(r => String(r.fields['Código único'] || '') === altaCodigoGenerado);
     if (existe) {
       showToast('Código ya existe — recalculando…', true);
       await altaGenerarCodigo();
