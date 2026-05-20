@@ -390,7 +390,7 @@
 <!-- NUEVA RENTA VIEW -->
 <div id="nueva-renta-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="backToRentas()">←</button>
+    <button class="btn-back" onclick="goHome()">←</button>
     <div class="view-title">Nueva renta</div>
   </div>
   <div style="margin-bottom:16px">
@@ -456,7 +456,7 @@
     <button class="btn-accion btn-salida" onclick="crearNuevaRenta()">
       Crear renta →
     </button>
-    <button class="btn-accion btn-secondary" onclick="backToRentas()">Cancelar</button>
+    <button class="btn-accion btn-secondary" onclick="goHome()">Cancelar</button>
   </div>
 </div>
 
@@ -1773,7 +1773,7 @@ async function crearNuevaRenta() {
       const nuevo = await db_crearCliente({ nombre, tel, origen });
       clienteId = nuevo.id;
       showToast('✓ Cliente creado');
-    } catch(e) { showToast('Error al crear cliente', true); return; }
+    } catch(e) { showToast('Error al crear cliente: ' + e.message, true); return; }
   } else if (clienteSelect) {
     clienteId = clienteSelect;
   }
@@ -2537,7 +2537,8 @@ async function pagosGuardar() {
     showToast(`✓ Pago guardado · ${estado}`);
     setTimeout(() => goHome(), 1500);
   } catch(e) {
-    showToast('Error: ' + e.message, true);
+    console.error('Error completo pagos:', e);
+    showToast('Error: ' + (e.message || JSON.stringify(e)), true);
   } finally {
     btn.disabled = false;
     btn.textContent = 'Guardar pago';
