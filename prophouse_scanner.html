@@ -18,30 +18,30 @@
   /* SETUP */
   #setup-screen { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:32px 24px; }
   .logo { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold); margin-bottom:8px; letter-spacing:2px; }
-  .tagline { font-size:11px; color:var(--text-dim); letter-spacing:3px; text-transform:uppercase; margin-bottom:48px; }
+  .tagline { font-size:11px; color:#6b5a40; letter-spacing:3px; text-transform:uppercase; margin-bottom:48px; }
   .setup-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
-  .setup-input { width:100%; background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:14px 16px; margin-bottom:24px; outline:none; }
+  .setup-input { width:100%; background:#241c14; border:1px solid #2e2018; border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:14px 16px; margin-bottom:24px; outline:none; }
   .setup-input:focus { border-color:var(--gold); }
   .btn-primary { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; }
-  .setup-note { font-size:10px; color:var(--text-dim); text-align:center; margin-top:16px; line-height:1.6; }
+  .setup-note { font-size:10px; color:#6b5a40; text-align:center; margin-top:16px; line-height:1.6; }
 
   /* APP */
   #app-screen { display:none; padding-bottom:72px; }
   body { overflow-x:hidden; }
 
   /* HEADER */
-  .header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid #1a1a1a; }
+  .header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px 16px; border-bottom:1px solid #2e2018; background:#1c1410; }
   .header-logo { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); letter-spacing:1px; cursor:pointer; }
   .header-right { display:flex; gap:10px; align-items:center; }
-  .header-icon-btn { background:none; border:none; color:var(--text-dim); cursor:pointer; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
-  .header-icon-btn:active { background:var(--gray); }
+  .header-icon-btn { background:none; border:none; color:#6b5a40; cursor:pointer; width:34px; height:34px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+  .header-icon-btn:active { background:#241c14; }
   .header-icon-btn svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
 
   /* BOTTOM NAV */
-  .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:#0d0d0d; border-top:1px solid #1a1a1a; display:flex; justify-content:space-around; padding:10px 0 24px; z-index:50; }
+  .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:#141008; border-top:1px solid #2e2018; display:flex; justify-content:space-around; padding:10px 0 24px; z-index:50; }
   .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 16px; border:none; background:none; }
   .nav-item svg { width:22px; height:22px; stroke:var(--text-dim); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; transition:stroke 0.2s; }
-  .nav-item span { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); font-family:'DM Mono',monospace; transition:color 0.2s; }
+  .nav-item span { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:#6b5a40; font-family:'DM Mono',monospace; transition:color 0.2s; }
   .nav-item.active svg { stroke:var(--gold); }
   .nav-item.active span { color:var(--gold); }
   .nav-dot { width:4px; height:4px; border-radius:50%; background:var(--gold); margin:0 auto; opacity:0; transition:opacity 0.2s; }
@@ -49,26 +49,30 @@
 
   /* HOME */
   #home-view { padding:20px 24px; }
-  .home-greeting { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:3px; }
+  .home-greeting { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#6b5a40; margin-bottom:3px; }
   .home-date { font-size:12px; color:var(--white); margin-bottom:24px; }
-  .section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:12px; margin-top:24px; }
+  .section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:#6b5a40; margin-bottom:12px; margin-top:24px; }
   .section-title:first-of-type { margin-top:0; }
 
   /* HOME ACTION GRID */
   .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0; }
-  .action-card { background:#141414; border:1px solid #1e1e1e; border-radius:10px; padding:18px 14px; cursor:pointer; transition:border-color 0.2s; }
+  .action-card { background:#241c14; border:1px solid #2e2018; border-radius:10px; padding:18px 14px; cursor:pointer; transition:border-color 0.2s; }
   .action-card:active { border-color:var(--gold); background:#1a1a0d; }
   .action-card svg { width:22px; height:22px; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; margin-bottom:8px; }
+  .action-card.salida { background:#3d1a18; border-color:#c0392b44; }
   .action-card.salida svg { stroke:var(--red); }
+  .action-card.entrada { background:#1a2e1e; border-color:#27ae6044; }
   .action-card.entrada svg { stroke:var(--green); }
+  .action-card.buscar { background:#2e2618; border-color:#c9a84c44; }
   .action-card.buscar svg { stroke:var(--gold); }
+  .action-card.nueva { background:#1a2030; border-color:#2980b944; }
   .action-card.nueva svg { stroke:var(--blue); }
-  .action-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); }
+  .action-label { font-size:10px; letter-spacing:1px; text-transform:uppercase; color:#6b5a40; }
   .action-label.gold { color:var(--gold); }
 
   /* HOME QUICK ACTIONS */
   .quick-actions { display:flex; flex-direction:column; gap:8px; }
-  .quick-btn { background:#141414; border:1px solid #1e1e1e; border-radius:8px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--white); transition:border-color 0.2s; text-align:left; width:100%; }
+  .quick-btn { background:#241c14; border:1px solid #2e2018; border-radius:8px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--white); transition:border-color 0.2s; text-align:left; width:100%; }
   .quick-btn:active { border-color:var(--gold); }
   .quick-btn svg { width:16px; height:16px; flex-shrink:0; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; }
   .quick-btn.gold { border-color:var(--gold-dim); color:var(--gold); }
@@ -76,12 +80,12 @@
   .quick-btn.red { border-color:#c0392b44; color:#e74c3c; }
   .quick-btn.red svg { stroke:#e74c3c; }
   .quick-btn-label { flex:1; }
-  .quick-btn-arrow { color:var(--text-dim); font-size:14px; }
+  .quick-btn-arrow { color:#6b5a40; font-size:14px; }
 
   /* VIEWS */
   .view { display:none; padding:0 24px 24px; }
-  .view-header { display:flex; align-items:center; gap:12px; padding:16px 0 20px; border-bottom:1px solid #1a1a1a; margin-bottom:20px; }
-  .btn-back { background:none; border:1px solid #1e1e1e; color:var(--white); width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .view-header { display:flex; align-items:center; gap:12px; padding:16px 0 20px; border-bottom:1px solid #2e2018; margin-bottom:20px; }
+  .btn-back { background:none; border:1px solid #2e2018; color:var(--white); width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .view-title { font-size:15px; letter-spacing:0.5px; color:var(--white); font-family:'Playfair Display',serif; }
   .mode-badge { margin-left:auto; font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:20px; text-transform:uppercase; }
@@ -90,15 +94,15 @@
   .mode-buscar { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid var(--gold-dim); }
 
   /* RENTA CARDS */
-  .renta-card { background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s; }
+  .renta-card { background:#241c14; border:1px solid #2e2018; border-radius:8px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s; }
   .renta-card:hover { border-color:var(--gold); }
   .renta-card-id { font-size:13px; color:var(--gold); margin-bottom:6px; }
-  .renta-card-info { font-size:11px; color:var(--text-dim); line-height:1.8; }
+  .renta-card-info { font-size:11px; color:#6b5a40; line-height:1.8; }
   .renta-card-info span { color:var(--white); }
 
   /* PROP LIST */
-  .prop-list-item { display:flex; align-items:center; gap:12px; background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:14px 16px; margin-bottom:10px; }
-  .prop-check { width:24px; height:24px; border-radius:50%; border:2px solid var(--gray-light); display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+  .prop-list-item { display:flex; align-items:center; gap:12px; background:#241c14; border:1px solid #2e2018; border-radius:8px; padding:14px 16px; margin-bottom:10px; }
+  .prop-check { width:24px; height:24px; border-radius:50%; border:2px solid #2e2018; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
   .prop-check.done { background:var(--green); border-color:var(--green); }
   .prop-check.pending { background:transparent; }
   .prop-info { flex:1; }
@@ -106,32 +110,32 @@
   .prop-item-code { font-size:10px; color:var(--gold); letter-spacing:1px; margin-top:2px; }
   .prop-item-status { font-size:10px; letter-spacing:1px; text-transform:uppercase; }
   .prop-item-status.ok { color:var(--green); }
-  .prop-item-status.pending { color:var(--text-dim); }
+  .prop-item-status.pending { color:#6b5a40; }
 
   /* SCANNER */
-  #qr-reader { border-radius:8px; overflow:hidden; margin-bottom:16px; border:1px solid var(--gray-light); }
-  .divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:var(--text-dim); font-size:10px; letter-spacing:2px; text-transform:uppercase; }
-  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--gray-light); }
+  #qr-reader { border-radius:8px; overflow:hidden; margin-bottom:16px; border:1px solid #2e2018; }
+  .divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:#6b5a40; font-size:10px; letter-spacing:2px; text-transform:uppercase; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:#2e2018; }
   .search-row { display:flex; gap:8px; }
-  .search-input { flex:1; background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:12px 16px; outline:none; }
+  .search-input { flex:1; background:#241c14; border:1px solid #2e2018; border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:12px 16px; outline:none; }
   .search-input:focus { border-color:var(--gold); }
   .btn-search { background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; padding:12px 16px; cursor:pointer; white-space:nowrap; }
 
   /* PROGRESS BAR */
-  .progress-section { background:var(--gray); border-radius:8px; padding:16px; margin-bottom:20px; }
-  .progress-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:8px; }
-  .progress-bar { height:6px; background:var(--gray-light); border-radius:3px; overflow:hidden; margin-bottom:8px; }
+  .progress-section { background:#241c14; border-radius:8px; padding:16px; margin-bottom:20px; }
+  .progress-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#6b5a40; margin-bottom:8px; }
+  .progress-bar { height:6px; background:#2e2018; border-radius:3px; overflow:hidden; margin-bottom:8px; }
   .progress-fill { height:100%; border-radius:3px; transition:width 0.3s; }
   .progress-fill.salida { background:var(--red); }
   .progress-fill.entrada { background:var(--green); }
   .progress-text { font-size:12px; color:var(--white); }
 
   /* PAGO */
-  .pago-section { background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:16px; margin-bottom:20px; }
+  .pago-section { background:#241c14; border:1px solid #2e2018; border-radius:8px; padding:16px; margin-bottom:20px; }
   .pago-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
-  .pago-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--gray-light); font-size:12px; }
+  .pago-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #2e2018; font-size:12px; }
   .pago-row:last-child { border-bottom:none; }
-  .pago-row .label { color:var(--text-dim); }
+  .pago-row .label { color:#6b5a40; }
   .pago-row .value { color:var(--white); }
   .pago-row .value.deuda { color:#e74c3c; font-weight:500; }
   .pago-row .value.saldado { color:#2ecc71; }
@@ -140,7 +144,7 @@
   .btn-accion { width:100%; border:none; border-radius:6px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer; margin-bottom:10px; }
   .btn-salida { background:var(--red); color:white; }
   .btn-entrada { background:var(--green); color:white; }
-  .btn-secondary { background:var(--gray-light); color:var(--white); }
+  .btn-secondary { background:#2e2018; color:var(--white); }
 
   /* ALERT BOXES */
   .alert { border-radius:6px; padding:14px; margin-bottom:12px; font-size:11px; letter-spacing:1px; line-height:1.6; }
@@ -156,23 +160,23 @@
   .status-rentado { background:rgba(231,76,60,0.15); color:#e74c3c; border:1px solid #c0392b; }
   .status-reparacion { background:rgba(241,196,15,0.15); color:#f1c40f; border:1px solid #f39c12; }
   .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
-  .info-card { background:var(--gray); border:1px solid var(--gray-light); border-radius:6px; padding:12px; }
-  .info-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); margin-bottom:4px; }
+  .info-card { background:#241c14; border:1px solid #2e2018; border-radius:6px; padding:12px; }
+  .info-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#6b5a40; margin-bottom:4px; }
   .info-card-value { font-size:13px; }
   .info-card-value.gold { color:var(--gold); }
-  .notes-section { background:var(--gray); border-left:3px solid var(--gold-dim); border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:16px; font-size:11px; color:var(--text-dim); line-height:1.6; font-style:italic; }
+  .notes-section { background:#241c14; border-left:3px solid var(--gold-dim); border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:16px; font-size:11px; color:#6b5a40; line-height:1.6; font-style:italic; }
 
   /* CONFIRM MODAL */
   #confirm-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; align-items:flex-end; justify-content:center; }
   #confirm-modal.show { display:flex; }
-  .modal-card { background:#1a1a1a; border:1px solid var(--gray-light); border-radius:12px 12px 0 0; padding:28px 24px 40px; width:100%; max-width:480px; }
+  .modal-card { background:#1a1a1a; border:1px solid #2e2018; border-radius:12px 12px 0 0; padding:28px 24px 40px; width:100%; max-width:480px; }
   .modal-title { font-family:'Playfair Display',serif; font-size:20px; margin-bottom:8px; }
-  .modal-subtitle { font-size:11px; color:var(--text-dim); margin-bottom:24px; letter-spacing:1px; }
-  .modal-info { background:var(--gray); border-radius:6px; padding:14px; margin-bottom:20px; font-size:12px; line-height:1.8; color:var(--text-dim); }
+  .modal-subtitle { font-size:11px; color:#6b5a40; margin-bottom:24px; letter-spacing:1px; }
+  .modal-info { background:#241c14; border-radius:6px; padding:14px; margin-bottom:20px; font-size:12px; line-height:1.8; color:#6b5a40; }
   .modal-info span { color:var(--white); }
   .modal-buttons { display:flex; gap:10px; }
   .btn-confirm-yes { flex:1; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer; }
-  .btn-confirm-no { flex:1; background:var(--gray); color:var(--white); border:1px solid var(--gray-light); border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; padding:14px; cursor:pointer; }
+  .btn-confirm-no { flex:1; background:#241c14; color:var(--white); border:1px solid #2e2018; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; padding:14px; cursor:pointer; }
 
   /* TOAST */
   #toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-80px); background:var(--green); color:white; font-size:11px; letter-spacing:1px; padding:12px 24px; border-radius:24px; transition:transform 0.3s; z-index:200; white-space:nowrap; }
@@ -180,22 +184,22 @@
   #toast.error { background:var(--red); }
 
   /* LOADING */
-  .loading { text-align:center; padding:40px; color:var(--text-dim); font-size:11px; letter-spacing:2px; }
-  .spinner { width:24px; height:24px; border:2px solid var(--gray-light); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
+  .loading { text-align:center; padding:40px; color:#6b5a40; font-size:11px; letter-spacing:2px; }
+  .spinner { width:24px; height:24px; border:2px solid #2e2018; border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin:0 auto 12px; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  .empty-state { text-align:center; padding:32px; color:var(--text-dim); font-size:12px; line-height:1.8; }
+  .empty-state { text-align:center; padding:32px; color:#6b5a40; font-size:12px; line-height:1.8; }
 
   /* ── ORDEN DE RENTA ─────────────────────────────────── */
   .orden-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
   .orden-form-group { display:flex; flex-direction:column; gap:5px; }
   .orden-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
-  .orden-input { background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:10px 14px; outline:none; width:100%; }
+  .orden-input { background:#241c14; border:1px solid #2e2018; border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:10px 14px; outline:none; width:100%; }
   .orden-input:focus { border-color:var(--gold); }
-  select.orden-input option { background:var(--gray); }
+  select.orden-input option { background:#241c14; }
 
   .orden-props-header { display:grid; grid-template-columns:2fr 0.8fr 0.8fr 0.8fr auto; gap:6px; margin-bottom:6px; }
-  .orden-prop-header-label { font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); }
+  .orden-prop-header-label { font-size:8px; letter-spacing:1px; text-transform:uppercase; color:#6b5a40; }
   .orden-prop-row { display:grid; grid-template-columns:2fr 0.8fr 0.8fr 0.8fr auto; gap:6px; align-items:center; margin-bottom:6px; }
 
   .btn-orden-add { background:none; border:1px solid var(--gold-dim); color:var(--gold); border-radius:4px; padding:10px 14px; cursor:pointer; font-size:10px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; }
@@ -203,18 +207,18 @@
   .btn-orden-generate { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
   .btn-orden-generate:disabled { opacity:0.5; cursor:not-allowed; }
 
-  .orden-total-box { background:var(--gray); border:1px solid var(--gray-light); border-radius:8px; padding:14px; margin:16px 0; }
-  .orden-total-row { display:flex; justify-content:space-between; padding:6px 0; font-size:11px; border-bottom:1px solid var(--gray-light); }
+  .orden-total-box { background:#241c14; border:1px solid #2e2018; border-radius:8px; padding:14px; margin:16px 0; }
+  .orden-total-row { display:flex; justify-content:space-between; padding:6px 0; font-size:11px; border-bottom:1px solid #2e2018; }
   .orden-total-row:last-child { border-bottom:none; color:var(--gold); font-size:13px; }
-  .orden-total-row .lbl { color:var(--text-dim); }
+  .orden-total-row .lbl { color:#6b5a40; }
 
   /* PDF preview dentro de la app */
   #orden-preview { display:none; }
   .orden-preview-actions { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
-  .btn-preview-back { flex:1; background:var(--gray); color:var(--white); border:1px solid var(--gray-light); border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
+  .btn-preview-back { flex:1; background:#241c14; color:var(--white); border:1px solid #2e2018; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
   .btn-preview-print { flex:1; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
   .btn-preview-wha { flex:1; background:#25d366; color:white; border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
-  .btn-preview-home { width:100%; background:var(--gray-light); color:var(--white); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; margin-top:6px; }
+  .btn-preview-home { width:100%; background:#2e2018; color:var(--white); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; margin-top:6px; }
 
   /* Documento en blanco */
   .document { background:white; color:#1a1a1a; padding:32px 28px; font-family:'DM Mono',monospace; border-radius:8px; }
@@ -258,30 +262,30 @@
   .airtable-err { font-size:9px; letter-spacing:1px; color:#e74c3c; margin-top:4px; }
 
   /* ── ALTA DE PROP ───────────────────────────────────── */
-  .alta-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin:20px 0 10px 0; padding-bottom:6px; border-bottom:1px solid var(--gray-light); }
+  .alta-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin:20px 0 10px 0; padding-bottom:6px; border-bottom:1px solid #2e2018; }
   .alta-section-title:first-child { margin-top:0; }
   .alta-field { display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
-  .alta-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); }
+  .alta-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:#6b5a40; }
   .alta-label span { color:#e74c3c; margin-left:2px; }
-  .alta-input { background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:11px 14px; outline:none; width:100%; }
+  .alta-input { background:#241c14; border:1px solid #2e2018; border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:11px 14px; outline:none; width:100%; }
   .alta-input:focus { border-color:var(--gold); }
-  .alta-input::placeholder { color:var(--text-dim); }
-  .alta-select { background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:11px 14px; outline:none; width:100%; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
+  .alta-input::placeholder { color:#6b5a40; }
+  .alta-select { background:#241c14; border:1px solid #2e2018; border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:11px 14px; outline:none; width:100%; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; }
   .alta-select:focus { border-color:var(--gold); }
   .alta-select option { background:var(--gray-dark, #1a1a1a); }
-  .alta-codigo-preview { font-size:18px; font-weight:500; color:var(--gold); letter-spacing:3px; padding:14px; background:var(--gray); border:1px solid var(--gray-light); border-radius:4px; text-align:center; min-height:50px; }
-  .alta-codigo-sub { font-size:9px; color:var(--text-dim); letter-spacing:1px; text-align:center; margin-top:4px; }
-  .alta-foto-placeholder { border:1px dashed var(--gray-light); border-radius:8px; padding:28px; text-align:center; color:var(--text-dim); font-size:10px; letter-spacing:1px; }
+  .alta-codigo-preview { font-size:18px; font-weight:500; color:var(--gold); letter-spacing:3px; padding:14px; background:#241c14; border:1px solid #2e2018; border-radius:4px; text-align:center; min-height:50px; }
+  .alta-codigo-sub { font-size:9px; color:#6b5a40; letter-spacing:1px; text-align:center; margin-top:4px; }
+  .alta-foto-placeholder { border:1px dashed #2e2018; border-radius:8px; padding:28px; text-align:center; color:#6b5a40; font-size:10px; letter-spacing:1px; }
   .alta-foto-icon { font-size:28px; margin-bottom:8px; }
-  .alta-foto-sub { font-size:9px; color:var(--text-dim); margin-top:4px; letter-spacing:1px; }
+  .alta-foto-sub { font-size:9px; color:#6b5a40; margin-top:4px; letter-spacing:1px; }
   .alta-currency { position:relative; }
-  .alta-currency::before { content:'$'; position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--text-dim); font-family:'DM Mono',monospace; font-size:12px; pointer-events:none; }
+  .alta-currency::before { content:'$'; position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#6b5a40; font-family:'DM Mono',monospace; font-size:12px; pointer-events:none; }
   .alta-currency .alta-input { padding-left:26px; }
   .alta-nivel-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .alta-nivel-btn { background:var(--gray); border:1px solid var(--gray-light); border-radius:6px; padding:10px 8px; cursor:pointer; text-align:center; transition:all 0.15s; }
+  .alta-nivel-btn { background:#241c14; border:1px solid #2e2018; border-radius:6px; padding:10px 8px; cursor:pointer; text-align:center; transition:all 0.15s; }
   .alta-nivel-btn.selected { border-color:var(--gold); background:rgba(201,168,76,0.1); }
   .alta-nivel-btn .nivel-name { font-size:11px; color:var(--white); font-family:'DM Mono',monospace; letter-spacing:1px; }
-  .alta-nivel-btn .nivel-desc { font-size:9px; color:var(--text-dim); margin-top:3px; letter-spacing:0.5px; }
+  .alta-nivel-btn .nivel-desc { font-size:9px; color:#6b5a40; margin-top:3px; letter-spacing:0.5px; }
   .alta-nivel-btn.selected .nivel-name { color:var(--gold); }
   .btn-alta-guardar { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
   .btn-alta-guardar:disabled { opacity:0.5; cursor:not-allowed; }
@@ -289,22 +293,22 @@
   .alta-success-icon { font-size:32px; margin-bottom:8px; }
   .alta-success-code { font-size:22px; color:var(--gold); letter-spacing:4px; font-weight:500; margin:8px 0 4px; }
   .alta-success-name { font-size:12px; color:var(--white); }
-  .alta-success-sub { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:8px; }
+  .alta-success-sub { font-size:9px; color:#6b5a40; letter-spacing:1px; margin-top:8px; }
 
   /* ── PIN OVERLAY ──────────────────────────────────── */
-  .pin-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.97); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
+  .pin-overlay { position:fixed; inset:0; background:rgba(20,16,8,0.98); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
   .pin-logo { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); letter-spacing:2px; margin-bottom:4px; }
-  .pin-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-dim); text-align:center; }
+  .pin-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#6b5a40; text-align:center; }
   .pin-dots { display:flex; gap:14px; margin:8px 0; }
   .pin-dot { width:14px; height:14px; border-radius:50%; border:1px solid #333; background:transparent; transition:background 0.15s,border-color 0.15s; }
   .pin-dot.filled { background:var(--gold); border-color:var(--gold); }
   .pin-error { font-size:10px; color:#e74c3c; letter-spacing:1px; min-height:16px; text-align:center; }
   .pin-pad { display:grid; grid-template-columns:repeat(3,72px); gap:10px; }
-  .pin-key { background:#141414; border:1px solid #1e1e1e; border-radius:10px; height:58px; font-family:'Playfair Display',serif; font-size:22px; color:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.1s; -webkit-tap-highlight-color:transparent; }
+  .pin-key { background:#241c14; border:1px solid #2e2018; border-radius:10px; height:58px; font-family:'Playfair Display',serif; font-size:22px; color:var(--white); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.1s; -webkit-tap-highlight-color:transparent; }
   .pin-key:active { background:#2a2a2a; }
-  .pin-key.delete { font-family:'DM Mono',monospace; font-size:14px; color:var(--text-dim); }
-  .pin-key.cancel { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim); }
-  .pin-change-link { font-size:9px; color:var(--text-dim); letter-spacing:1px; text-decoration:underline; cursor:pointer; margin-top:4px; }
+  .pin-key.delete { font-family:'DM Mono',monospace; font-size:14px; color:#6b5a40; }
+  .pin-key.cancel { font-family:'DM Mono',monospace; font-size:11px; color:#6b5a40; }
+  .pin-change-link { font-size:9px; color:#6b5a40; letter-spacing:1px; text-decoration:underline; cursor:pointer; margin-top:4px; }
 
   /* ── FINANZAS ───────────────────────────────────────── */
   .fin-card { background:#141414; border:1px solid #1e1e1e; border-radius:10px; padding:16px; }
@@ -445,23 +449,23 @@
   <div id="finanzas-menu-view" class="view">
     <div class="view-header">
       <div class="view-title" style="font-size:18px;">Finanzas</div>
-      <button onclick="pinSesionActiva=false;navGo('inicio')" style="margin-left:auto;background:none;border:none;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;">🔒 cerrar</button>
+      <button onclick="pinSesionActiva=false;navGo('inicio')" style="margin-left:auto;background:none;border:none;color:#6b5a40;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;">🔒 cerrar</button>
     </div>
 
     <!-- Selector de mes -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <button onclick="finMesAnterior()" style="background:none;border:1px solid #1e1e1e;color:var(--text-dim);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">‹</button>
+      <button onclick="finMesAnterior()" style="background:none;border:1px solid #1e1e1e;color:#6b5a40;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">‹</button>
       <div style="font-size:13px;color:var(--white);letter-spacing:1px;" id="fin-mes-label">—</div>
-      <button onclick="finMesSiguiente()" style="background:none;border:1px solid #1e1e1e;color:var(--text-dim);border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">›</button>
+      <button onclick="finMesSiguiente()" style="background:none;border:1px solid #1e1e1e;color:#6b5a40;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;">›</button>
     </div>
 
     <!-- Flashcards -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-      <div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:16px;">
+      <div style="background:#241c14;border:1px solid #2e2018;border-radius:10px;padding:16px;">
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#27ae60;margin-bottom:6px;">Ingresos</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--white);" id="fin-ingresos">—</div>
       </div>
-      <div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:16px;">
+      <div style="background:#241c14;border:1px solid #2e2018;border-radius:10px;padding:16px;">
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#e74c3c;margin-bottom:6px;">Gastos</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--white);" id="fin-gastos">—</div>
       </div>
@@ -469,7 +473,7 @@
     <div style="background:#141414;border:1px solid var(--gold-dim);border-radius:10px;padding:16px;margin-bottom:20px;">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Ganancia</div>
       <div style="font-family:'Playfair Display',serif;font-size:26px;" id="fin-ganancia">—</div>
-      <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-top:4px;" id="fin-equilibrio"></div>
+      <div style="font-size:9px;color:#6b5a40;letter-spacing:1px;margin-top:4px;" id="fin-equilibrio"></div>
     </div>
 
     <!-- Botón agregar gasto -->
@@ -480,7 +484,7 @@
     </button>
 
     <!-- Lista de gastos del mes -->
-    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-dim);margin-bottom:12px;">Gastos del mes</div>
+    <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#6b5a40;margin-bottom:12px;">Gastos del mes</div>
     <div id="fin-lista-gastos">
       <div class="loading"><div class="spinner"></div>Cargando...</div>
     </div>
@@ -536,7 +540,7 @@
     </div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
       <input type="checkbox" id="gasto-recurrente" style="width:18px;height:18px;accent-color:var(--gold);">
-      <label for="gasto-recurrente" style="font-size:11px;color:var(--text-dim);letter-spacing:1px;">Es un gasto recurrente (fijo mensual)</label>
+      <label for="gasto-recurrente" style="font-size:11px;color:#6b5a40;letter-spacing:1px;">Es un gasto recurrente (fijo mensual)</label>
     </div>
     <button class="btn-alta-guardar" id="gasto-btn-guardar" onclick="gastoGuardar()">
       Guardar gasto
@@ -613,14 +617,14 @@
   <!-- Pantalla de éxito — oculta por defecto -->
   <div id="nr-success" style="display:none;text-align:center;padding:12px 0;">
     <div style="font-size:32px;margin-bottom:12px;">✅</div>
-    <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:6px;">RENTA CREADA</div>
+    <div style="font-size:9px;letter-spacing:3px;color:#6b5a40;margin-bottom:6px;">RENTA CREADA</div>
     <div style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="nr-success-id">—</div>
     <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="nr-success-monto">—</div>
-    <div style="font-size:10px;color:var(--text-dim);margin-bottom:24px;" id="nr-success-detalle">—</div>
+    <div style="font-size:10px;color:#6b5a40;margin-bottom:24px;" id="nr-success-detalle">—</div>
     <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:8px;">
       🌅 Generar orden de renta
     </button>
-    <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);">
+    <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid #2e2018;color:#6b5a40;">
       Ir al inicio
     </button>
   </div>
@@ -670,11 +674,11 @@
       <button class="btn-search" onclick="abrirScannerUniversal('nr-prop-codigo', nrAgregarProp)">📷</button>
       <button class="btn-search" onclick="nrAgregarProp()">＋</button>
     </div>
-    <div id="nr-prop-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;min-height:16px;margin-bottom:12px;"></div>
+    <div id="nr-prop-status" style="font-size:10px;color:#6b5a40;letter-spacing:1px;min-height:16px;margin-bottom:12px;"></div>
 
-    <div style="background:var(--gray);border:1px solid var(--gray-light);border-radius:6px;padding:12px;margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--gray-light);margin-bottom:6px;">
-        <span style="color:var(--text-dim);">Días cobrados</span><span id="nr-dias-cobrados">—</span>
+    <div style="background:#241c14;border:1px solid #2e2018;border-radius:6px;padding:12px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid #2e2018;margin-bottom:6px;">
+        <span style="color:#6b5a40;">Días cobrados</span><span id="nr-dias-cobrados">—</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;">
         <span style="color:var(--gold);">Monto total</span><span style="color:var(--gold);font-weight:500;" id="nr-monto-calc">$0 MXN</span>
@@ -712,7 +716,7 @@
     <button class="btn-search" onclick="abrirScannerUniversal('inv-codigo', invVerificar)">📷</button>
     <button class="btn-search" onclick="invVerificar()">✓</button>
   </div>
-  <div id="inv-status" style="font-size:11px;color:var(--text-dim);letter-spacing:1px;min-height:20px;margin-bottom:16px;text-align:center;"></div>
+  <div id="inv-status" style="font-size:11px;color:#6b5a40;letter-spacing:1px;min-height:20px;margin-bottom:16px;text-align:center;"></div>
   <div id="inv-lista"></div>
   <div id="inv-resumen" style="display:none">
     <div class="alert alert-green" id="inv-resumen-ok"></div>
@@ -733,13 +737,13 @@
   <!-- Éxito -->
   <div id="danos-success" style="display:none;text-align:center;padding:20px 0;">
     <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
-    <div style="font-size:9px;letter-spacing:3px;color:var(--text-dim);margin-bottom:6px;">DAÑO REGISTRADO</div>
+    <div style="font-size:9px;letter-spacing:3px;color:#6b5a40;margin-bottom:6px;">DAÑO REGISTRADO</div>
     <div style="font-size:20px;color:#e74c3c;letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="danos-success-id">—</div>
     <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="danos-success-prop">—</div>
-    <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:20px;">Prop cambiado a En reparación</div>
+    <div style="font-size:9px;color:#6b5a40;letter-spacing:1px;margin-bottom:20px;">Prop cambiado a En reparación</div>
     <div style="display:flex;gap:8px;">
       <button class="btn-accion" onclick="danosNuevoOtro()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid #e74c3c;color:#e74c3c;">⚠️ Otro daño</button>
-      <button class="btn-accion" onclick="goHome()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid var(--gray-light);color:var(--text-dim);">Ir al inicio</button>
+      <button class="btn-accion" onclick="goHome()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid #2e2018;color:#6b5a40;">Ir al inicio</button>
     </div>
   </div>
 
@@ -751,7 +755,7 @@
       <button class="btn-search" onclick="abrirScannerUniversal('danos-prop-codigo', danossBuscarProp)">📷</button>
       <button class="btn-search" onclick="danossBuscarProp()">→</button>
     </div>
-    <div id="danos-prop-info" style="display:none;background:var(--gray);border:1px solid var(--gray-light);border-radius:6px;padding:12px;margin-bottom:16px;">
+    <div id="danos-prop-info" style="display:none;background:#241c14;border:1px solid #2e2018;border-radius:6px;padding:12px;margin-bottom:16px;">
       <div style="font-size:12px;color:var(--white);" id="danos-prop-nombre">—</div>
       <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:2px;" id="danos-prop-codigo-display">—</div>
     </div>
@@ -805,19 +809,19 @@
     </div>
 
     <!-- Preview de estado -->
-    <div style="background:var(--gray);border:1px solid var(--gray-light);border-radius:8px;padding:14px;margin:16px 0;">
-      <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim);margin-bottom:10px;text-transform:uppercase;">Resumen de pago</div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
-        <span style="color:var(--text-dim);">Monto total</span><span id="pagos-total">$0 MXN</span>
+    <div style="background:#241c14;border:1px solid #2e2018;border-radius:8px;padding:14px;margin:16px 0;">
+      <div style="font-size:9px;letter-spacing:2px;color:#6b5a40;margin-bottom:10px;text-transform:uppercase;">Resumen de pago</div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid #2e2018;">
+        <span style="color:#6b5a40;">Monto total</span><span id="pagos-total">$0 MXN</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
-        <span style="color:var(--text-dim);">Monto Adelanto</span><span id="pagos-adelanto-preview">$0 MXN</span>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid #2e2018;">
+        <span style="color:#6b5a40;">Monto Adelanto</span><span id="pagos-adelanto-preview">$0 MXN</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
-        <span style="color:var(--text-dim);">Liquidación</span><span id="pagos-liq-preview">$0 MXN</span>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid #2e2018;">
+        <span style="color:#6b5a40;">Liquidación</span><span id="pagos-liq-preview">$0 MXN</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--gray-light);">
-        <span style="color:var(--text-dim);">Saldo pendiente</span><span id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid #2e2018;">
+        <span style="color:#6b5a40;">Saldo pendiente</span><span id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;margin-top:4px;">
         <span>Estado</span>
@@ -828,7 +832,7 @@
     <button class="btn-alta-guardar" id="pagos-btn-guardar" onclick="pagosGuardar()">
       Guardar pago
     </button>
-    <button class="btn-accion" onclick="pagosCancelar()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);margin-top:8px;">
+    <button class="btn-accion" onclick="pagosCancelar()" style="background:none;border:1px solid #2e2018;color:#6b5a40;margin-top:8px;">
       Cancelar
     </button>
   </div>
@@ -845,13 +849,13 @@
   <!-- ÉXITO -->
   <div class="alta-success" id="alta-success-box">
     <div class="alta-success-icon">✅</div>
-    <div style="font-size:9px;letter-spacing:2px;color:var(--text-dim);">PROP REGISTRADO</div>
+    <div style="font-size:9px;letter-spacing:2px;color:#6b5a40;">PROP REGISTRADO</div>
     <div class="alta-success-code" id="alta-success-code">—</div>
     <div class="alta-success-name" id="alta-success-name">—</div>
     <div class="alta-success-sub">Guardado en Airtable · INVENTARIO</div>
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button class="btn-accion" onclick="altaNuevoOtro()" style="flex:1;padding:12px;font-size:10px;">＋ Dar de alta otro</button>
-      <button class="btn-accion" onclick="goHome()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid var(--gray-light);color:var(--text-dim);">Ir al inicio</button>
+      <button class="btn-accion" onclick="goHome()" style="flex:1;padding:12px;font-size:10px;background:none;border:1px solid #2e2018;color:#6b5a40;">Ir al inicio</button>
     </div>
   </div>
 
@@ -953,7 +957,7 @@
     <button class="btn-alta-guardar" id="btn-alta-guardar" onclick="altaGuardarProp()">
       Registrar prop en inventario
     </button>
-    <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--gray-light);color:var(--text-dim);margin-top:8px;">
+    <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid #2e2018;color:#6b5a40;margin-top:8px;">
       Cancelar
     </button>
   </div>
@@ -1044,7 +1048,7 @@
         <button class="btn-search" onclick="abrirScannerUniversal('or-scan-code', orScanCode)">📷</button>
         <button class="btn-search" onclick="orScanCode()">→</button>
       </div>
-      <div id="or-scan-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
+      <div id="or-scan-status" style="font-size:10px;color:#6b5a40;letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
     </div>
 
     <div class="section-title" style="margin-top:16px">Pago</div>
@@ -1098,7 +1102,7 @@
     <button class="pin-key" onclick="pinKey('7')">7</button>
     <button class="pin-key" onclick="pinKey('8')">8</button>
     <button class="pin-key" onclick="pinKey('9')">9</button>
-    <button class="pin-key" onclick="pinCerrar()" style="font-size:11px;color:var(--text-dim);">✕</button>
+    <button class="pin-key" onclick="pinCerrar()" style="font-size:11px;color:#6b5a40;">✕</button>
     <button class="pin-key" onclick="pinKey('0')">0</button>
     <button class="pin-key delete" onclick="pinDelete()">⌫</button>
   </div>
@@ -1964,12 +1968,12 @@ function showPropDetail(prop, fromFlow) {
 
   // Selector de estado — permite cambiar desde aquí
   const estadoSelector = `
-    <div style="background:var(--gray);border:1px solid var(--gray-light);border-radius:8px;padding:14px;margin-bottom:14px;">
-      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-dim);margin-bottom:10px;">Cambiar estado</div>
+    <div style="background:#241c14;border:1px solid #2e2018;border-radius:8px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#6b5a40;margin-bottom:10px;">Cambiar estado</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         ${estados.map(e => `
           <button onclick="propCambiarEstado('${prop.id}', '${e}', this)"
-            style="background:${e===estado?'var(--gold)':'var(--gray-light)'};
+            style="background:${e===estado?'var(--gold)':'#2e2018'};
                    color:${e===estado?'var(--black)':'var(--white)'};
                    border:none;border-radius:4px;padding:8px 12px;
                    font-family:'DM Mono',monospace;font-size:9px;
@@ -1977,7 +1981,7 @@ function showPropDetail(prop, fromFlow) {
             ${e}
           </button>`).join('')}
       </div>
-      <div id="estado-change-status" style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
+      <div id="estado-change-status" style="font-size:10px;color:#6b5a40;letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
     </div>`;
 
   document.getElementById('prop-detail-content').innerHTML = `
@@ -2005,7 +2009,7 @@ async function propCambiarEstado(recordId, nuevoEstado, btn) {
 
     // Actualizar UI — resaltar botón seleccionado
     btn.closest('div').querySelectorAll('button').forEach(b => {
-      b.style.background = 'var(--gray-light)';
+      b.style.background = '#2e2018';
       b.style.color = 'var(--white)';
     });
     btn.style.background = 'var(--gold)';
@@ -2169,7 +2173,7 @@ async function showRentasActivas() {
       return `<div class="pago-section" style="margin-bottom:12px;cursor:pointer;" onclick="rentasVerDetalle('${r.id}')">
         <div class="pago-title" style="display:flex;justify-content:space-between;align-items:center;">
           <span>${f['ID de renta'] || '—'}</span>
-          <span style="font-size:10px;color:var(--text-dim);font-family:'DM Mono',monospace;">ver →</span>
+          <span style="font-size:10px;color:#6b5a40;font-family:'DM Mono',monospace;">ver →</span>
         </div>
         <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
@@ -2317,16 +2321,16 @@ function nrRemoveProp(codigo) {
 function nrRenderProps() {
   const list = document.getElementById('nr-props-list');
   if (nrProps.length === 0) {
-    list.innerHTML = '<div style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:8px;">Sin props agregados aún</div>';
+    list.innerHTML = '<div style="font-size:10px;color:#6b5a40;letter-spacing:1px;margin-bottom:8px;">Sin props agregados aún</div>';
     return;
   }
   list.innerHTML = nrProps.map(p => `
-    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--gray);border:1px solid var(--gray-light);border-radius:4px;padding:8px 12px;margin-bottom:6px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#241c14;border:1px solid #2e2018;border-radius:4px;padding:8px 12px;margin-bottom:6px;">
       <div>
         <div style="font-size:11px;color:var(--white);">${p.nombre}</div>
         <div style="font-size:9px;color:var(--gold);letter-spacing:1px;">${p.codigo} · $${p.rentaDia.toLocaleString()}/día</div>
       </div>
-      <button onclick="nrRemoveProp('${p.codigo}')" style="background:none;border:none;color:var(--text-dim);font-size:14px;cursor:pointer;padding:0 4px;">✕</button>
+      <button onclick="nrRemoveProp('${p.codigo}')" style="background:none;border:none;color:#6b5a40;font-size:14px;cursor:pointer;padding:0 4px;">✕</button>
     </div>`).join('');
 }
 
@@ -2411,7 +2415,7 @@ async function showOrdenView() {
   selectorEl.style.display = 'block';
   selectorEl.innerHTML = `
     <div class="section-title" style="margin-top:0">¿Para qué renta?</div>
-    <div style="font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:16px;">Selecciona la renta y se generará la orden con todos sus datos</div>
+    <div style="font-size:10px;color:#6b5a40;letter-spacing:1px;margin-bottom:16px;">Selecciona la renta y se generará la orden con todos sus datos</div>
     <div id="or-sel-list"><div class="loading"><div class="spinner"></div>Cargando rentas…</div></div>`;
 
   try {
@@ -3371,15 +3375,15 @@ async function finCargarDatos() {
           <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #1a1a1a;">
             <div>
               <div style="font-size:11px;color:var(--white);">${r.fields['Nombre'] || '—'}</div>
-              <div style="font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-top:2px;">${r.fields['Tipo'] || '—'}${r.fields['Recurrente'] ? ' · Recurrente' : ''}</div>
+              <div style="font-size:9px;color:#6b5a40;letter-spacing:1px;margin-top:2px;">${r.fields['Tipo'] || '—'}${r.fields['Recurrente'] ? ' · Recurrente' : ''}</div>
             </div>
             <div style="font-size:12px;color:var(--white);">$${(r.fields['Monto'] || 0).toLocaleString('es-MX')} MXN</div>
           </div>`).join('');
 
-        return `<div style="background:#141414;border:1px solid #1e1e1e;border-radius:10px;padding:14px;margin-bottom:10px;">
+        return `<div style="background:#241c14;border:1px solid #2e2018;border-radius:10px;padding:14px;margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
             <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);">${cat}</div>
-            <div style="font-size:11px;color:var(--text-dim);">$${totalCat.toLocaleString('es-MX')} MXN</div>
+            <div style="font-size:11px;color:#6b5a40;">$${totalCat.toLocaleString('es-MX')} MXN</div>
           </div>
           ${itemsHtml}
         </div>`;
