@@ -19,6 +19,7 @@
     --white: #f0ece4;
     --white-dim: #c8c4bc;
     --text-dim: #888070;
+    --white-dim: #c8c4bc;
     --text-muted: #666050;
     --red: #e74c3c;
     --green: #4caf50;
@@ -39,7 +40,7 @@
   .setup-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
   .setup-input { width:100%; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:14px 16px; margin-bottom:24px; outline:none; }
   .setup-input:focus { border-color:var(--gold); }
-  .btn-primary { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; }
+  .btn-primary { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; }
   .setup-note { font-size:10px; color:var(--text-muted); text-align:center; margin-top:16px; line-height:1.6; }
 
   /* APP — LAYOUT RESPONSIVO */
@@ -52,10 +53,18 @@
     #app-screen { display:none; flex-direction:row; min-height:100vh; max-width:100%; }
     #app-screen.visible { display:flex; }
     .app-sidebar { width:148px; background:var(--bg-deep); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:40; }
-    .app-main { margin-left:148px; flex:1; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; }
-    .header { display:none; }
-    .bottom-nav { display:none; }
-    #home-view, .view { padding:24px 28px; }
+    .app-main { margin-left:148px; flex:1; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; overflow-y:auto; }
+    .header { display:none !important; }
+    .bottom-nav { display:none !important; }
+    .view-content { padding:0 28px 28px; }
+    .view-header { padding:16px 28px !important; }
+    #home-view { padding:0; }
+    .view { padding:0; }
+    .section-title { padding:0; }
+    .alta-field, .alta-section-title, .alta-nivel-grid, .btn-alta-guardar,
+    .search-row, .divider, .prop-list-item, .progress-section,
+    .renta-card, .pago-section, .quick-actions, .action-grid,
+    .home-greeting, .home-date, .orden-form-grid, .alta-foto-placeholder { margin-left:0; margin-right:0; }
   }
 
   /* MÓVIL: header + bottom nav */
@@ -64,6 +73,9 @@
     #app-screen.visible { display:flex; flex-direction:column; }
     .app-sidebar { display:none; }
     .app-main { flex:1; }
+    #home-view { padding:20px 24px; }
+    .view { padding:0 24px; }
+    .view-header { padding:16px 0 !important; background:transparent !important; position:relative !important; }
   }
 
   /* SIDEBAR */
@@ -74,7 +86,7 @@
   .sidebar-section { font-size:7px; letter-spacing:2px; text-transform:uppercase; color:#4a4840; padding:10px 12px 3px; }
   .sidebar-item { display:flex; align-items:center; gap:8px; padding:8px 12px; font-size:11px; color:var(--text-dim); border-left:2px solid transparent; cursor:pointer; transition:all 0.15s; text-decoration:none; }
   .sidebar-item i { font-size:15px; color:var(--text-muted); flex-shrink:0; }
-  .sidebar-item:hover { color:var(--white-dim); background:rgba(255,255,255,0.03); }
+  .sidebar-item:hover { color:var(--white-dim, #c8c4bc); background:rgba(255,255,255,0.03); }
   .sidebar-item.active { color:var(--white); border-left-color:var(--gold); background:#222018; }
   .sidebar-item.active i { color:var(--gold); }
   .sidebar-item.danger { color:#cd6060; }
@@ -92,9 +104,18 @@
   }
 
   /* BOTONES DESKTOP */
-  .btn-desk-primary { background:var(--gold); color:var(--bg-deep); border:none; border-radius:6px; padding:7px 14px; font-size:11px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:5px; font-family:-apple-system,sans-serif; }
-  .btn-desk-ghost { background:none; border:1px solid var(--border); color:var(--text-dim); border-radius:6px; padding:7px 14px; font-size:11px; cursor:pointer; display:flex; align-items:center; gap:5px; font-family:-apple-system,sans-serif; }
-  .btn-desk-primary i, .btn-desk-ghost i { font-size:13px; }
+  .btn-desk-primary { background:var(--gold); color:var(--bg-deep); border:none; border-radius:6px; padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:-apple-system,sans-serif; transition:opacity 0.15s; }
+  .btn-desk-primary:hover { opacity:0.9; }
+  .btn-desk-ghost { background:none; border:1px solid var(--border); color:var(--text-dim); border-radius:6px; padding:8px 16px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:6px; font-family:-apple-system,sans-serif; transition:all 0.15s; }
+  .btn-desk-ghost:hover { border-color:var(--gold); color:var(--gold); }
+  .btn-desk-primary i, .btn-desk-ghost i { font-size:14px; }
+
+  /* BOTONES MÓVIL MEJORADOS */
+  .btn-accion { display:block; width:100%; padding:14px 20px; border-radius:8px; border:1px solid var(--border); background:var(--bg-card); color:var(--white); font-family:-apple-system,sans-serif; font-size:13px; font-weight:500; cursor:pointer; margin-bottom:8px; text-align:left; transition:all 0.15s; }
+  .btn-accion:active { opacity:0.8; }
+  .btn-accion.btn-salida { background:var(--red); color:#fff; border-color:var(--red); }
+  .btn-accion.btn-entrada { background:var(--green); color:#fff; border-color:var(--green); }
+  .btn-accion.btn-secondary { background:none; border:1px solid var(--border); color:var(--text-dim); }
 
   /* HEADER MÓVIL */
   .header { display:flex; align-items:center; justify-content:space-between; padding:18px 20px 14px; border-bottom:1px solid var(--border); background:var(--bg-deep); }
@@ -117,7 +138,7 @@
   #home-view { padding:20px 24px; }
   .home-greeting { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
   .home-date { font-size:13px; color:var(--white); margin-bottom:20px; font-family:'Playfair Display',serif; }
-  .section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; margin-top:20px; }
+  .section-title { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; margin-top:20px; padding:0; }
   .section-title:first-of-type { margin-top:0; }
 
   /* DASHBOARD STATS (desktop) */
@@ -143,7 +164,7 @@
   /* HOME ACTION GRID */
   .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0; }
   .action-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:18px 14px; cursor:pointer; transition:border-color 0.2s; }
-  .action-card:active { border-color:var(--gold); background:#1a1a0d; }
+  .action-card:active { border-color:var(--gold); background:var(--bg-hover); }
   .action-card svg { width:22px; height:22px; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; margin-bottom:8px; }
   .action-card.salida { background:#3d1a18; border-color:#c0392b44; }
   .action-card.salida svg { stroke:var(--red); }
@@ -158,10 +179,10 @@
 
   /* HOME QUICK ACTIONS */
   .quick-actions { display:flex; flex-direction:column; gap:8px; }
-  .quick-btn { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--white); transition:border-color 0.2s; text-align:left; width:100%; }
+  .quick-btn { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:14px 16px; cursor:pointer; display:flex; align-items:center; gap:12px; font-family:-apple-system,sans-serif; font-size:12px; letter-spacing:0.3px; color:var(--white); transition:all 0.15s; text-align:left; width:100%; }
   .quick-btn:active { border-color:var(--gold); }
   .quick-btn svg { width:16px; height:16px; flex-shrink:0; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; fill:none; }
-  .quick-btn.gold { border-color:var(--gold-dim); color:var(--gold); }
+  .quick-btn.gold { border-color:rgba(212,168,83,0.5); color:var(--gold); }
   .quick-btn.gold svg { stroke:var(--gold); }
   .quick-btn.red { border-color:#c0392b44; color:#e74c3c; }
   .quick-btn.red svg { stroke:#e74c3c; }
@@ -170,14 +191,14 @@
 
   /* VIEWS */
   .view { display:none; padding:0 24px 24px; }
-  .view-header { display:flex; align-items:center; gap:12px; padding:16px 0 20px; border-bottom:1px solid var(--border); margin-bottom:20px; }
-  .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:34px; height:34px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .view-header { display:flex; align-items:center; gap:12px; padding:16px 28px 16px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; }
+  .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; } .btn-back:hover { border-color:var(--gold); } .btn-back:active { background:var(--bg-card); }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .view-title { font-size:15px; letter-spacing:0.5px; color:var(--white); font-family:'Playfair Display',serif; }
   .mode-badge { margin-left:auto; font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:20px; text-transform:uppercase; }
   .mode-salida { background:rgba(192,57,43,0.15); color:#e74c3c; border:1px solid #c0392b44; }
   .mode-entrada { background:rgba(39,174,96,0.15); color:#2ecc71; border:1px solid #27ae6044; }
-  .mode-buscar { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid var(--gold-dim); }
+  .mode-buscar { background:rgba(201,168,76,0.15); color:var(--gold); border:1px solid rgba(212,168,83,0.5); }
 
   /* RENTA CARDS */
   .renta-card { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.2s; }
@@ -205,7 +226,7 @@
   .search-row { display:flex; gap:8px; }
   .search-input { flex:1; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:13px; padding:12px 16px; outline:none; }
   .search-input:focus { border-color:var(--gold); }
-  .btn-search { background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; padding:12px 16px; cursor:pointer; white-space:nowrap; }
+  .btn-search { background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; padding:12px 16px; cursor:pointer; white-space:nowrap; }
 
   /* PROGRESS BAR */
   .progress-section { background:var(--bg-card); border-radius:8px; padding:16px; margin-bottom:20px; }
@@ -250,7 +271,7 @@
   .info-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; }
   .info-card-value { font-size:13px; }
   .info-card-value.gold { color:var(--gold); }
-  .notes-section { background:var(--bg-card); border-left:3px solid var(--gold-dim); border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:16px; font-size:11px; color:var(--text-muted); line-height:1.6; font-style:italic; }
+  .notes-section { background:var(--bg-card); border-left:3px solid rgba(212,168,83,0.5); border-radius:0 6px 6px 0; padding:12px 14px; margin-bottom:16px; font-size:11px; color:var(--text-muted); line-height:1.6; font-style:italic; }
 
   /* CONFIRM MODAL */
   #confirm-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; align-items:flex-end; justify-content:center; }
@@ -261,7 +282,7 @@
   .modal-info { background:var(--bg-card); border-radius:6px; padding:14px; margin-bottom:20px; font-size:12px; line-height:1.8; color:var(--text-muted); }
   .modal-info span { color:var(--white); }
   .modal-buttons { display:flex; gap:10px; }
-  .btn-confirm-yes { flex:1; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer; }
+  .btn-confirm-yes { flex:1; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer; }
   .btn-confirm-no { flex:1; background:var(--bg-card); color:var(--white); border:1px solid var(--border); border-radius:4px; font-family:'DM Mono',monospace; font-size:11px; padding:14px; cursor:pointer; }
 
   /* TOAST */
@@ -288,9 +309,9 @@
   .orden-prop-header-label { font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
   .orden-prop-row { display:grid; grid-template-columns:2fr 0.8fr 0.8fr 0.8fr auto; gap:6px; align-items:center; margin-bottom:6px; }
 
-  .btn-orden-add { background:none; border:1px solid var(--gold-dim); color:var(--gold); border-radius:4px; padding:10px 14px; cursor:pointer; font-size:10px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; }
+  .btn-orden-add { background:none; border:1px solid rgba(212,168,83,0.5); color:var(--gold); border-radius:4px; padding:10px 14px; cursor:pointer; font-size:10px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; }
   .btn-orden-remove { background:none; border:1px solid #c0392b; color:#e74c3c; border-radius:4px; padding:7px 9px; cursor:pointer; font-size:11px; flex-shrink:0; }
-  .btn-orden-generate { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
+  .btn-orden-generate { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
   .btn-orden-generate:disabled { opacity:0.5; cursor:not-allowed; }
 
   .orden-total-box { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:14px; margin:16px 0; }
@@ -302,7 +323,7 @@
   #orden-preview { display:none; }
   .orden-preview-actions { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
   .btn-preview-back { flex:1; background:var(--bg-card); color:var(--white); border:1px solid var(--border); border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
-  .btn-preview-print { flex:1; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
+  .btn-preview-print { flex:1; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
   .btn-preview-wha { flex:1; background:#25d366; color:white; border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
   .btn-preview-home { width:100%; background:var(--border); color:var(--white); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; margin-top:6px; }
 
@@ -373,7 +394,7 @@
   .alta-nivel-btn .nivel-name { font-size:11px; color:var(--white); font-family:'DM Mono',monospace; letter-spacing:1px; }
   .alta-nivel-btn .nivel-desc { font-size:9px; color:var(--text-muted); margin-top:3px; letter-spacing:0.5px; }
   .alta-nivel-btn.selected .nivel-name { color:var(--gold); }
-  .btn-alta-guardar { width:100%; background:var(--gold); color:var(--black); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
+  .btn-alta-guardar { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:15px; cursor:pointer; margin-top:8px; }
   .btn-alta-guardar:disabled { opacity:0.5; cursor:not-allowed; }
   .alta-success { background:rgba(46,204,113,0.1); border:1px solid #2ecc71; border-radius:8px; padding:20px; text-align:center; display:none; }
   .alta-success-icon { font-size:32px; margin-bottom:8px; }
@@ -382,7 +403,7 @@
   .alta-success-sub { font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-top:8px; }
 
   /* ── PIN OVERLAY ──────────────────────────────────── */
-  .pin-overlay { position:fixed; inset:0; background:rgba(20,16,8,0.98); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
+  .pin-overlay { position:fixed; inset:0; background:rgba(26,24,22,0.98); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
   .pin-logo { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); letter-spacing:2px; margin-bottom:4px; }
   .pin-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); text-align:center; }
   .pin-dots { display:flex; gap:14px; margin:8px 0; }
@@ -615,7 +636,7 @@
         <div style="font-family:'Playfair Display',serif;font-size:20px;color:var(--white);" id="fin-gastos">—</div>
       </div>
     </div>
-    <div style="background:#141414;border:1px solid var(--gold-dim);border-radius:10px;padding:16px;margin-bottom:20px;">
+    <div style="background:#141414;border:1px solid rgba(212,168,83,0.5);border-radius:10px;padding:16px;margin-bottom:20px;">
       <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;">Ganancia</div>
       <div style="font-family:'Playfair Display',serif;font-size:26px;" id="fin-ganancia">—</div>
       <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;margin-top:4px;" id="fin-equilibrio"></div>
@@ -766,7 +787,7 @@
     <div style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="nr-success-id">—</div>
     <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="nr-success-monto">—</div>
     <div style="font-size:10px;color:var(--text-muted);margin-bottom:24px;" id="nr-success-detalle">—</div>
-    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--black);border:none;margin-bottom:8px;">
+    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--bg-deep);border:none;margin-bottom:8px;">
       🌅 Generar orden de renta
     </button>
     <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--border);color:var(--text-muted);">
@@ -881,7 +902,7 @@
   <div id="inv-resumen" style="display:none">
     <div class="alert alert-green" id="inv-resumen-ok"></div>
   </div>
-  <button onclick="invFinalizar()" id="inv-btn-finalizar" style="display:none;" class="btn-accion" style="background:var(--gold);color:var(--black);border:none;margin-top:16px;">
+  <button onclick="invFinalizar()" id="inv-btn-finalizar" style="display:none;" class="btn-accion" style="background:var(--gold);color:var(--bg-deep);border:none;margin-top:16px;">
     Finalizar inventario
   </button>
 </div>
@@ -2043,7 +2064,7 @@ function renderPropsFlow() {
         ${currentMode === 'salida' ? '📤 Confirmar salida completa' : '📥 Confirmar entrada completa'}
       </button>` : ''}
 
-    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:none;border:1px solid var(--gold);color:var(--gold);margin-top:12px">
+    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:none;border:1px solid rgba(212,168,83,0.4);color:var(--gold);margin-top:12px">
       🌅 Generar orden de renta
     </button>
   `;
@@ -2234,7 +2255,7 @@ function showPropDetail(prop, fromFlow) {
         ${estados.map(e => `
           <button onclick="propCambiarEstado('${prop.id}', '${e}', this)"
             style="background:${e===estado?'var(--gold)':'#2e2018'};
-                   color:${e===estado?'var(--black)':'var(--white)'};
+                   color:${e===estado?'var(--bg-deep)':'var(--white)'};
                    border:none;border-radius:4px;padding:8px 12px;
                    font-family:'DM Mono',monospace;font-size:9px;
                    letter-spacing:1px;text-transform:uppercase;cursor:pointer;">
@@ -2273,7 +2294,7 @@ async function propCambiarEstado(recordId, nuevoEstado, btn) {
       b.style.color = 'var(--white)';
     });
     btn.style.background = 'var(--gold)';
-    btn.style.color = 'var(--black)';
+    btn.style.color = 'var(--bg-deep)';
 
     // Actualizar badge de estado
     const badge = document.getElementById('prop-estado-badge');
@@ -2380,8 +2401,8 @@ async function rentasVerDetalle(rentaRecordId) {
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
 
       <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
-        <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--black);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
-        <button class="btn-accion" onclick="pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid var(--green);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
+        <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--bg-deep);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
+        <button class="btn-accion" onclick="pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
       </div>
       ${f['Estado de la renta']==='Activa' ? `<button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
     `;
