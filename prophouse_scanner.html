@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>Hora Dorada — Sistema de inventario</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700&display=swap');
   :root {
@@ -32,7 +33,7 @@
     --badge-adel-bg: #33280f; --badge-adel-fg: #fcc419;  --badge-adel-border: #e6a817;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--white); font-family:-apple-system,'Helvetica Neue',sans-serif; min-height:100vh; }
+  body { background:#22201e !important; color:#f0ece4 !important; font-family:-apple-system,'Helvetica Neue',sans-serif; min-height:100vh; color-scheme:dark; }
 
   /* SETUP */
   #setup-screen { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:32px 24px; max-width:400px; margin:0 auto; }
@@ -63,13 +64,14 @@
     #app-screen { display:none; flex-direction:row; min-height:100vh; max-width:100%; }
     #app-screen.visible { display:flex; }
     .app-sidebar { width:160px; background:var(--bg-deep); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:40; }
-    .app-main { margin-left:160px; flex:1; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; overflow-y:auto; }
+    .app-main { margin-left:160px; flex:1; min-height:100vh; background:#22201e; display:flex; flex-direction:column; overflow-y:auto; width:calc(100% - 160px); }
     .header { display:none !important; }
     .bottom-nav { display:none !important; }
     .view-content { padding:0 28px 28px; }
+    .view > *:not(.view-header) { padding-left:28px; padding-right:28px; }
     .view-header { padding:16px 28px !important; }
-    #home-view { padding:0; }
-    .view { padding:0; }
+    #home-view { padding:0; width:100%; }
+    .view { padding:0; width:100%; min-height:100vh; box-sizing:border-box; }
     .section-title { padding:0; }
     .alta-field, .alta-section-title, .alta-nivel-grid, .btn-alta-guardar,
     .search-row, .divider, .prop-list-item, .progress-section,
@@ -154,7 +156,7 @@
 
   /* DASHBOARD STATS (desktop) */
   .dash-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:16px; }
-  .dash-stat { background:var(--bg-card); border:1px solid var(--border-light); border-radius:8px; padding:14px; }
+  .dash-stat { background:#2c2a28 !important; border:1px solid #3d3b38; border-radius:8px; padding:14px; color:#f0ece4 !important; }
   .dash-stat-label { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
   .dash-stat-value { font-size:22px; font-family:'Playfair Display',serif; color:var(--white); line-height:1; }
   .dash-stat-value.gold { color:var(--gold); }
@@ -162,7 +164,7 @@
   .dash-stat-value.red { color:var(--red); }
   .dash-stat-sub { font-size:9px; color:var(--text-muted); margin-top:5px; }
   .dash-panels { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .dash-panel { background:var(--bg-card); border:1px solid var(--border-light); border-radius:8px; overflow:hidden; }
+  .dash-panel { background:#2c2a28 !important; border:1px solid #3d3b38; border-radius:8px; overflow:hidden; }
   .dash-panel-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--border); }
   .dash-panel-title { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
   .dash-panel-link { font-size:10px; color:var(--text-muted); cursor:pointer; }
@@ -468,12 +470,12 @@
       <div class="sidebar-item active" id="snav-inicio" onclick="navGo('inicio')"><i class="ti ti-home" aria-hidden="true"></i>Dashboard</div>
       <div class="sidebar-item" id="snav-rentas" onclick="navGo('rentas')"><i class="ti ti-file-text" aria-hidden="true"></i>Rentas</div>
       <div class="sidebar-item" id="snav-inventario" onclick="navGo('inventario')"><i class="ti ti-box" aria-hidden="true"></i>Inventario</div>
-      <div class="sidebar-item" onclick="showRentasActivas()"><i class="ti ti-users" aria-hidden="true"></i>Clientes</div>
+      <div class="sidebar-item" id="snav-clientes" onclick="showClientesView()"><i class="ti ti-users" aria-hidden="true"></i>Clientes</div>
       <div class="sidebar-section">Operación</div>
-      <div class="sidebar-item" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i>Salida</div>
-      <div class="sidebar-item" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i>Entrada</div>
+      <div class="sidebar-item" id="snav-salida" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i>Salida</div>
+      <div class="sidebar-item" id="snav-entrada" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i>Entrada</div>
       <div class="sidebar-item" id="snav-finanzas" onclick="navGo('finanzas')"><i class="ti ti-coin" aria-hidden="true"></i>Finanzas</div>
-      <div class="sidebar-item danger" onclick="showDanosView()"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Daños</div>
+      <div class="sidebar-item danger" id="snav-danos" onclick="showDanosView()"><i class="ti ti-alert-triangle" aria-hidden="true"></i>Daños</div>
     </div>
     <div class="sidebar-bottom">
       <div class="sidebar-avatar">AL</div>
@@ -531,11 +533,11 @@
 
     <div class="section-title">Movimientos</div>
     <div class="action-grid">
-      <div class="action-card salida" onclick="startFlow('salida')">
+      <div class="action-card salida" id="snav-salida" onclick="startFlow('salida')">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <div class="action-label">Salida</div>
       </div>
-      <div class="action-card entrada" onclick="startFlow('entrada')">
+      <div class="action-card entrada" id="snav-entrada" onclick="startFlow('entrada')">
         <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <div class="action-label">Entrada</div>
       </div>
@@ -556,7 +558,7 @@
         <span class="quick-btn-label">Registrar pago</span>
         <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="quick-btn red" onclick="showDanosView()">
+      <button class="quick-btn red" id="snav-danos" onclick="showDanosView()">
         <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span class="quick-btn-label">Registrar daño</span>
         <span class="quick-btn-arrow">›</span>
@@ -586,7 +588,7 @@
         <span class="quick-btn-label">Inventario físico</span>
         <span class="quick-btn-arrow">›</span>
       </button>
-      <button class="quick-btn red" onclick="showDanosView()">
+      <button class="quick-btn red" id="snav-danos" onclick="showDanosView()">
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span class="quick-btn-label">Registrar daño</span>
         <span class="quick-btn-arrow">›</span>
@@ -890,6 +892,17 @@
     </button>
     <button class="btn-accion btn-secondary" onclick="goHome()">Cancelar</button>
   </div><!-- fin nr-form -->
+</div>
+
+<!-- CLIENTES VIEW -->
+<div id="clientes-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="view-title">Clientes</div>
+  </div>
+  <div style="padding:0 28px 28px;" id="clientes-content">
+    <div class="loading"><div class="spinner"></div>Cargando clientes...</div>
+  </div>
 </div>
 
 <!-- INVENTARIO RÁPIDO VIEW -->
@@ -1508,9 +1521,10 @@ function setNavActive(tab) {
   // Bottom nav móvil
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-' + tab)?.classList.add('active');
-  // Sidebar desktop
+  // Sidebar desktop — quitar todos y activar el correcto
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('snav-' + tab)?.classList.add('active');
+  const snavEl = document.getElementById('snav-' + tab);
+  if (snavEl) snavEl.classList.add('active');
 }
 
 // Advertir si se intenta salir durante una operación crítica
@@ -1973,6 +1987,7 @@ async function findPropByCode(code) {
 // ── FLOW: SALIDA / ENTRADA ──────────────────────────────
 async function startFlow(mode) {
   currentMode = mode;
+  setNavActive(mode);
 
   if (mode === 'buscar') {
     previousView = 'buscar';
@@ -3192,6 +3207,35 @@ function orCompartirWhatsApp() {
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
 
+// ── CLIENTES VIEW ────────────────────────────────────────
+async function showClientesView() {
+  showView('clientes-view');
+  setNavActive('clientes');
+  document.getElementById('clientes-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando clientes...</div>';
+  try {
+    const clientes = await db_getClientes();
+    if (!clientes.length) {
+      document.getElementById('clientes-content').innerHTML =
+        '<div class="empty-state">Sin clientes registrados</div>';
+      return;
+    }
+    document.getElementById('clientes-content').innerHTML = clientes.map(c => {
+      const f = c.fields;
+      return `<div class="pago-section" style="margin-bottom:10px;cursor:default;">
+        <div class="pago-title">${f['Nombre o empresa'] || '—'}</div>
+        <div class="pago-row"><span class="label">Teléfono</span><span class="value">${f['Teléfono'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Email</span><span class="value">${f['Email'] || '—'}</span></div>
+        ${f['Origen'] ? `<div class="pago-row"><span class="label">Origen</span><span class="value">${f['Origen']}</span></div>` : ''}
+        ${f['RFC'] ? `<div class="pago-row"><span class="label">RFC</span><span class="value">${f['RFC']}</span></div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e) {
+    document.getElementById('clientes-content').innerHTML =
+      `<div class="alert alert-red">Error: ${e.message}</div>`;
+  }
+}
+
 // ── INVENTARIO RÁPIDO ───────────────────────────────────
 let invVerificados = [];
 let invTotal = 0;
@@ -3296,6 +3340,7 @@ let danosPropActual = null;
 
 async function showDanosView() {
   showView('danos-view');
+  setNavActive('danos');
   danosPropActual = null;
   document.getElementById('danos-success').style.display = 'none';
   document.getElementById('danos-form').style.display = 'block';
