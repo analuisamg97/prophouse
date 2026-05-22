@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Hora Dorada — Sistema de inventario</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700&display=swap');
   :root {
@@ -34,7 +35,7 @@
   body { background:var(--bg); color:var(--white); font-family:-apple-system,'Helvetica Neue',sans-serif; min-height:100vh; }
 
   /* SETUP */
-  #setup-screen { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:32px 24px; }
+  #setup-screen { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:32px 24px; max-width:400px; margin:0 auto; }
   .logo { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold); margin-bottom:8px; letter-spacing:2px; }
   .tagline { font-size:11px; color:var(--text-muted); letter-spacing:3px; text-transform:uppercase; margin-bottom:48px; }
   .setup-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
@@ -52,8 +53,8 @@
     body { background:var(--bg-deep); }
     #app-screen { display:none; flex-direction:row; min-height:100vh; max-width:100%; }
     #app-screen.visible { display:flex; }
-    .app-sidebar { width:148px; background:var(--bg-deep); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:40; }
-    .app-main { margin-left:148px; flex:1; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; overflow-y:auto; }
+    .app-sidebar { width:160px; background:var(--bg-deep); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:40; }
+    .app-main { margin-left:160px; flex:1; min-height:100vh; background:var(--bg); display:flex; flex-direction:column; overflow-y:auto; }
     .header { display:none !important; }
     .bottom-nav { display:none !important; }
     .view-content { padding:0 28px 28px; }
@@ -126,6 +127,7 @@
 
   /* BOTTOM NAV MÓVIL */
   .bottom-nav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--bg-deep); border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:10px 0 24px; z-index:50; }
+  @media (min-width:768px) { .bottom-nav { display:none !important; } }
   .nav-item { display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; padding:4px 12px; border:none; background:none; }
   .nav-item svg { width:22px; height:22px; stroke:var(--text-muted); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; transition:stroke 0.2s; }
   .nav-item span { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; transition:color 0.2s; }
@@ -403,7 +405,8 @@
   .alta-success-sub { font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-top:8px; }
 
   /* ── PIN OVERLAY ──────────────────────────────────── */
-  .pin-overlay { position:fixed; inset:0; background:rgba(26,24,22,0.98); z-index:500; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; padding:24px; }
+  .pin-overlay { position:fixed; inset:0; background:rgba(10,10,8,0.7); backdrop-filter:blur(4px); z-index:500; display:flex; align-items:center; justify-content:center; padding:24px; }
+  .pin-modal { background:var(--bg-deep); border:1px solid var(--border); border-radius:16px; padding:32px 28px; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:320px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); }
   .pin-logo { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); letter-spacing:2px; margin-bottom:4px; }
   .pin-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); text-align:center; }
   .pin-dots { display:flex; gap:14px; margin:8px 0; }
@@ -486,7 +489,7 @@
     <!-- DASHBOARD DESKTOP -->
     <div id="desk-dashboard" style="display:none;">
       <div class="desktop-topbar">
-        <div class="desktop-topbar-title">Dashboard</div>
+        <div class="desktop-topbar-title" id="desk-topbar-title">Dashboard</div>
         <div class="desktop-topbar-actions">
           <button class="btn-desk-ghost" onclick="startFlow('buscar')"><i class="ti ti-search" aria-hidden="true"></i>Buscar prop</button>
           <button class="btn-desk-primary" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i>Nueva renta</button>
@@ -1626,8 +1629,8 @@ async function cargarDashboard() {
           <div class="dash-row-name">${f['Nombre del prop'] || '—'}</div>
           <div class="dash-row-sub">${f['Categoría'] || '—'}</div>
         </div>
-        <div class="badge-k ${sc}">
-          <div class="bico"><i class="ti ${si}" aria-hidden="true"></i></div>
+        <div class="badge-k ${sc}" style="flex-shrink:0;">
+          <div class="bico"><i class="ti ${si}"></i></div>
           <div class="blbl">${sl}</div>
         </div>
       </div>`;
