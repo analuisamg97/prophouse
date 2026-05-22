@@ -1502,6 +1502,15 @@ function setNavActive(tab) {
   document.getElementById('snav-' + tab)?.classList.add('active');
 }
 
+// Advertir si se intenta salir durante una operación crítica
+let _operacionEnCurso = false;
+window.onbeforeunload = (e) => {
+  if (_operacionEnCurso) {
+    e.preventDefault();
+    return 'Hay una operación en curso. ¿Salir de todas formas?';
+  }
+};
+
 window.addEventListener('resize', () => {
   const homeVisible = document.getElementById('home-view')?.style.display !== 'none';
   if (homeVisible) goHome();
@@ -1567,7 +1576,11 @@ function goHome() {
   if (isDesktop) cargarDashboard();
 }
 
+let _dashboardLoading = false;
 async function cargarDashboard() {
+  if (_dashboardLoading) return; // evitar fetch doble
+  _dashboardLoading = true;
+  try {
   try {
     const [rentas, props] = await Promise.all([
       db_getRentas({ maxRecords: 200 }),
@@ -1638,6 +1651,8 @@ async function cargarDashboard() {
 
   } catch(e) {
     console.error('Dashboard error:', e);
+  } finally {
+    _dashboardLoading = false;
   }
 }
 
@@ -1656,10 +1671,70 @@ function backFromDetail() {
   }
 }
 
+// ══════════════════════════════════════════════════════
+// CAMPOS DE AIRTABLE — si cambias un nombre en Airtable,
+// solo lo cambias aquí y toda la app se actualiza
+// ══════════════════════════════════════════════════════
+const F = {
+  // INVENTARIO
+  NOMBRE_PROP:     'Nombre del prop',
+  CODIGO:          'Código único',
+  CATEGORIA:       'Categoría',
+  ESTADO:          'Estado',
+  NIVEL_VISUAL:    'Nivel Visual',
+  RENTA_DIA:       'Renta x 1 día',
+  VALOR_REPO:      'Valor de reposición',
+  NOTAS_CINE:      'Notas cinematográficas',
+  ULT_VERIF:       'Última verificación física',
+  // RENTAS
+  ID_RENTA:        'ID de renta',
+  FECHA_SALIDA:    'Fecha de salida',
+  FECHA_REGRESO:   'Fecha de regreso',
+  MONTO_TOTAL:     'Monto total',
+  MONTO_ADELANTO:  'Monto Adelanto',
+  FECHA_ADELANTO:  'Fecha de adelanto',
+  MONTO_LIQ:       'Monto liquidación',
+  FECHA_LIQ:       'Fecha de liquidación',
+  MONTO_A_LIQ:     'Monto a liquidar',
+  ESTADO_PAGO:     'Estado del pago',
+  ESTADO_RENTA:    'Estado de la renta',
+  FECHA_CANCEL:    'Fecha de cancelación',
+  IVA_APLICADO:    'IVA aplicado',
+  MONTO_IVA:       'Monto IVA',
+  // CLIENTES
+  NOMBRE_CLIENTE:  'Nombre o empresa',
+  TELEFONO:        'Teléfono',
+  EMAIL:           'Email',
+  ORIGEN:          'Origen',
+  RFC:             'RFC',
+  RAZON_SOCIAL:    'Razón social',
+  REGIMEN_FISCAL:  'Régimen fiscal',
+  DIRECCION:       'Dirección fiscal',
+  CP:              'Código postal',
+  // DAÑOS
+  ID_DANO:         'ID daño',
+  DESC_DANO:       'Descripción del daño',
+  COSTO_REP:       'Costo de reparación',
+  ESTADO_COBRO:    'Estado del cobro',
+  FECHA_REPORTE:   'Fecha del reporte',
+  // GASTOS
+  NOMBRE_GASTO:    'Nombre',
+  MONTO_GASTO:     'Monto',
+  TIPO_GASTO:      'Tipo',
+  CAT_GASTO:       'Categoría',
+  FECHA_GASTO:     'Fecha',
+  MES_GASTO:       'Mes',
+  RECURRENTE:      'Recurrente',
+};
+
 // ── AIRTABLE API ────────────────────────────────────────
 async function airtableGet(table, params = '') {
+  if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales — configura el token');
   const url = `https://api.airtable.com/v0/${BASE_ID}/${table}${params}`;
   const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
+  if (res.status === 401) throw new Error('Token inválido o expirado');
+  if (res.status === 403) throw new Error('Sin permisos — revisa el token');
+  if (res.status === 404) throw new Error(`Tabla "${table}" no encontrada`);
   const data = await res.json();
   if (data.error) {
     console.error('Airtable error en', table, ':', data.error);
@@ -1680,12 +1755,18 @@ async function airtablePatch(table, recordId, fields) {
 
 // Llamada en cada escaneo: actualiza estado, ubicacion y timestamp
 async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
+  if (!recordId) { console.warn('registrarVerificacion: recordId vacío'); return; }
   const fields = {
     "Última verificación física": new Date().toISOString()
   };
   if (nuevoEstado) fields["Estado"] = nuevoEstado;
   if (nuevaUbicacion) fields["Ubicación"] = nuevaUbicacion;
-  return airtablePatch("INVENTARIO", recordId, fields);
+  try {
+    return await airtablePatch("INVENTARIO", recordId, fields);
+  } catch(e) {
+    console.error('Error al registrar verificación:', e.message);
+    // No lanzar — la verificación falla silenciosamente para no interrumpir el flujo
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -1695,11 +1776,14 @@ async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
 
 // ── POST helper central ─────────────────────────────
 async function airtablePost(table, fields) {
+  if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales');
   const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${table}`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields })
   });
+  if (res.status === 401) throw new Error('Token inválido o expirado');
+  if (res.status === 422) throw new Error('Datos inválidos — revisa los nombres de campos');
   const data = await res.json();
   if (data.error) throw new Error(data.error.message || data.error.type);
   return data;
@@ -1817,7 +1901,16 @@ async function db_registrarPago({ rentaRecordId, montoTotal, adelanto, fechaAdel
 }
 
 // ── INVENTARIO ───────────────────────────────────────
-async function db_getProps({ maxRecords = 500 } = {}) {
+let _propsCache = null;
+let _propsCacheTime = 0;
+const PROPS_CACHE_TTL = 60000; // 1 minuto
+
+async function db_getProps({ maxRecords = 500, forceRefresh = false } = {}) {
+  // Cache de 1 minuto para evitar fetches repetidos al cargar vistas
+  const now = Date.now();
+  if (!forceRefresh && _propsCache && (now - _propsCacheTime) < PROPS_CACHE_TTL) {
+    return _propsCache;
+  }
   let all = [], offset = '', pages = 0;
   do {
     const params = `?pageSize=100${offset ? '&offset=' + offset : ''}`;
@@ -1826,9 +1919,16 @@ async function db_getProps({ maxRecords = 500 } = {}) {
     all = all.concat(data.records);
     offset = data.offset || '';
     pages++;
-    if (pages > 20) break; // seguro: máximo 2000 props
+    if (pages > 20) break;
   } while (offset);
+  _propsCache = all;
+  _propsCacheTime = now;
   return all;
+}
+
+function db_invalidarCacheProps() {
+  _propsCache = null;
+  _propsCacheTime = 0;
 }
 
 async function db_getProp(recordId) {
@@ -3569,6 +3669,7 @@ async function altaGuardarProp() {
     if (valorRepo > 0) fields['Valor de reposición'] = valorRepo;
 
     const d = await db_crearProp(fields);
+    db_invalidarCacheProps(); // invalidar cache tras alta
 
     // Mostrar éxito
     document.getElementById('alta-form').style.display = 'none';
