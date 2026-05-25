@@ -975,22 +975,25 @@
 
   <!-- Form -->
   <div id="danos-form">
-    <div class="section-title" style="margin-top:0;">Prop afectado</div>
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-      <input type="text" class="search-input" id="danos-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') danossBuscarProp()">
-      <button class="btn-search" onclick="abrirScannerUniversal('danos-prop-codigo', danossBuscarProp)">📷</button>
-      <button class="btn-search" onclick="danossBuscarProp()">→</button>
+    <div class="section-title" style="margin-top:0;">1. Renta relacionada</div>
+    <select class="search-input" id="danos-renta-select" style="width:100%;margin-bottom:8px;" onchange="danosCambiarRenta()">
+      <option value="">— Seleccionar renta (opcional) —</option>
+    </select>
+    <div id="danos-cliente-auto" style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:16px;min-height:16px;"></div>
+
+    <div class="section-title">2. Prop afectado</div>
+    <div id="danos-prop-selector">
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <input type="text" class="search-input" id="danos-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') danossBuscarProp()">
+        <button class="btn-search" onclick="abrirScannerUniversal('danos-prop-codigo', danossBuscarProp)">📷</button>
+        <button class="btn-search" onclick="danossBuscarProp()">→</button>
+      </div>
+      <div id="danos-props-renta" style="display:none;margin-bottom:8px;"></div>
     </div>
     <div id="danos-prop-info" style="display:none;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:16px;">
       <div style="font-size:12px;color:var(--white);" id="danos-prop-nombre">—</div>
       <div style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-top:2px;" id="danos-prop-codigo-display">—</div>
     </div>
-
-    <div class="section-title">Renta relacionada</div>
-    <select class="search-input" id="danos-renta-select" style="width:100%;margin-bottom:8px;">
-      <option value="">— Sin renta asociada —</option>
-    </select>
-    <div id="danos-cliente-auto" style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:16px;min-height:16px;"></div>
 
     <div class="section-title">Descripción del daño</div>
     <textarea class="search-input" id="danos-descripcion" placeholder="Describe el daño..." style="width:100%;height:80px;resize:none;padding:12px;font-family:'DM Mono',monospace;margin-bottom:16px;"></textarea>
@@ -1068,7 +1071,7 @@
 <!-- ALTA DE PROP VIEW -->
 <div id="alta-prop-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="showView('inventario-menu-view')" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Dar de alta prop</div>
     <div class="mode-badge mode-buscar">Nuevo</div>
   </div>
@@ -1609,7 +1612,7 @@ function showView(id) {
     'danos-view':'danos',
     'rentas-menu-view':'rentas','nueva-renta-view':'rentas',
     'rentas-view':'rentas','orden-view':'rentas','pagos-view':'rentas',
-    'renta-select-view':'salida','props-flow-view':'salida',
+    // renta-select-view and props-flow-view intentionally omitted — currentMode handles sidebar
     'clientes-view':'clientes',
     'finanzas-menu-view':'finanzas','agregar-gasto-view':'finanzas',
   };
@@ -2074,11 +2077,11 @@ async function findPropByCode(code) {
 // ── FLOW: SALIDA / ENTRADA ──────────────────────────────
 async function startFlow(mode) {
   currentMode = mode;
-  setNavActive(mode);
 
   if (mode === 'buscar') {
     previousView = 'buscar';
     showView('buscar-view');
+    setNavActive('buscar'); // buscar → inventario
     setTimeout(() => startScanner('buscar'), 300);
     return;
   }
@@ -2089,6 +2092,7 @@ async function startFlow(mode) {
   badge.className = 'mode-badge ' + (mode === 'salida' ? 'mode-salida' : 'mode-entrada');
 
   showView('renta-select-view');
+  setNavActive(mode); // Forzar después de showView para no perder 'entrada'
   document.getElementById('renta-list-content').innerHTML =
     '<div class="loading"><div class="spinner"></div>Cargando rentas...</div>';
 
@@ -2733,7 +2737,10 @@ async function showNuevaRenta() {
     ).join('');
     select.innerHTML = '<option value="">— Seleccionar cliente existente —</option>' +
       options + '<option value="__nuevo__">+ Nuevo cliente</option>';
-  } catch(e) {}
+  } catch(e) {
+    showToast('Error al cargar clientes: ' + e.message, true);
+    console.error('getClientes error:', e);
+  }
 }
 
 function toggleNuevoCliente() {
@@ -2775,7 +2782,7 @@ function nrCalcMonto() {
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
   document.getElementById('nr-dias-cobrados').textContent = `${dias} día${dias>1?'s':''}`;
-  document.getElementById('nr-subtotal-calc').textContent = fmtM(subtotal);
+  const subtotalEl = document.getElementById('nr-subtotal-calc'); if(subtotalEl) subtotalEl.textContent = fmtM(subtotal);
   const ivaRow = document.getElementById('nr-iva-row');
   if (ivaRow) ivaRow.style.display = ivaAplicado ? 'flex' : 'none';
   const ivaCalc = document.getElementById('nr-iva-calc');
@@ -2852,7 +2859,8 @@ async function crearNuevaRenta() {
   if (!fechaRegreso) { showToast('Ingresa fecha de regreso', true); return; }
 
   const diasCobrados = nrDiasCobrados();
-  const { subtotal, iva, total, ivaAplicado } = nrCalcMonto();
+  const calcResult = nrCalcMonto() || {};
+  const { subtotal = 0, iva = 0, total = 0, ivaAplicado = false } = calcResult;
   const monto = subtotal;
   const propsIds = nrProps.map(p => p.airtableId).filter(Boolean);
 
@@ -3379,8 +3387,8 @@ async function invVerificar() {
 
     const nombre = prop.fields['Nombre del prop'] || codigo;
 
-    // Registrar verificación física en Airtable
-    await registrarVerificacion(prop.id, null, null);
+    // Registrar verificación física en Airtable (silencioso si falla)
+    registrarVerificacion(prop.id, null, null).catch(e => console.warn('Verif timestamp:', e.message));
 
     invVerificados.push({ codigo, nombre, id: prop.id });
     document.getElementById('inv-codigo').value = '';
@@ -3434,12 +3442,13 @@ async function showDanosView() {
   document.getElementById('danos-form').style.display = 'block';
   document.getElementById('danos-prop-codigo').value = '';
   document.getElementById('danos-prop-info').style.display = 'none';
+  const prRenta = document.getElementById('danos-props-renta'); if(prRenta) prRenta.style.display = 'none';
   document.getElementById('danos-descripcion').value = '';
   document.getElementById('danos-costo').value = '';
 
   // Cargar rentas para el selector
   try {
-    const rentas = await db_getRentas({ soloActivas: false, maxRecords: 100 });
+    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 100 });
     const clientes = await db_getClientes();
     const select = document.getElementById('danos-renta-select');
     const opts = rentas.map(r => {
@@ -3456,6 +3465,62 @@ async function showDanosView() {
     };
   } catch(e) {}
 }
+
+async function danosCambiarRenta() {
+  const select = document.getElementById('danos-renta-select');
+  const rentaId = select.value;
+  const opt = select.options[select.selectedIndex];
+  const cliente = opt?.dataset?.cliente || '';
+  document.getElementById('danos-cliente-auto').textContent = cliente ? `Cliente: ${cliente}` : '';
+
+  // Limpiar prop seleccionado
+  danosPropActual = null;
+  document.getElementById('danos-prop-info').style.display = 'none';
+  document.getElementById('danos-prop-codigo').value = '';
+
+  const propsRentaEl = document.getElementById('danos-props-renta');
+
+  if (!rentaId) {
+    propsRentaEl.style.display = 'none';
+    return;
+  }
+
+  // Cargar props de esta renta como botones de selección rápida
+  try {
+    const renta = await db_getRenta(rentaId);
+    const propsIds = renta.fields['Props rentados'] || [];
+    if (propsIds.length === 0) {
+      propsRentaEl.style.display = 'none';
+      return;
+    }
+    propsRentaEl.innerHTML = '<div style="font-size:9px;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Props de esta renta:</div>';
+    for (const pid of propsIds) {
+      try {
+        const p = await db_getProp(pid);
+        const pf = p.fields;
+        const btn = document.createElement('button');
+        btn.style.cssText = 'background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:7px 12px;cursor:pointer;font-family:"DM Mono",monospace;font-size:10px;color:var(--white);margin:3px 4px 3px 0;display:inline-block;';
+        btn.textContent = `${pf['Código único'] || '?'} — ${pf['Nombre del prop'] || '?'}`;
+        btn.onclick = () => {
+          danosPropActual = p;
+          document.getElementById('danos-prop-nombre').textContent = pf['Nombre del prop'] || '—';
+          document.getElementById('danos-prop-codigo-display').textContent = pf['Código único'] || '—';
+          document.getElementById('danos-prop-codigo').value = pf['Código único'] || '';
+          document.getElementById('danos-prop-info').style.display = 'block';
+          // Resaltar botón seleccionado
+          propsRentaEl.querySelectorAll('button').forEach(b => b.style.borderColor = 'var(--border)');
+          btn.style.borderColor = 'var(--gold)';
+          btn.style.color = 'var(--gold)';
+        };
+        propsRentaEl.appendChild(btn);
+      } catch(e) {}
+    }
+    propsRentaEl.style.display = 'block';
+  } catch(e) {
+    propsRentaEl.style.display = 'none';
+  }
+}
+
 
 async function danossBuscarProp() {
   const codigo = document.getElementById('danos-prop-codigo').value.trim().toUpperCase();
