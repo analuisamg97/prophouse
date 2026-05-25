@@ -8,6 +8,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
+/* Fallback SVG por si Tabler no carga — íconos críticos inline */
+.ti { display:inline-block; width:1em; height:1em; vertical-align:middle; }
+.ti::before { font-family:'tabler-icons','Font Awesome 6 Free',sans-serif; }
+</style>
+<style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Playfair+Display:wght@400;700&display=swap');
   :root {
     --bg: #22201e;
@@ -1406,11 +1411,12 @@ function navGo(tab) {
 }
 
 function _navGoInterno(tab) {
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('nav-' + tab)?.classList.add('active');
+  // Actualizar AMBOS: bottom nav móvil Y sidebar desktop
+  setNavActive(tab);
   hideAllViews();
   if (tab === 'inicio') {
-    document.getElementById('home-view').style.display = 'block';
+    goHome();
+    return;
   } else if (tab === 'inventario') {
     document.getElementById('inventario-menu-view').style.display = 'block';
   } else if (tab === 'rentas') {
@@ -1521,10 +1527,9 @@ function setNavActive(tab) {
   // Bottom nav móvil
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-' + tab)?.classList.add('active');
-  // Sidebar desktop — quitar todos y activar el correcto
+  // Sidebar desktop
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
-  const snavEl = document.getElementById('snav-' + tab);
-  if (snavEl) snavEl.classList.add('active');
+  document.getElementById('snav-' + tab)?.classList.add('active');
 }
 
 // Advertir si se intenta salir durante una operación crítica
@@ -1572,8 +1577,39 @@ function hideAllViews() {
 }
 
 function showView(id) {
+  stopScanner();
   hideAllViews();
-  document.getElementById(id).style.display = 'block';
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'block';
+
+  // Mapa vista → tab activo en sidebar
+  const viewToTab = {
+    'home-view':'inicio',
+    'inventario-menu-view':'inventario','alta-prop-view':'inventario',
+    'inventario-view':'inventario','buscar-view':'inventario','prop-detail-view':'inventario',
+    'danos-view':'danos',
+    'rentas-menu-view':'rentas','nueva-renta-view':'rentas',
+    'rentas-view':'rentas','orden-view':'rentas','pagos-view':'rentas',
+    'renta-select-view':'salida','props-flow-view':'salida',
+    'clientes-view':'clientes',
+    'finanzas-menu-view':'finanzas','agregar-gasto-view':'finanzas',
+  };
+  const tab = viewToTab[id];
+  if (tab) setNavActive(tab);
+
+  // Título topbar desktop
+  const titles = {
+    'home-view':'Dashboard','nueva-renta-view':'Nueva renta',
+    'renta-select-view':'Seleccionar renta','props-flow-view':'Props de la renta',
+    'prop-detail-view':'Detalle del prop','rentas-view':'Rentas activas',
+    'buscar-view':'Consultar prop','orden-view':'Orden de renta',
+    'pagos-view':'Registrar pago','alta-prop-view':'Alta de prop',
+    'inventario-view':'Inventario físico','danos-view':'Registrar daño',
+    'finanzas-menu-view':'Finanzas','agregar-gasto-view':'Registrar gasto',
+    'inventario-menu-view':'Inventario','rentas-menu-view':'Rentas','clientes-view':'Clientes',
+  };
+  const titleEl = document.getElementById('desk-topbar-title');
+  if (titleEl && titles[id]) titleEl.textContent = titles[id];
 }
 
 function goHome() {
@@ -1638,7 +1674,7 @@ async function cargarDashboard() {
       const saldo = f['Monto a liquidar'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
       const badgeClass = estado === 'Pagado' ? 'ok' : estado === 'Adelanto depositado' ? 'adel' : 'pend';
-      const badgeIcon = estado === 'Pagado' ? 'ti-check' : estado === 'Adelanto depositado' ? 'ti-clock' : 'ti-alert-circle';
+      const badgeIconSVG = estado === 'Pagado' ? SVG.check : estado === 'Adelanto depositado' ? SVG.clock : SVG.alertCircle;
       const badgeLabel = estado === 'Pagado' ? 'Pagado' : estado === 'Adelanto depositado' ? 'Adelanto' : 'Pendiente';
       return `<div class="dash-panel-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
         <div>
@@ -1647,7 +1683,7 @@ async function cargarDashboard() {
           <div class="dash-row-sub">${f['Fecha de salida'] || '—'} · $${(f['Monto total'] || 0).toLocaleString()}</div>
         </div>
         <div class="badge-k ${badgeClass}">
-          <div class="bico"><i class="ti ${badgeIcon}" aria-hidden="true"></i></div>
+          <div class="bico">${badgeIconSVG}</div>
           <div class="blbl">${badgeLabel}</div>
         </div>
       </div>`;
@@ -1658,7 +1694,7 @@ async function cargarDashboard() {
       const f = p.fields;
       const estado = f['Estado'] || 'Disponible';
       const sc = estado === 'Disponible' ? 'disp' : estado === 'Rentado' ? 'rent' : 'rep';
-      const si = estado === 'Disponible' ? 'ti-circle-check' : estado === 'Rentado' ? 'ti-package' : 'ti-tool';
+      const si = estado === 'Disponible' ? SVG.circleCheck : estado === 'Rentado' ? SVG.package : SVG.tool;
       const sl = estado === 'Disponible' ? 'Disponible' : estado === 'Rentado' ? 'Rentado' : 'Reparación';
       return `<div class="dash-panel-row">
         <div>
@@ -1667,7 +1703,7 @@ async function cargarDashboard() {
           <div class="dash-row-sub">${f['Categoría'] || '—'}</div>
         </div>
         <div class="badge-k ${sc}" style="flex-shrink:0;">
-          <div class="bico"><i class="ti ${si}"></i></div>
+          <div class="bico">${si}</div>
           <div class="blbl">${sl}</div>
         </div>
       </div>`;
@@ -1694,6 +1730,17 @@ function backFromDetail() {
     goHome();
   }
 }
+
+// ── SVG ÍCONOS INLINE — sin dependencia de CDN ──────────
+const SVG = {
+  check:        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  clock:        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  alertCircle:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+  package:      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+  circleCheck:  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+  tool:         '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  alertTriangle:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+};
 
 // ══════════════════════════════════════════════════════
 // CAMPOS DE AIRTABLE — si cambias un nombre en Airtable,
