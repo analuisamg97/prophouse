@@ -1773,7 +1773,13 @@ async function cargarDashboard() {
 }
 
 function backToRentas() {
-  showView('renta-select-view');
+  // Si venimos desde rentas activas, regresar ahí; si no, al flujo salida/entrada
+  if (previousView === 'rentas-activas') {
+    previousView = '';
+    showRentasActivas();
+  } else {
+    showView('renta-select-view');
+  }
 }
 
 function backFromDetail() {
@@ -2578,6 +2584,7 @@ async function executeAction() {
 
 // ── VER DETALLE DE RENTA DESDE RENTAS ACTIVAS ──────────
 async function rentasVerDetalle(rentaRecordId) {
+  previousView = 'rentas-activas';
   showView('props-flow-view');
   document.getElementById('props-flow-content').innerHTML =
     '<div class="loading"><div class="spinner"></div>Cargando renta...</div>';
@@ -2629,7 +2636,7 @@ async function rentasVerDetalle(rentaRecordId) {
         <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value">${mkBadge(f['Estado del pago']==='Pagado'?'ok':f['Estado del pago']==='Adelanto depositado'?'adel':'pend', f['Estado del pago']==='Pagado'?SVG.check:f['Estado del pago']==='Adelanto depositado'?SVG.clock:SVG.alertCircle, f['Estado del pago']||'Pendiente')}</span></div>
       </div>
 
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
