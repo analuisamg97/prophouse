@@ -421,19 +421,19 @@
   .alta-success-sub { font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-top:8px; }
 
   /* ── BADGE K — sistema de badges con ícono + texto ── */
-  .badge-k { display:inline-flex; align-items:center; gap:6px; padding:5px 10px 5px 8px; border-radius:5px; border:1.5px solid; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace; white-space:nowrap; flex-shrink:0; font-weight:500; }
-  .badge-k .bico { display:flex; align-items:center; justify-content:center; flex-shrink:0; opacity:0.9; }
-  .badge-k .bico svg { display:block; }
-  .badge-k .blbl { line-height:1; }
+  .badge-k { display:inline-flex !important; align-items:center; gap:6px; padding:5px 10px 5px 8px; border-radius:5px; border:1.5px solid; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace; white-space:nowrap; flex-shrink:0; font-weight:500; line-height:1; box-sizing:border-box; }
+  .badge-k .bico, .badge-k span.bico { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; color:inherit; }
+  .badge-k .bico svg { display:block; stroke:currentColor !important; fill:none !important; color:inherit; }
+  .badge-k .blbl, .badge-k span.blbl { line-height:1; color:inherit; }
   /* Estados de pago */
-  .badge-k.ok    { background:var(--badge-ok-bg);   color:var(--badge-ok-fg);   border-color:var(--badge-ok-border); }
-  .badge-k.pend  { background:var(--badge-pend-bg); color:var(--badge-pend-fg); border-color:var(--badge-pend-border); }
-  .badge-k.adel  { background:var(--badge-adel-bg); color:var(--badge-adel-fg); border-color:var(--badge-adel-border); }
-  .badge-k.canc  { background:#2a2a2a; color:#888; border-color:#444; }
-  /* Estados de inventario (aliases) */
-  .badge-k.disp  { background:var(--badge-ok-bg);   color:var(--badge-ok-fg);   border-color:var(--badge-ok-border); }
-  .badge-k.rent  { background:var(--badge-pend-bg); color:var(--badge-pend-fg); border-color:var(--badge-pend-border); }
-  .badge-k.rep   { background:var(--badge-adel-bg); color:var(--badge-adel-fg); border-color:var(--badge-adel-border); }
+  .badge-k.ok    { background:var(--badge-ok-bg)   !important; color:var(--badge-ok-fg)   !important; border-color:var(--badge-ok-border)   !important; }
+  .badge-k.pend  { background:var(--badge-pend-bg) !important; color:var(--badge-pend-fg) !important; border-color:var(--badge-pend-border) !important; }
+  .badge-k.adel  { background:var(--badge-adel-bg) !important; color:var(--badge-adel-fg) !important; border-color:var(--badge-adel-border) !important; }
+  .badge-k.canc  { background:#2a2a2a !important; color:#888070 !important; border-color:#444 !important; }
+  /* Estados de inventario */
+  .badge-k.disp  { background:var(--badge-ok-bg)   !important; color:var(--badge-ok-fg)   !important; border-color:var(--badge-ok-border)   !important; }
+  .badge-k.rent  { background:var(--badge-pend-bg) !important; color:var(--badge-pend-fg) !important; border-color:var(--badge-pend-border) !important; }
+  .badge-k.rep   { background:var(--badge-adel-bg) !important; color:var(--badge-adel-fg) !important; border-color:var(--badge-adel-border) !important; }
 
   /* ── PIN OVERLAY ──────────────────────────────────── */
   .pin-overlay { position:fixed; inset:0; background:rgba(10,10,8,0.7); backdrop-filter:blur(4px); z-index:500; display:flex; align-items:center; justify-content:center; padding:24px; }
