@@ -1654,6 +1654,25 @@ function goHome() {
   if (isDesktop) cargarDashboard();
 }
 
+
+// ── BADGE INLINE HELPER ─────────────────────────────────
+function mkBadge(tipo, svgIcon, label) {
+  const paleta = {
+    ok:   { fg:'#51cf66', bd:'#4caf50' },
+    pend: { fg:'#ff6b6b', bd:'#e74c3c' },
+    adel: { fg:'#fcc419', bd:'#e6a817' },
+    disp: { fg:'#51cf66', bd:'#4caf50' },
+    rent: { fg:'#ff6b6b', bd:'#e74c3c' },
+    rep:  { fg:'#fcc419', bd:'#e6a817' },
+    canc: { fg:'#888070', bd:'#444444' },
+  };
+  const c = paleta[tipo] || paleta.pend;
+  return '<span style="display:inline-flex;align-items:center;gap:8px;flex-shrink:0;">'
+    + '<span style="display:inline-flex;align-items:center;color:' + c.fg + ';">' + svgIcon + '</span>'
+    + '<span style="display:inline-block;padding:5px 10px;border-radius:5px;border:1.5px solid ' + c.bd + ';color:' + c.fg + ';font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-family:DM Mono,monospace;white-space:nowrap;font-weight:600;line-height:1;">' + label + '</span>'
+    + '</span>';
+}
+
 let _dashboardLoading = false;
 async function cargarDashboard() {
   if (_dashboardLoading) return;
@@ -1699,10 +1718,7 @@ async function cargarDashboard() {
           <div class="dash-row-name">${nombre}</div>
           <div class="dash-row-sub">${f['Fecha de salida'] || '—'} · $${(f['Monto total'] || 0).toLocaleString()}</div>
         </div>
-        <div class="badge-k ${badgeClass}">
-          <div class="bico">${badgeIconSVG}</div>
-          <div class="blbl">${badgeLabel}</div>
-        </div>
+        ${mkBadge(badgeClass, badgeIconSVG, badgeLabel)}
       </div>`;
     }).join('') || '<div class="empty-state">Sin rentas activas</div>';
 
@@ -1719,10 +1735,7 @@ async function cargarDashboard() {
           <div class="dash-row-name">${f['Nombre del prop'] || '—'}</div>
           <div class="dash-row-sub">${f['Categoría'] || '—'}</div>
         </div>
-        <div class="badge-k ${sc}" style="flex-shrink:0;">
-          <div class="bico">${si}</div>
-          <div class="blbl">${sl}</div>
-        </div>
+        ${mkBadge(sc, si, sl)}
       </div>`;
     }).join('') || '<div class="empty-state">Sin props</div>';
 
