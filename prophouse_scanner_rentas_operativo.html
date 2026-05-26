@@ -41,6 +41,10 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:#22201e !important; color:#f0ece4 !important; font-family:'Inter',-apple-system,'Helvetica Neue',sans-serif; min-height:100vh; color-scheme:dark; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: SETUP — Pantalla de login inicial
+     ════════════════════════════════════════════════════ */
   /* SETUP */
   #setup-screen { min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:32px 24px; max-width:400px; margin:0 auto; }
   .logo { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold); margin-bottom:8px; letter-spacing:2px; }
@@ -60,6 +64,10 @@
   .btn-primary { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; }
   .setup-note { font-size:10px; color:var(--text-muted); text-align:center; margin-top:16px; line-height:1.6; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: LAYOUT — App layout, responsive desktop/móvil
+     ════════════════════════════════════════════════════ */
   /* APP — LAYOUT RESPONSIVO */
   #app-screen { display:none; }
   body { overflow-x:hidden; }
@@ -96,6 +104,10 @@
     .view-header { padding:16px 0 !important; background:transparent !important; position:relative !important; }
   }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: SIDEBAR — Navegación lateral desktop
+     ════════════════════════════════════════════════════ */
   /* SIDEBAR */
   .sidebar-logo { padding:18px 14px 14px; border-bottom:1px solid var(--border); }
   .sidebar-logo-text { font-family:'Playfair Display',serif; font-size:15px; color:var(--gold); letter-spacing:0.5px; }
@@ -162,6 +174,10 @@
   .section-title:first-of-type { margin-top:0; }
 
   /* DASHBOARD STATS (desktop) */
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: ACTION BAR — Barra de acciones rápidas (dashboard, rentas, galería)
+     ════════════════════════════════════════════════════ */
   /* ── ACTION BAR CENTRALIZADA — aplica en dashboard, rentas, inventario, galería ── */
   .action-bar-universal { display:inline-flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; }
   .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; min-width:100px; position:relative; transition:background 0.15s; color:var(--white-dim); }
@@ -178,6 +194,10 @@
   .abu-btn:hover span { color:var(--white-dim); }
   .abu-btn:hover.gold span { color:var(--gold); }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: DASHBOARD — Estilos del home/dashboard principal
+     ════════════════════════════════════════════════════ */
   /* ── DASHBOARD REDISEÑADO ── */
   .dash-welcome { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
   .dash-greet { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); }
@@ -464,6 +484,10 @@
 
   .empty-state { text-align:center; padding:32px; color:var(--text-muted); font-size:12px; line-height:1.8; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: ORDEN DE RENTA — Formulario y documento PDF
+     ════════════════════════════════════════════════════ */
   /* ── ORDEN DE RENTA ─────────────────────────────────── */
   .orden-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px; }
   .orden-form-group { display:flex; flex-direction:column; gap:5px; }
@@ -541,6 +565,10 @@
   .airtable-ok { font-size:9px; letter-spacing:1px; color:#27ae60; margin-top:4px; }
   .airtable-err { font-size:9px; letter-spacing:1px; color:#e74c3c; margin-top:4px; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: ALTA DE PROP — Formulario para dar de alta props
+     ════════════════════════════════════════════════════ */
   /* ── ALTA DE PROP ───────────────────────────────────── */
   .alta-section-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin:20px 0 10px 0; padding-bottom:6px; border-bottom:1px solid var(--border); }
   .alta-section-title:first-child { margin-top:0; }
@@ -575,6 +603,10 @@
   .alta-success-name { font-size:12px; color:var(--white); }
   .alta-success-sub { font-size:9px; color:var(--text-muted); letter-spacing:1px; margin-top:8px; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: BADGES — Sistema de badges de estado (pago, inventario)
+     ════════════════════════════════════════════════════ */
   /* ── BADGE K — sistema de badges con ícono + texto ── */
   .badge-k { display:inline-flex !important; align-items:center; gap:6px; padding:5px 10px 5px 8px; border-radius:5px; border:1.5px solid; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-family:'DM Mono',monospace; white-space:nowrap; flex-shrink:0; font-weight:500; line-height:1; box-sizing:border-box; }
   .badge-k .bico, .badge-k span.bico { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; color:inherit; }
@@ -590,6 +622,10 @@
   .badge-k.rent  { background:var(--badge-pend-bg) !important; color:var(--badge-pend-fg) !important; border-color:var(--badge-pend-border) !important; }
   .badge-k.rep   { background:var(--badge-adel-bg) !important; color:var(--badge-adel-fg) !important; border-color:var(--badge-adel-border) !important; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: PIN — Overlay de PIN para Finanzas
+     ════════════════════════════════════════════════════ */
   /* ── PIN OVERLAY ──────────────────────────────────── */
   .pin-overlay { position:fixed; inset:0; background:rgba(10,10,8,0.7); backdrop-filter:blur(4px); z-index:500; display:flex; align-items:center; justify-content:center; padding:24px; }
   .pin-modal { background:var(--bg-deep); border:1px solid var(--border); border-radius:16px; padding:32px 28px; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:320px; width:100%; box-shadow:0 24px 60px rgba(0,0,0,0.5); }
@@ -611,6 +647,10 @@
   .fin-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
   .fin-card-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: GALERÍA — Grid de cards de inventario
+     ════════════════════════════════════════════════════ */
   /* ── GALERÍA DE PROPS ───────────────────────────────── */
   .galeria-toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
   .galeria-search { flex:1; min-width:120px; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:9px 14px; outline:none; }
@@ -638,6 +678,10 @@
   .prop-foto { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; margin-bottom:16px; display:block; background:var(--bg-deep); }
   .prop-foto-placeholder { width:100%; aspect-ratio:4/3; border-radius:8px; margin-bottom:16px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:36px; }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: SELECTOR DE PROPS — Overlay para seleccionar props en rentas/órdenes
+     ════════════════════════════════════════════════════ */
   /* ── SELECTOR DE PROPS (overlay) ───────────────────── */
   #prop-selector-overlay {
     display:none; position:fixed; inset:0; z-index:200;
@@ -739,6 +783,10 @@
   .galeria-btn.white svg { stroke:var(--white); }
   .galeria-btn.white span { color:var(--white-dim); }
 
+
+  /* ═══════════════════════════════════════════════════
+     SECCIÓN: CENTRO DE RENTAS — Vista principal de rentas (tabla, filtros, alertas)
+     ════════════════════════════════════════════════════ */
   /* ── CENTRO OPERATIVO DE RENTAS ─────────────────────── */
   .rentas-centro { display:flex; flex-direction:column; gap:18px; }
   .rentas-acciones { display:flex; gap:0; margin-bottom:0; }
@@ -944,6 +992,10 @@
 </head>
 <body>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: SETUP — Pantalla de login/credenciales
+     ════════════════════════════════════════════════════ -->
 <!-- SETUP -->
 <div id="setup-screen">
   <div class="logo">Hora Dorada</div>
@@ -956,8 +1008,14 @@
   <div class="setup-note">Tu token nunca sale de este dispositivo.<br>Se guarda solo en tu navegador.</div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: APP — Contenedor principal de la aplicación
+     ════════════════════════════════════════════════════ -->
 <!-- APP -->
 <div id="app-screen">
+
+  <!-- ═══════ HTML: SIDEBAR DESKTOP ═══════ -->
   <!-- SIDEBAR DESKTOP -->
   <div class="app-sidebar" id="app-sidebar">
     <div class="sidebar-logo">
@@ -994,6 +1052,10 @@
       </div>
     </div>
 
+
+  <!-- ═══════════════════════════════════════════════════
+       HTML: HOME — Dashboard desktop + home móvil
+       ════════════════════════════════════════════════════ -->
   <!-- HOME -->
   <div id="home-view">
     <!-- DASHBOARD DESKTOP -->
@@ -1103,6 +1165,11 @@
     </div><!-- fin mob-home -->
   </div>
 
+
+  <!-- ═══════════════════════════════════════════════════
+       HTML: GALERÍA DE INVENTARIO
+       Editar: grid de cards, buscador, filtros de estado
+       ════════════════════════════════════════════════════ -->
   <!-- GALERÍA DE INVENTARIO (reemplaza el menú) -->
   <div id="inventario-menu-view" class="view">
     <div class="main-view-header">
@@ -1141,6 +1208,11 @@
     </div>
   </div>
 
+
+  <!-- ═══════════════════════════════════════════════════
+       HTML: CENTRO DE RENTAS
+       Editar: tabla de rentas, filtros, alertas, KPIs
+       ════════════════════════════════════════════════════ -->
   <!-- SUBMENU RENTAS -->
   <div id="rentas-menu-view" class="view">
     <div class="main-view-header">
@@ -1251,6 +1323,11 @@
     </div>
   </div>
 
+
+  <!-- ═══════════════════════════════════════════════════
+       HTML: FINANZAS — Ingresos, gastos, ganancia por mes
+       Editar: selector de mes, flashcards, lista de gastos
+       ════════════════════════════════════════════════════ -->
   <!-- FINANZAS VIEW -->
   <div id="finanzas-menu-view" class="view">
     <div class="view-header">
@@ -1296,6 +1373,10 @@
     </div>
   </div>
 
+
+  <!-- ═══════════════════════════════════════════════════
+       HTML: AGREGAR GASTO — Formulario de registro de gasto
+       ════════════════════════════════════════════════════ -->
   <!-- AGREGAR GASTO VIEW -->
   <div id="agregar-gasto-view" class="view">
     <div class="view-header">
@@ -1413,6 +1494,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: NUEVA RENTA — Formulario para crear una renta
+     Editar: campos de cliente, fechas, props, monto, notas
+     ════════════════════════════════════════════════════ -->
 <!-- NUEVA RENTA VIEW -->
 <div id="nueva-renta-view" class="view">
   <div class="view-header">
@@ -1541,6 +1627,10 @@
   </div><!-- fin nr-form -->
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: CLIENTES — Lista y búsqueda de clientes
+     ════════════════════════════════════════════════════ -->
 <!-- CLIENTES VIEW -->
 <div id="clientes-view" class="view">
   <div class="main-view-header">
@@ -1590,6 +1680,10 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: DETALLE DE CLIENTE — Info y rentas de un cliente
+     ════════════════════════════════════════════════════ -->
 <!-- DETALLE DE CLIENTE -->
 <div id="cliente-detail-view" class="view">
   <div class="view-header">
@@ -1601,6 +1695,10 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: INVENTARIO RÁPIDO — Conteo físico de props
+     ════════════════════════════════════════════════════ -->
 <!-- INVENTARIO RÁPIDO VIEW -->
 <div id="inventario-view" class="view">
   <div class="view-header">
@@ -1628,6 +1726,10 @@
   </button>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: DAÑOS — Registro de daños en props
+     ════════════════════════════════════════════════════ -->
 <!-- DAÑOS VIEW -->
 <div id="danos-view" class="view">
   <div class="main-view-header">
@@ -1683,6 +1785,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: PAGOS — Registrar cobros a rentas
+     Editar: monto, tipo de pago, método, resumen de estado
+     ════════════════════════════════════════════════════ -->
 <!-- PAGOS VIEW -->
 <div id="pagos-view" class="view">
   <div class="view-header">
@@ -1762,6 +1869,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: ALTA DE PROP — Formulario para registrar prop nuevo
+     Editar: nombre, categoría, precios, nivel, foto
+     ════════════════════════════════════════════════════ -->
 <!-- ALTA DE PROP VIEW -->
 <div id="alta-prop-view" class="view">
   <div class="view-header">
@@ -1887,6 +1999,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: ORDEN DE RENTA — Generador de contrato/PDF
+     Editar: datos cliente, props, totales, cláusulas
+     ════════════════════════════════════════════════════ -->
 <!-- ORDEN DE RENTA VIEW -->
 <div id="orden-view" class="view">
   <div class="view-header">
@@ -2013,6 +2130,10 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: COTIZACIÓN — Generador de cotizaciones
+     ════════════════════════════════════════════════════ -->
 <!-- COTIZACIÓN VIEW -->
 <div id="cotizacion-view" class="view">
   <div class="view-header">
@@ -2105,6 +2226,10 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: EDITAR PROPS DE RENTA — Modificar props en una renta existente
+     ════════════════════════════════════════════════════ -->
 <!-- EDITAR PROPS DE RENTA VIEW -->
 <div id="editar-props-view" class="view">
   <div class="view-header">
@@ -2128,6 +2253,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: SELECTOR DE PROPS (overlay reutilizable)
+     Usado en: Nueva Renta, Orden, Cotización, Editar Props
+     ════════════════════════════════════════════════════ -->
 <!-- SELECTOR DE PROPS — overlay reutilizable -->
 <div id="prop-selector-overlay" onclick="propSelCerrarSiFondo(event)">
   <div class="prop-selector-sheet">
@@ -2153,6 +2283,10 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: PIN OVERLAY — Protección por PIN para Finanzas
+     ════════════════════════════════════════════════════ -->
 <!-- PIN OVERLAY FINANZAS -->
 <div id="pin-overlay" class="pin-overlay" style="display:none;">
   <div class="pin-modal" style="position:relative;">
@@ -2184,6 +2318,11 @@
   </div>
 </div>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: BOTTOM NAV — Navegación inferior (solo móvil)
+     Editar: tabs, íconos, labels
+     ════════════════════════════════════════════════════ -->
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="nav-item active" id="nav-inicio" onclick="navGo('inicio')">
@@ -2208,6 +2347,10 @@
   </button>
 </nav>
 
+
+<!-- ═══════════════════════════════════════════════════
+     HTML: CONFIRM MODAL — Modal de confirmación reutilizable
+     ════════════════════════════════════════════════════ -->
 <!-- CONFIRM MODAL -->
 <div id="confirm-modal">
   <div class="modal-card">
@@ -2224,6 +2367,9 @@
 <div id="toast"></div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+// JS: ESTADO GLOBAL — Variables y estado de la app
+// ═══════════════════════════════════════════════════════
 let TOKEN = '', BASE_ID = '';
 let currentMode = '';
 let currentRenta = null;
@@ -2324,6 +2470,11 @@ function showSetup() {
   document.getElementById('setup-screen').style.display = 'flex';
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: NAVEGACIÓN + PIN FINANZAS
+// Editar: tabs, active states, flujo de PIN
+// ═══════════════════════════════════════════════════════
 // ── NAVEGACIÓN POR TABS ─────────────────────────────────
 // ── PIN FINANZAS ─────────────────────────────────────────
 const PIN_MAESTRO = '2404';
@@ -2507,6 +2658,10 @@ async function probarConexion() {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: NAVIGATION — navGo(), navBack(), showView(), goHome()
+// ═══════════════════════════════════════════════════════
 // ── NAVIGATION ──────────────────────────────────────────
 function hideAllViews() {
   document.getElementById('home-view').style.display = 'none';
@@ -2591,6 +2746,10 @@ function actualizarSaludoDashboard() {
 }
 
 
+
+// ═══════════════════════════════════════════════════════
+// JS: BADGE HELPERS — makeBadge(), estados de pago/inventario
+// ═══════════════════════════════════════════════════════
 // ── BADGE INLINE HELPER ─────────────────────────────────────────
 function mkBadge(tipo, svgIcon, label) {
   var pal = {
@@ -2869,6 +3028,10 @@ function backFromPagosView() {
   navBack(() => showView('rentas-menu-view'));
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: SVG ÍCONOS INLINE — íconos sin CDN
+// ═══════════════════════════════════════════════════════
 // ── SVG ÍCONOS INLINE — sin dependencia de CDN ──────────
 const SVG = {
   check:        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
@@ -2880,6 +3043,11 @@ const SVG = {
   alertTriangle:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
 };
 
+
+// ═══════════════════════════════════════════════════════
+// JS: CAMPOS DE AIRTABLE — mapa de nombres de columnas
+// ⚠️  Si renombras una columna en Airtable, cámbiala AQUÍ
+// ═══════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════
 // CAMPOS DE AIRTABLE — si cambias un nombre en Airtable,
 // solo lo cambias aquí y toda la app se actualiza
@@ -2944,6 +3112,11 @@ const F = {
   RECURRENTE:      'Recurrente',
 };
 
+
+// ═══════════════════════════════════════════════════════
+// JS: AIRTABLE API — fetch(), patch(), post(), delete()
+// Editar: lógica de conexión a Airtable
+// ═══════════════════════════════════════════════════════
 // ── AIRTABLE API ────────────────────────────────────────
 async function airtableGet(table, params = '') {
   if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales — configura el token');
@@ -3081,6 +3254,10 @@ async function airtablePatchConCamposOpcionales(table, recordId, fields, optiona
   return airtablePatch(table, recordId, cleanFields);
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: CLIENTES — showClientesView(), renderClientes(), detalle
+// ═══════════════════════════════════════════════════════
 // ── CLIENTES ─────────────────────────────────────────
 async function db_getClientes() {
   return airtableGetAll('CLIENTES');
@@ -3112,6 +3289,10 @@ async function db_buscarOCrearCliente({ nombre, tel = '', email = '' }) {
   return db_crearCliente({ nombre, tel, email });
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: RENTAS — loadRentas(), renderRenta()
+// ═══════════════════════════════════════════════════════
 // ── RENTAS ───────────────────────────────────────────
 async function db_getRentas({ soloActivas = false, maxRecords = 0 } = {}) {
   const params = soloActivas
@@ -3124,6 +3305,11 @@ async function db_getRenta(recordId) {
   return airtableGet('RENTAS', '/' + recordId);
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: CENTRO DE RENTAS — tabla, filtros, alertas, KPIs
+// Editar: rentasCentroCargar(), rentasCentroRender(), filtros
+// ═══════════════════════════════════════════════════════
 // ── CENTRO OPERATIVO DE RENTAS ────────────────────────
 let rentasCentroRegistros = [];
 let rentasCentroFiltro = 'todas';
@@ -3606,6 +3792,10 @@ function db_calcEstadoPago(montoTotal, pagado) {
   return 'Pendiente';
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: INVENTARIO — showInventarioView(), cargar props
+// ═══════════════════════════════════════════════════════
 // ── INVENTARIO ───────────────────────────────────────
 let _propsCache = null;
 let _propsCacheTime = 0;
@@ -3657,6 +3847,11 @@ async function findPropByCode(code) {
   return all.find(r => String(r.fields['Código único'] || '').toUpperCase().trim() === target) || null;
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: FLUJO SALIDA / ENTRADA — startFlow(), confirmar salida/entrada
+// Editar: lógica de cambio de estado al sacar/regresar prop
+// ═══════════════════════════════════════════════════════
 // ── FLOW: SALIDA / ENTRADA ──────────────────────────────
 async function startFlow(mode, { fromSidebar = false } = {}) {
   currentMode = mode;
@@ -3973,6 +4168,10 @@ async function handleFlowScan(code) {
 }
 
 // ── CONSULTAR PROP ──────────────────────────────────────
+
+// ═══════════════════════════════════════════════════════
+// JS: SCANNER QR — abrirScannerUniversal(), html5QrCode
+// ═══════════════════════════════════════════════════════
 // ── SCANNER UNIVERSAL ────────────────────────────────────
 // Abre la cámara y al detectar QR llama el callback con el código
 function abrirScannerUniversal(inputId, onScan) {
@@ -4152,6 +4351,10 @@ async function propCambiarEstado(recordId, nuevoEstado, btn) {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: FINALIZAR RENTA — cerrar renta, devolver props
+// ═══════════════════════════════════════════════════════
 // ── FINALIZAR RENTA ─────────────────────────────────────
 function confirmFinalizarRenta() {
   const f = currentRenta.fields;
@@ -4230,6 +4433,10 @@ async function finalizarFlujoRenta() {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: DETALLE DE RENTA — ver, editar, pagar desde lista
+// ═══════════════════════════════════════════════════════
 // ── VER DETALLE DE RENTA DESDE RENTAS ACTIVAS ──────────
 async function rentasVerDetalle(rentaRecordId) {
   _navHistory.push(_getCurrentViewId());
@@ -4492,6 +4699,10 @@ async function rentasCancelarFlow(rentaRecordId, fechaSalida) {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: RENTAS ACTIVAS — showRentasActivas(), lista filtrada
+// ═══════════════════════════════════════════════════════
 // ── RENTAS ACTIVAS ──────────────────────────────────────
 async function showRentasActivas() {
   _navHistory.push(_getCurrentViewId());
@@ -4540,6 +4751,10 @@ async function showRentasActivas() {
   } catch(e) { showToast('Error de conexión', true); }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: TOAST — showToast(), notificaciones flotantes
+// ═══════════════════════════════════════════════════════
 // ── TOAST ───────────────────────────────────────────────
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
@@ -4548,6 +4763,10 @@ function showToast(msg, isError = false) {
   setTimeout(() => { t.className = isError ? 'error' : ''; }, 2500);
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: QUICK NUEVA RENTA — acceso rápido desde dashboard
+// ═══════════════════════════════════════════════════════
 // ── QUICK NUEVA RENTA DESDE HOME ───────────────────────
 function quickNuevaRenta() {
   currentMode = 'salida';
@@ -4559,6 +4778,11 @@ function quickNuevaRenta() {
   showNuevaRenta();
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: NUEVA RENTA — showNuevaRenta(), nrGuardar(), nrProps
+// Editar: validación, guardar en Airtable, cálculo de monto
+// ═══════════════════════════════════════════════════════
 // ── NUEVA RENTA ─────────────────────────────────────────
 let clientesCache = [];
 let nrProps = []; // { nombre, codigo, rentaDia, airtableId }
@@ -4790,6 +5014,11 @@ async function crearNuevaRenta() {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: ORDEN DE RENTA — generarOrden(), PDF, WhatsApp
+// Editar: cláusulas, diseño del contrato, datos de empresa
+// ═══════════════════════════════════════════════════════
 // ── ORDEN DE RENTA ──────────────────────────────────────
 let orPropRows = [];
 let orPropCounter = 0;
@@ -5499,6 +5728,10 @@ function crmNuevaRenta(clienteId, clienteNombre) {
 
 
 
+
+// ═══════════════════════════════════════════════════════
+// JS: INVENTARIO RÁPIDO — conteo físico, showInventarioView()
+// ═══════════════════════════════════════════════════════
 // ── INVENTARIO RÁPIDO ───────────────────────────────────
 let invVerificados = [];
 let invTotal = 0;
@@ -5599,6 +5832,10 @@ function invFinalizar() {
   showToast(`✓ ${invVerificados.length} props verificados`);
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: DAÑOS — showDanosView(), danosGuardar()
+// ═══════════════════════════════════════════════════════
 // ── DAÑOS ─────────────────────────────────────────────
 let danosPropActual = null;
 
@@ -5823,6 +6060,11 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
 // ── ORIGEN en db_crearCliente ─────────────────────────
 // Ya soporta el campo — solo hay que pasarlo desde los forms
 
+
+// ═══════════════════════════════════════════════════════
+// JS: PAGOS — showPagosView(), pagosGuardar(), pagosCalcEstado()
+// Editar: lógica de cobro, actualizar saldo en Airtable
+// ═══════════════════════════════════════════════════════
 // ── PAGOS ────────────────────────────────────────────────
 let pagosRentaActual = null;
 
@@ -5977,6 +6219,10 @@ function pagosCancelar() {
   pagosRentaActual = null;
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: ALTA DE PROP — showAltaProp(), altaGuardar(), altaGenerarCodigo()
+// ═══════════════════════════════════════════════════════
 // ── ALTA DE PROP ────────────────────────────────────────
 const PREFIJOS_CATEGORIA = {
   'Mueble': 'MU',
@@ -6132,6 +6378,11 @@ async function orAbrirDesdeRentaId(rentaRecordId) {
   }
 }
 
+
+// ═══════════════════════════════════════════════════════
+// JS: FINANZAS — showFinanzasView(), finCargar(), showAgregarGasto()
+// Editar: cálculos de ingresos/gastos/ganancia
+// ═══════════════════════════════════════════════════════
 // ── FINANZAS ─────────────────────────────────────────────
 let finMesActual = new Date().toISOString().slice(0, 7); // YYYY-MM
 
@@ -6365,6 +6616,10 @@ async function orAbrirDesdeRenta() {
 
 // orGenerarId eliminado — usar db_generarRentaId() directamente
 
+
+// ═══════════════════════════════════════════════════════
+// JS: GALERÍA — galeríaCargar(), galeríaFiltrar(), cards de props
+// ═══════════════════════════════════════════════════════
 // ── GALERÍA DE INVENTARIO ────────────────────────────────
 let _galeriaProps = [];       // todos los props cargados
 let _galeriaFiltroEstado = ''; // '' = todos
