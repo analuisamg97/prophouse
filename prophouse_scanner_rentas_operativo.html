@@ -72,10 +72,10 @@
     .app-main { margin-left:160px; flex:1; min-height:100vh; background:#22201e; display:flex; flex-direction:column; overflow-y:auto; width:calc(100% - 160px); box-sizing:border-box; }
     .header { display:none !important; }
     .bottom-nav { display:none !important; }
-    .view-content { padding:0 28px 28px; }
+    .view-content { padding:0 0 28px; }
     .view { padding:0; width:100%; min-width:0; min-height:100vh; box-sizing:border-box; }
-    .view > *:not(.view-header) { padding-left:28px; padding-right:28px; }
-    .view-header { padding:16px 28px !important; }
+    .view > *:not(.view-header):not(.main-view-header) { padding-left:0; padding-right:0; }
+    .view-header { padding:16px 0 !important; }
     #home-view { padding:0; width:100%; }
     .section-title { padding:0; }
     .alta-field, .alta-section-title, .alta-nivel-grid, .btn-alta-guardar,
@@ -348,7 +348,7 @@
   /* VIEWS */
   .view { display:none; padding:0 24px 24px; }
   .view-header { display:flex; align-items:center; gap:12px; padding:16px 28px 16px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; }
-  .main-view-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 28px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; box-sizing:border-box; width:100%; }
+  .main-view-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 0; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; box-sizing:border-box; width:100%; }
   .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; } .btn-back:hover { border-color:var(--gold); } .btn-back:active { background:var(--bg-card); }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .view-title { font-size:22px; letter-spacing:0.3px; color:var(--white); font-family:'Playfair Display',serif; }
@@ -960,7 +960,7 @@
         <div class="dash-date" id="dash-fecha-hoy" style="font-size:11px;color:var(--text-muted);letter-spacing:1px;">—</div>
       </div>
 
-      <div style="padding:0 28px 28px;">
+      <div style="padding:0 0 28px;">
         <!-- Acciones rápidas — misma clase que Rentas, ancho completo -->
         <div class="rentas-acciones" style="margin-bottom:16px;">
           <div class="rentas-action-bar" style="width:min(100%, 690px);">
@@ -1503,7 +1503,7 @@
   <div class="main-view-header">
     <div class="view-title">Clientes</div>
   </div>
-  <div style="padding:0 28px 28px;">
+  <div style="padding:0 0 28px;">
     <!-- Toolbar -->
     <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
       <input class="rentas-search" id="crm-search" placeholder="Buscar por nombre, email o teléfono…" oninput="crmFiltrar()" style="flex:1;min-width:200px;">
@@ -1531,7 +1531,7 @@
     <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title" id="cd-titulo">Cliente</div>
   </div>
-  <div id="cd-content" style="padding:0 28px 28px;">
+  <div id="cd-content" style="padding:0 0 28px;">
     <div class="loading"><div class="spinner"></div>Cargando...</div>
   </div>
 </div>
