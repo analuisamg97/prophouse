@@ -960,14 +960,16 @@
       </div>
 
       <div style="padding:0 28px 28px;">
-        <!-- Acciones rápidas — misma clase que Rentas -->
-        <div class="rentas-acciones"><div class="rentas-action-bar">
-          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
-          <button class="rentas-action-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
-          <button class="rentas-action-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
-          <button class="rentas-action-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
-          <button class="rentas-action-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
-        </div></div>
+        <!-- Acciones rápidas — misma clase que Rentas, ancho completo -->
+        <div class="rentas-acciones" style="margin-bottom:16px;">
+          <div class="rentas-action-bar" style="width:100%;">
+            <button class="rentas-action-btn gold" style="flex:1;" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
+          </div>
+        </div>
 
         <!-- KPIs — sin hover, solo info -->
         <div class="dash-kpis-bar">
@@ -1064,16 +1066,16 @@
     </div>
     <!-- Acciones rápidas -->
     <div class="galeria-acciones">
-      <div class="galeria-action-bar">
-        <button class="galeria-btn gold" onclick="showAltaProp()">
+      <div class="galeria-action-bar" style="width:100%;">
+        <button class="galeria-btn gold" style="flex:1;" onclick="showAltaProp()">
           <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Alta de prop</span>
         </button>
-        <button class="galeria-btn white" onclick="showInventarioView()">
+        <button class="galeria-btn white" style="flex:1;" onclick="showInventarioView()">
           <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           <span>Inventario físico</span>
         </button>
-        <button class="galeria-btn white" onclick="startFlow('buscar')">
+        <button class="galeria-btn white" style="flex:1;" onclick="startFlow('buscar')">
           <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Buscar código</span>
         </button>
@@ -1104,24 +1106,24 @@
     </div>
     <div class="rentas-centro">
       <div class="rentas-acciones">
-        <div class="rentas-action-bar">
-          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()">
+        <div class="rentas-action-bar" style="width:100%;">
+          <button class="rentas-action-btn gold" style="flex:1;" onclick="quickNuevaRenta()">
             <i class="ti ti-plus" aria-hidden="true"></i>
             <span>Nueva renta</span>
           </button>
-          <button class="rentas-action-btn" onclick="showCotizacionView()">
+          <button class="rentas-action-btn" style="flex:1;" onclick="showCotizacionView()">
             <i class="ti ti-file-dollar" aria-hidden="true"></i>
             <span>Nueva cotización</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('salida')">
+          <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('salida')">
             <i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
             <span>Registrar salida</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('entrada')">
+          <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('entrada')">
             <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
             <span>Registrar regreso</span>
           </button>
-          <button class="rentas-action-btn" onclick="showPagosView()">
+          <button class="rentas-action-btn" style="flex:1;" onclick="showPagosView()">
             <i class="ti ti-credit-card" aria-hidden="true"></i>
             <span>Registrar pago</span>
           </button>
