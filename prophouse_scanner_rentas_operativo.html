@@ -835,7 +835,13 @@
     .rentas-search { min-width:100%; }
     .rentas-table-card, .rentas-side-card { border-radius:8px; }
   }
-  /* ── CRM CLIENTES ───────────────────────────────────── */
+  /* ── ESTADOS DE PAGO — centralizados ───────────────── */
+  .pago-estado-pagado    { color:#2ecc71 !important; }
+  .pago-estado-parcial   { color:#f1c40f !important; }
+  .pago-estado-pendiente { color:#e74c3c !important; }
+  .pago-badge-pagado    { background:rgba(46,204,113,0.12); color:#2ecc71; border:1px solid rgba(46,204,113,0.35); }
+  .pago-badge-parcial   { background:rgba(241,196,15,0.12);  color:#f1c40f; border:1px solid rgba(241,196,15,0.35);  }
+  .pago-badge-pendiente { background:rgba(231,76,60,0.12);   color:#e74c3c; border:1px solid rgba(231,76,60,0.35);   }
   .crm-table { width:100%; border-collapse:collapse; }
   .crm-table thead tr { border-bottom:1px solid var(--border); }
   .crm-table th { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); padding:8px 12px; text-align:left; font-weight:500; white-space:nowrap; }
@@ -2631,11 +2637,10 @@ async function cargarDashboard() {
 
       const saldo = Number(f['Monto a liquidar'] || 0);
       const estadoPago = f['Estado del pago'] || 'Pendiente';
-      const badgeHtml = saldo > 0
-        ? `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid #e74c3c44;">Saldo</span>`
-        : estadoPago === 'Pagado'
-          ? `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(76,175,80,0.15);color:#4caf50;border:1px solid #4caf5044;">Pagado</span>`
-          : `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(230,168,23,0.15);color:#e6a817;border:1px solid #e6a81744;">Parcial</span>`;
+      // Badge de pago usando clases centralizadas
+      const _badgeCls = saldo > 0 ? 'pago-badge-pendiente' : estadoPago === 'Pagado' ? 'pago-badge-pagado' : 'pago-badge-parcial';
+      const _badgeTxt = saldo > 0 ? 'Saldo' : estadoPago === 'Pagado' ? 'Pagado' : 'Parcial';
+      const badgeHtml = `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;" class="${_badgeCls}">${_badgeTxt}</span>`;
 
       if (f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']))) {
         const fechaD = parseDate(f['Fecha de salida']);
@@ -3463,7 +3468,23 @@ async function db_actualizarRenta(rentaRecordId, { salida, regreso, horaSalida =
   ]);
 }
 
-// Lógica central de estado del pago
+// ── HELPER CENTRALIZADO — color/clase de estado de pago ──
+function pagoEstadoClass(estado) {
+  if (!estado || estado === 'Pendiente') return 'pago-estado-pendiente';
+  if (estado === 'Pagado')              return 'pago-estado-pagado';
+  // Pago parcial, Adelanto depositado → amarillo
+  return 'pago-estado-parcial';
+}
+function pagoEstadoColor(estado) {
+  if (!estado || estado === 'Pendiente') return '#e74c3c';
+  if (estado === 'Pagado')              return '#2ecc71';
+  return '#f1c40f';
+}
+function pagoBadgeClass(estado) {
+  if (!estado || estado === 'Pendiente') return 'pago-badge-pendiente';
+  if (estado === 'Pagado')              return 'pago-badge-pagado';
+  return 'pago-badge-parcial';
+}
 function db_calcEstadoPago(montoTotal, pagado) {
   const total = parseFloat(montoTotal) || 0;
   const pagadoNum = parseFloat(pagado) || 0;
@@ -3636,7 +3657,7 @@ async function renderRentaList(rentas) {
             Salida: <span>${f['Fecha de salida'] || '—'}</span> &nbsp;·&nbsp;
             Regreso: <span>${f['Fecha de regreso'] || '—'}</span><br>
             Props: <span>${propsCount} vinculados</span> &nbsp;·&nbsp;
-            Saldo: <span style="color:${deuda > 0 ? '#e74c3c' : '#2ecc71'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'Saldado ✓'}</span>
+            Saldo: <span class="${deuda > 0 ? 'pago-estado-pendiente' : 'pago-estado-pagado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'Saldado ✓'}</span>
           </div>
         </div>
       </div>
@@ -4097,7 +4118,7 @@ async function rentasVerDetalle(rentaRecordId) {
         <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${estadoPago==='Pagado'?'#2ecc71':estadoPago==='Pago parcial'?'#f1c40f':'#e74c3c'}">${estadoPago}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(estadoPago)};font-weight:500;">${estadoPago}</span></div>
       </div>
 
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
@@ -4340,7 +4361,7 @@ async function showRentasActivas() {
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f[F.ESTADO_PAGO]==='Pagado'?'#2ecc71':f[F.ESTADO_PAGO]==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f[F.ESTADO_PAGO] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(f[F.ESTADO_PAGO])};font-weight:500;">${f[F.ESTADO_PAGO] || '—'}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + saldo.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
       ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
@@ -5588,7 +5609,7 @@ async function showPagosView() {
       const total = f['Monto total'] || 0;
       const saldo = f['Monto a liquidar'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
-      const estadoColor = estado === 'Pagado' ? '#2ecc71' : estado === 'Pago parcial' ? '#f1c40f' : '#e74c3c';
+      const estadoColor = pagoEstadoColor(estado);
       const thumb = await rentaFirstPropThumbHtml(f);
       return `<div class="renta-card" onclick="pagosSeleccionarRenta('${r.id}')">
         <div class="renta-card-with-thumb">
@@ -5627,7 +5648,7 @@ async function pagosSeleccionarRenta(recordId) {
       <div class="pago-row"><span class="label">Monto total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${pagado.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${saldo.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
+      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${pagoEstadoColor(f['Estado del pago'] || 'Pendiente')};font-weight:500;">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
 
     document.getElementById('pago-monto').value = '';
     document.getElementById('pago-tipo').value = saldo > 0 && pagado > 0 ? 'Liquidación' : 'Adelanto';
@@ -5660,7 +5681,9 @@ function pagosCalcEstado() {
 
   const estadoEl = document.getElementById('pagos-estado-preview');
   estadoEl.textContent = estado;
-  estadoEl.style.color = estado === 'Pagado' ? '#2ecc71' : estado === 'Pago parcial' ? '#f1c40f' : '#e74c3c';
+  estadoEl.className = pagoEstadoClass(estado);
+  estadoEl.style.fontWeight = '500';
+  estadoEl.style.letterSpacing = '1px';
 }
 
 async function pagosGuardar() {
