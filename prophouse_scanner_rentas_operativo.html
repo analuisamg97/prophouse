@@ -607,15 +607,27 @@
   .rentas-head-btn:hover { background:rgba(212,168,83,0.08); border-color:var(--gold); }
   .rentas-table-wrap { padding:12px; }
   .rentas-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
-  .rentas-op-card { background:#252320; border:1px solid var(--border); border-radius:8px; padding:14px; cursor:pointer; transition:border-color 0.15s, background 0.15s; min-height:168px; display:flex; flex-direction:column; gap:11px; }
+  .rentas-op-card { background:#252320; border:1px solid var(--border); border-radius:8px; padding:12px; cursor:pointer; transition:border-color 0.15s, background 0.15s; min-height:188px; display:flex; flex-direction:column; gap:11px; }
+  .rentas-op-card.card-activa { border-color:rgba(76,175,80,0.28); }
+  .rentas-op-card.card-regresar { border-color:rgba(212,168,83,0.36); }
+  .rentas-op-card.card-cobrar { border-color:rgba(231,76,60,0.28); }
+  .rentas-op-card.card-cerrada { border-color:rgba(136,128,112,0.22); }
   .rentas-op-card:hover { border-color:var(--gold-dim); background:var(--bg-card); }
   .rentas-op-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .rentas-card-main { display:grid; grid-template-columns:74px minmax(0,1fr); gap:12px; align-items:start; }
+  .rentas-thumb { width:74px; height:74px; border-radius:7px; overflow:hidden; background:var(--bg-deep); border:1px solid rgba(255,255,255,0.05); flex-shrink:0; }
+  .rentas-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .rentas-thumb-placeholder { width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:22px; }
   .rentas-folio { color:var(--gold); font-family:'DM Mono',monospace; font-size:11px; white-space:nowrap; }
   .rentas-client { color:var(--white); font-size:14px; font-weight:700; line-height:1.25; margin-top:5px; }
   .rentas-muted { color:var(--text-muted); font-size:11px; line-height:1.45; }
   .rentas-card-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .rentas-meta-label { font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:3px; }
   .rentas-meta-value { color:var(--white-dim); font-family:'DM Mono',monospace; font-size:11px; }
+  .rentas-timeline { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; margin-top:2px; }
+  .rentas-time-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 3px rgba(212,168,83,0.1); }
+  .rentas-time-line { height:1px; background:linear-gradient(90deg, rgba(212,168,83,0.55), rgba(136,128,112,0.28)); }
+  .rentas-time-arrow { color:var(--text-muted); font-size:12px; font-family:'DM Mono',monospace; }
   .rentas-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:auto; }
   .rentas-card-badges { display:flex; flex-wrap:wrap; gap:6px; }
   .rentas-money { color:var(--white); font-family:'DM Mono',monospace; font-size:11px; white-space:nowrap; }
@@ -2519,6 +2531,15 @@ function rentasCentroPagoBadge(f) {
   return { label:pago, cls };
 }
 
+function rentasCentroCardClass(f) {
+  if (rentasCentroIsCerrada(f)) return 'card-cerrada';
+  if (rentasCentroIsPorCobrar(f)) return 'card-cobrar';
+  const estado = rentasCentroEstadoBadge(f);
+  if (estado.cls === 'activa') return 'card-activa';
+  if (estado.cls === 'regresar') return 'card-regresar';
+  return 'card-cerrada';
+}
+
 async function rentasCentroCargar() {
   const table = document.getElementById('rentas-centro-table');
   if (!table) return;
@@ -2531,19 +2552,28 @@ async function rentasCentroCargar() {
       db_getProps({ maxRecords: 500 })
     ]);
     const clientesMap = new Map(clientes.map(c => [c.id, c.fields[F.NOMBRE_CLIENTE] || '—']));
-    const propsMap = new Map(props.map(p => [p.id, p.fields[F.NOMBRE_PROP] || p.fields[F.CODIGO] || 'Prop']));
+    const propsMap = new Map(props.map(p => {
+      const fotos = p.fields['Foto principal'] || [];
+      const thumb = fotos.length ? (fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url) : '';
+      return [p.id, {
+        nombre: p.fields[F.NOMBRE_PROP] || p.fields[F.CODIGO] || 'Prop',
+        foto: thumb
+      }];
+    }));
 
     rentasCentroRegistros = rentas.map(r => {
       const f = r.fields || {};
       const clienteIds = f.Cliente || [];
       const propIds = f['Props rentados'] || [];
       const cliente = clientesMap.get(clienteIds[0]) || '—';
-      const propsNombres = propIds.map(id => propsMap.get(id)).filter(Boolean);
+      const propsInfo = propIds.map(id => propsMap.get(id)).filter(Boolean);
+      const propsNombres = propsInfo.map(p => p.nombre);
       return {
         id: r.id,
         fields: f,
         cliente,
         propsTexto: propsNombres.join(', '),
+        foto: propsInfo[0]?.foto || '',
         search: [
           f[F.ID_RENTA],
           cliente,
@@ -2634,7 +2664,11 @@ function rentasCentroRenderTabla(rows) {
       const estado = rentasCentroEstadoBadge(f);
       const pago = rentasCentroPagoBadge(f);
       const propsInfo = r.propsTexto ? rentasCentroEsc(r.propsTexto) : 'Sin props vinculados';
-      return `<div class="rentas-op-card" onclick="rentasVerDetalle('${r.id}')">
+      const cardClass = rentasCentroCardClass(f);
+      const fotoHtml = r.foto
+        ? `<img src="${rentasCentroEsc(r.foto)}" alt="${rentasCentroEsc(propsInfo)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="rentas-thumb-placeholder" style="display:none;"><i class="ti ti-camera" aria-hidden="true"></i></div>`
+        : `<div class="rentas-thumb-placeholder"><i class="ti ti-camera" aria-hidden="true"></i></div>`;
+      return `<div class="rentas-op-card ${cardClass}" onclick="rentasVerDetalle('${r.id}')">
         <div class="rentas-op-top">
           <div>
             <div class="rentas-folio">${rentasCentroEsc(f[F.ID_RENTA] || 'Sin folio')}</div>
@@ -2642,7 +2676,17 @@ function rentasCentroRenderTabla(rows) {
           </div>
           <div class="rentas-money">${rentasCentroMoney(f[F.MONTO_TOTAL] || 0)}</div>
         </div>
-        <div class="rentas-muted">${propsInfo}</div>
+        <div class="rentas-card-main">
+          <div class="rentas-thumb">${fotoHtml}</div>
+          <div>
+            <div class="rentas-muted">${propsInfo}</div>
+            <div class="rentas-timeline" aria-hidden="true">
+              <span class="rentas-time-dot"></span>
+              <span class="rentas-time-line"></span>
+              <span class="rentas-time-arrow">→</span>
+            </div>
+          </div>
+        </div>
         <div class="rentas-card-meta">
           <div>
             <div class="rentas-meta-label">Salida</div>
