@@ -530,7 +530,7 @@
   #prop-selector-overlay.open { display:flex; }
   .prop-selector-sheet {
     background:var(--bg-deep); border:1px solid var(--border);
-    border-radius:16px 16px 0 0; width:100%; max-width:600px;
+    border-radius:16px 16px 0 0; width:100%; max-width:860px;
     max-height:88vh; display:flex; flex-direction:column;
     overflow:hidden;
   }
@@ -560,30 +560,40 @@
   .prop-sel-filtros { display:flex; gap:5px; flex-wrap:wrap; }
   .prop-sel-grid {
     overflow-y:auto; padding:14px 18px;
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-    gap:10px; flex:1;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:12px; flex:1; align-content:start;
   }
   .prop-sel-card {
     background:var(--bg-card); border:1px solid var(--border);
     border-radius:8px; overflow:hidden; cursor:pointer;
     transition:border-color 0.15s; position:relative;
-    display:flex; flex-direction:column;
+    display:flex; flex-direction:column; min-height:248px;
   }
-  .prop-sel-card:hover { border-color:var(--gold-dim); }
-  .prop-sel-card.selected { border-color:var(--gold); border-width:2px; }
+  .prop-sel-card:hover { border-color:var(--gold-dim); background:#2c2925; }
+  .prop-sel-card.selected { border-color:var(--gold); box-shadow:0 0 0 1px rgba(201,168,76,0.35) inset; }
   .prop-sel-card.selected::after {
-    content:'✓'; position:absolute; top:6px; right:7px;
+    content:'✓'; position:absolute; top:8px; right:8px;
     background:var(--gold); color:var(--bg-deep);
-    width:20px; height:20px; border-radius:50%;
-    font-size:10px; display:flex; align-items:center; justify-content:center;
-    font-weight:700; line-height:20px; text-align:center;
+    width:26px; height:26px; border-radius:50%;
+    font-size:12px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; line-height:26px; text-align:center;
   }
-  .prop-sel-img { width:100%; height:110px; object-fit:cover; display:block; background:var(--bg-deep); flex-shrink:0; }
-  .prop-sel-noimg { width:100%; height:110px; display:flex; align-items:center; justify-content:center; background:var(--bg-deep); color:var(--text-muted); font-size:26px; flex-shrink:0; }
-  .prop-sel-body { padding:8px 9px 10px; flex:1; }
-  .prop-sel-code { font-size:9px; letter-spacing:1px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:3px; }
-  .prop-sel-name { font-size:11px; color:var(--white); font-weight:500; line-height:1.35; margin-bottom:5px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .prop-sel-estado { font-size:9px; color:var(--text-muted); letter-spacing:0.5px; }
+  .prop-sel-img-wrap { width:100%; aspect-ratio:1/0.78; background:#151412; border-bottom:1px solid var(--border); overflow:hidden; flex-shrink:0; }
+  .prop-sel-img { width:100%; height:100%; object-fit:cover; display:block; background:var(--bg-deep); }
+  .prop-sel-noimg { width:100%; height:100%; min-height:132px; display:flex; align-items:center; justify-content:center; background:var(--bg-deep); color:var(--text-muted); font-size:26px; }
+  .prop-sel-body { padding:11px 12px 12px; flex:1; display:flex; flex-direction:column; gap:7px; min-height:112px; }
+  .prop-sel-code { font-size:9px; letter-spacing:1.4px; color:var(--gold); font-family:'DM Mono',monospace; text-transform:uppercase; }
+  .prop-sel-name { font-size:12px; color:var(--white); font-weight:700; line-height:1.25; min-height:32px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .prop-sel-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:auto; }
+  .prop-sel-price { font-size:10px; color:var(--white-dim); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .prop-sel-estado { font-size:8px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; padding:4px 8px; border-radius:20px; border:1px solid var(--border); white-space:nowrap; }
+  .prop-sel-category { font-size:9px; color:var(--text-muted); line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  @media (max-width:767px) {
+    .prop-selector-sheet { max-width:none; max-height:92vh; }
+    .prop-sel-grid { grid-template-columns:repeat(2,minmax(0,1fr)); padding:12px; gap:10px; }
+    .prop-sel-card { min-height:224px; }
+    .prop-sel-body { padding:10px; }
+  }
   .prop-sel-footer {
     padding:12px 18px; border-top:1px solid var(--border);
     display:flex; align-items:center; gap:10px; flex-shrink:0;
@@ -6113,6 +6123,7 @@ function propSelRenderizar() {
     const nombre = f['Nombre del prop'] || 'Sin nombre';
     const codigo = f['Código único'] || '';
     const estado = f['Estado'] || 'Disponible';
+    const categoria = f['Categoría'] || 'Sin categoría';
     const rentaDia = f['Renta x 1 día'] || 0;
     const isSel = selIds.has(p.id) || selCodigos.has(codigo);
 
@@ -6120,22 +6131,29 @@ function propSelRenderizar() {
     let imgHtml;
     if (fotos && fotos.length > 0) {
       const thumb = fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url;
-      imgHtml = `<img class="prop-sel-img" src="${thumb}" alt="${nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                 <div class="prop-sel-noimg" style="display:none">📷</div>`;
+      imgHtml = `<div class="prop-sel-img-wrap"><img class="prop-sel-img" src="${rentasCentroEsc(thumb)}" alt="${rentasCentroEsc(nombre)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                 <div class="prop-sel-noimg" style="display:none"><i class="ti ti-camera" aria-hidden="true"></i></div></div>`;
     } else {
-      imgHtml = `<div class="prop-sel-noimg">📷</div>`;
+      imgHtml = `<div class="prop-sel-img-wrap"><div class="prop-sel-noimg"><i class="ti ti-camera" aria-hidden="true"></i></div></div>`;
     }
 
-    const estadoLabel = estado === 'Disponible' ? '● Disponible' : estado === 'Rentado' ? '● Rentado' : `● ${estado}`;
+    const estadoLabel = estado || '—';
     const estadoColor = estado === 'Disponible' ? '#2ecc71' : estado === 'Rentado' ? '#e74c3c' : '#f1c40f';
+    const estadoBorder = estado === 'Disponible' ? 'rgba(76,175,80,0.35)' : estado === 'Rentado' ? 'rgba(231,76,60,0.35)' : 'rgba(212,168,83,0.35)';
+    const nombreJs = String(nombre).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    const codigoJs = String(codigo).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
     return `<div class="prop-sel-card ${isSel ? 'selected' : ''}"
-          onclick="propSelToggle('${p.id}', '${nombre.replace(/'/g,"\\'")}', '${codigo}', ${rentaDia}, this)">
+          onclick="propSelToggle('${p.id}', '${nombreJs}', '${codigoJs}', ${Number(rentaDia) || 0}, this)">
       ${imgHtml}
       <div class="prop-sel-body">
-        <div class="prop-sel-code">${codigo}</div>
-        <div class="prop-sel-name" title="${nombre}">${nombre}</div>
-        <div class="prop-sel-estado" style="color:${estadoColor}">${estadoLabel}</div>
+        <div class="prop-sel-code">${rentasCentroEsc(codigo || 'SIN CÓDIGO')}</div>
+        <div class="prop-sel-name" title="${rentasCentroEsc(nombre)}">${rentasCentroEsc(nombre)}</div>
+        <div class="prop-sel-category">${rentasCentroEsc(categoria)}</div>
+        <div class="prop-sel-meta">
+          <span class="prop-sel-estado" style="color:${estadoColor};border-color:${estadoBorder};">${rentasCentroEsc(estadoLabel)}</span>
+          <span class="prop-sel-price">$${Number(rentaDia || 0).toLocaleString('es-MX')}/día</span>
+        </div>
       </div>
     </div>`;
   }).join('');
