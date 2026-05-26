@@ -1692,6 +1692,7 @@
     <div class="section-title" style="margin-top:16px">Pago</div>
     <div class="orden-total-box">
       <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="or-t-subtotal">$0.00 MXN</span></div>
+      <div class="orden-total-row" id="or-iva-row" style="display:none;"><span class="lbl">IVA 16%</span><span id="or-t-iva">$0.00 MXN</span></div>
       <div class="orden-total-row"><span class="lbl">Pago sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
       <div class="orden-total-row">
         <span class="lbl">Pago recibido</span>
@@ -2809,6 +2810,16 @@ function rentasCentroSaldo(f) {
   return Math.max(0, total - pagado);
 }
 
+function rentasCentroMergePago(fields = {}, pagado = 0) {
+  const total = Number(fields[F.MONTO_TOTAL] || 0);
+  const totalPagado = Number(pagado || 0);
+  const merged = { ...fields };
+  merged[F.TOTAL_PAGADO] = totalPagado;
+  merged[F.MONTO_A_LIQ] = Math.max(0, total - totalPagado);
+  merged[F.ESTADO_PAGO] = db_calcEstadoPago(total, totalPagado);
+  return merged;
+}
+
 function rentasCentroIsPorCobrar(f) {
   const pago = String(f[F.ESTADO_PAGO] || '').toLowerCase();
   return rentasCentroSaldo(f) > 0 || pago.includes('pendiente') || pago.includes('adelanto');
@@ -2848,12 +2859,19 @@ async function rentasCentroCargar() {
   table.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando rentas...</div>';
 
   try {
-    const [rentas, clientes, props] = await Promise.all([
+    const [rentas, clientes, props, pagos] = await Promise.all([
       db_getRentas({ maxRecords: 200 }),
       db_getClientes(),
-      db_getProps({ maxRecords: 500 })
+      db_getProps({ maxRecords: 500 }),
+      db_getPagos({ maxRecords: 500 })
     ]);
     const clientesMap = new Map(clientes.map(c => [c.id, c.fields[F.NOMBRE_CLIENTE] || '—']));
+    const pagosPorRenta = new Map();
+    pagos.forEach(p => {
+      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
+        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
+      });
+    });
     const propsMap = new Map(props.map(p => {
       const fotos = p.fields['Foto principal'] || [];
       const thumb = fotos.length ? (fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url) : '';
@@ -2864,7 +2882,7 @@ async function rentasCentroCargar() {
     }));
 
     rentasCentroRegistros = rentas.map(r => {
-      const f = r.fields || {};
+      const f = rentasCentroMergePago(r.fields || {}, pagosPorRenta.get(r.id) || 0);
       const clienteIds = f.Cliente || [];
       const propIds = f['Props rentados'] || [];
       const cliente = clientesMap.get(clienteIds[0]) || '—';
@@ -3026,6 +3044,18 @@ async function db_generarRentaId() {
 async function db_getPagos({ maxRecords = 500 } = {}) {
   const data = await airtableGet('PAGOS', `?maxRecords=${maxRecords}`);
   return data.records || [];
+}
+
+async function db_totalPagadoRenta(rentaRecordId) {
+  if (!rentaRecordId) return 0;
+  try {
+    const pagos = await db_getPagos({ maxRecords: 500 });
+    return pagos
+      .filter(p => (p.fields[F.PAGO_RENTA] || []).includes(rentaRecordId))
+      .reduce((sum, p) => sum + (parseFloat(p.fields[F.PAGO_MONTO]) || 0), 0);
+  } catch(e) {
+    return 0;
+  }
 }
 
 async function db_generarPagoId() {
@@ -3692,7 +3722,10 @@ async function rentasVerDetalle(rentaRecordId) {
     const renta = await db_getRenta(rentaRecordId);
     const f = renta.fields;
     const total = f['Monto total'] || 0;
-    const saldo = f['Monto a liquidar'] || 0;
+    const pagadoReal = await db_totalPagadoRenta(rentaRecordId);
+    const pagado = pagadoReal > 0 ? pagadoReal : (parseFloat(f[F.TOTAL_PAGADO]) || 0);
+    const saldo = Math.max(0, total - pagado);
+    const estadoPago = db_calcEstadoPago(total, pagado);
     const propsIds = f['Props rentados'] || [];
 
     // Cargar nombre de cliente
@@ -3736,7 +3769,7 @@ async function rentasVerDetalle(rentaRecordId) {
         <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${estadoPago==='Pagado'?'#2ecc71':estadoPago==='Pago parcial'?'#f1c40f':'#e74c3c'}">${estadoPago}</span></div>
       </div>
 
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
@@ -3950,10 +3983,16 @@ async function showRentasActivas() {
       document.getElementById('rentas-content').innerHTML = '<div class="empty-state">No hay rentas activas</div>';
       return;
     }
-    // Cargar nombres de clientes para mostrar en cards
-    const clientesAll = await db_getClientes();
+    // Cargar nombres de clientes y pagos reales para mostrar en cards
+    const [clientesAll, pagos] = await Promise.all([db_getClientes(), db_getPagos({ maxRecords: 500 })]);
+    const pagosPorRenta = new Map();
+    pagos.forEach(p => {
+      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
+        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
+      });
+    });
     document.getElementById('rentas-content').innerHTML = (await Promise.all(rentas.map(async r => {
-      const f = r.fields;
+      const f = rentasCentroMergePago(r.fields, pagosPorRenta.get(r.id) || 0);
       const total = f['Monto total'] || 0;
       const saldo = f['Monto a liquidar'] || 0;
       const clienteIds = f['Cliente'] || [];
@@ -3973,7 +4012,7 @@ async function showRentasActivas() {
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f[F.ESTADO_PAGO]==='Pagado'?'#2ecc71':f[F.ESTADO_PAGO]==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f[F.ESTADO_PAGO] || '—'}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + saldo.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
       ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
@@ -4207,6 +4246,10 @@ async function crearNuevaRenta() {
         metodo: metodoPagoInicial,
         notas: 'Pago inicial al crear renta'
       });
+      newRenta.fields = newRenta.fields || {};
+      newRenta.fields[F.TOTAL_PAGADO] = deposito;
+      newRenta.fields[F.MONTO_A_LIQ] = Math.max(0, total - deposito);
+      newRenta.fields[F.ESTADO_PAGO] = db_calcEstadoPago(total, deposito);
     }
 
     showToast(`✓ Renta ${rentaId} registrada`);
@@ -4234,6 +4277,8 @@ let orHtml5QrCode = null;
 let orScannerActivo = false;
 let orClientesCache = [];
 let orRentaIdGenerado = '';
+let orMontoIvaActual = 0;
+let orMontoTotalAirtable = 0;
 
 async function showOrdenView() {
   _navHistory.push(_getCurrentViewId());
@@ -4326,11 +4371,16 @@ function orCalcTotales() {
     subtotal += dias * precio;
   });
   const deposito = parseFloat(document.getElementById('or-deposito')?.value) || 0;
-  const saldo = Math.max(0, subtotal - deposito);
+  const total = orMontoTotalAirtable > 0 ? orMontoTotalAirtable : subtotal + orMontoIvaActual;
+  const saldo = Math.max(0, total - deposito);
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' MXN';
+  const ivaRow = document.getElementById('or-iva-row');
+  if (ivaRow) ivaRow.style.display = orMontoIvaActual > 0 ? 'flex' : 'none';
+  const ivaEl = document.getElementById('or-t-iva');
+  if (ivaEl) ivaEl.textContent = fmtM(orMontoIvaActual);
   document.getElementById('or-t-subtotal').textContent = fmtM(subtotal);
-  document.getElementById('or-t-dep-sug').textContent = fmtM(subtotal * 0.5);
-  document.getElementById('or-t-total').textContent = fmtM(subtotal);
+  document.getElementById('or-t-dep-sug').textContent = fmtM(total * 0.5);
+  document.getElementById('or-t-total').textContent = fmtM(total);
   document.getElementById('or-t-saldo').textContent = fmtM(saldo);
 }
 
@@ -4418,7 +4468,9 @@ async function orGenerarOrden() {
   const recibe = document.getElementById('or-recibe').value || '—';
   const salida = f['Fecha de salida'] || document.getElementById('or-fecha-salida').value;
   const regreso = f['Fecha de regreso'] || document.getElementById('or-fecha-regreso').value;
-  const deposito = f['Total pagado'] || parseFloat(document.getElementById('or-deposito').value) || 0;
+  const pagoDirecto = await db_totalPagadoRenta(currentRenta?.id);
+  const deposito = pagoDirecto > 0 ? pagoDirecto : (parseFloat(f[F.TOTAL_PAGADO]) || parseFloat(document.getElementById('or-deposito').value) || 0);
+  document.getElementById('or-deposito').value = deposito;
 
   // Resolver nombre del cliente desde cache
   let clienteNombre = '—';
@@ -4458,8 +4510,10 @@ async function orGenerarOrden() {
     }
   });
 
-  // Usar monto de Airtable si no hay props desglosados
-  const montoFinal = subtotal || f['Monto total'] || 0;
+  // Usar el total real de la renta cuando ya existe en Airtable.
+  const subtotalFinal = subtotal || f[F.SUBTOTAL] || f[F.MONTO_TOTAL] || 0;
+  const ivaDoc = f[F.MONTO_IVA] || 0;
+  const totalOrden = f[F.MONTO_TOTAL] || (subtotalFinal + ivaDoc);
   const airtableStatus = `<div class="airtable-ok">✓ Renta ${rentaId} · Hora Dorada Prop House</div>`;
 
   // Generar documento HTML — solo lectura
@@ -4469,10 +4523,8 @@ async function orGenerarOrden() {
     const [y, m, d] = fecha.split('-');
     return `${d} ${'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m)-1]} ${y}`;
   };
-  const ivaDoc = f['Monto IVA'] || 0;
-  const totalConIvaDoc = ivaDoc > 0 ? montoFinal + ivaDoc : montoFinal;
-  const saldo = Math.max(0, totalConIvaDoc - deposito);
-  const estadoPago = deposito >= totalConIvaDoc ? 'badge-pagado">PAGADO' : 'badge-pendiente">PENDIENTE';
+  const saldo = Math.max(0, totalOrden - deposito);
+  const estadoPago = deposito >= totalOrden ? 'badge-pagado">PAGADO' : 'badge-pendiente">PENDIENTE';
   const hoy = new Date().toISOString().split('T')[0];
   const factura = document.getElementById('or-factura')?.value === 'si' ? 'Con factura' : 'Sin factura';
 
@@ -4544,10 +4596,11 @@ async function orGenerarOrden() {
         <tbody>${propsRowsHtml}</tbody>
       </table>
       <div class="doc-totals">
-        <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmtM(montoFinal)}</span></div>
+        <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmtM(subtotalFinal)}</span></div>
+        ${ivaDoc > 0 ? `<div class="doc-total-row"><span class="doc-total-label">IVA 16%</span><span>${fmtM(ivaDoc)}</span></div>` : ''}
         <div class="doc-total-row"><span class="doc-total-label">Total pagado</span><span>${fmtM(deposito)}</span></div>
         <div class="doc-total-row"><span class="doc-total-label">Saldo pendiente</span><span>${fmtM(saldo)}</span></div>
-        <div class="doc-total-row"><span>TOTAL</span><span>${fmtM(montoFinal)}</span></div>
+        <div class="doc-total-row"><span>TOTAL</span><span>${fmtM(totalOrden)}</span></div>
       </div>
     </div>
 
@@ -4617,10 +4670,11 @@ function orCompartirWhatsApp() {
     subtotal += dias * precio;
   });
   const deposito = parseFloat(document.getElementById('or-deposito')?.value) || 0;
-  const saldo = Math.max(0, subtotal - deposito);
+  const total = orMontoTotalAirtable > 0 ? orMontoTotalAirtable : subtotal + orMontoIvaActual;
+  const saldo = Math.max(0, total - deposito);
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
-  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(subtotal)}\n✅ Total pagado: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
+  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(total)}\n✅ Total pagado: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
 
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
@@ -4992,8 +5046,15 @@ async function showPagosView() {
       document.getElementById('pagos-rentas-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
       return;
     }
+    const pagos = await db_getPagos({ maxRecords: 500 });
+    const pagosPorRenta = new Map();
+    pagos.forEach(p => {
+      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
+        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
+      });
+    });
     document.getElementById('pagos-rentas-list').innerHTML = (await Promise.all(activas.map(async r => {
-      const f = r.fields;
+      const f = rentasCentroMergePago(r.fields, pagosPorRenta.get(r.id) || 0);
       const total = f['Monto total'] || 0;
       const saldo = f['Monto a liquidar'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
@@ -5021,6 +5082,8 @@ async function showPagosView() {
 async function pagosSeleccionarRenta(recordId) {
   try {
     pagosRentaActual = await db_getRenta(recordId);
+    const pagadoReal = await db_totalPagadoRenta(recordId);
+    pagosRentaActual.fields = rentasCentroMergePago(pagosRentaActual.fields || {}, pagadoReal);
     const f = pagosRentaActual.fields;
     const total = f['Monto total'] || 0;
     const saldo = f['Monto a liquidar'] || 0;
@@ -5099,6 +5162,7 @@ async function pagosGuardar() {
     });
 
     const estado = db_calcEstadoPago(total, pagadoActual + monto);
+    pagosRentaActual.fields = rentasCentroMergePago(pagosRentaActual.fields || {}, pagadoActual + monto);
     showToast(`✓ Pago guardado · ${estado}`);
     setTimeout(() => goHome(), 1500);
   } catch(e) {
@@ -5450,11 +5514,15 @@ async function orAbrirDesdeRenta() {
 
   const f = currentRenta?.fields || {};
   const rentaId = f['ID de renta'] || '';
+  const pagoRecibido = await db_totalPagadoRenta(currentRenta?.id);
+  const totalPagado = pagoRecibido > 0 ? pagoRecibido : (parseFloat(f[F.TOTAL_PAGADO]) || 0);
+  orMontoIvaActual = parseFloat(f[F.MONTO_IVA]) || 0;
+  orMontoTotalAirtable = parseFloat(f[F.MONTO_TOTAL]) || 0;
 
   // Fechas
   document.getElementById('or-fecha-salida').value = f['Fecha de salida'] || new Date().toISOString().split('T')[0];
   document.getElementById('or-fecha-regreso').value = f['Fecha de regreso'] || new Date().toISOString().split('T')[0];
-  document.getElementById('or-deposito').value = f['Total pagado'] || 0;
+  document.getElementById('or-deposito').value = totalPagado;
 
   // Pre-set ID de renta para que orGenerarId() no duplique
   window._orRentaIdFijo = rentaId;
