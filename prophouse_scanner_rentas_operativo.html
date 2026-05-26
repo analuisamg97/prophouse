@@ -374,6 +374,12 @@
   .orden-total-row { display:flex; justify-content:space-between; padding:6px 0; font-size:11px; border-bottom:1px solid var(--border); }
   .orden-total-row:last-child { border-bottom:none; color:var(--gold); font-size:13px; }
   .orden-total-row .lbl { color:var(--text-muted); }
+  .orden-total-row.main-total { border-top:1px solid rgba(201,168,76,0.25); margin-top:4px; padding-top:9px; color:var(--gold); font-size:13px; font-weight:700; }
+  .orden-total-row.main-total:last-child { border-top:1px solid rgba(201,168,76,0.25); }
+  .payment-reference-box { background:rgba(201,168,76,0.06); border:1px dashed rgba(201,168,76,0.35); border-radius:8px; padding:12px 14px; margin:-6px 0 16px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+  .payment-reference-label { font-size:9px; letter-spacing:1.8px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:3px; }
+  .payment-reference-note { font-size:10px; color:var(--text-muted); line-height:1.35; }
+  .payment-reference-amount { font-size:13px; color:var(--gold); font-weight:700; white-space:nowrap; }
 
   /* PDF preview dentro de la app */
   #orden-preview { display:none; }
@@ -1703,13 +1709,19 @@
     <div class="orden-total-box">
       <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="or-t-subtotal">$0.00 MXN</span></div>
       <div class="orden-total-row" id="or-iva-row" style="display:none;"><span class="lbl">IVA 16%</span><span id="or-t-iva">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span class="lbl">Pago sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
       <div class="orden-total-row">
         <span class="lbl">Pago recibido</span>
         <input type="number" class="orden-input" id="or-deposito" placeholder="0" style="width:100px;text-align:right;padding:4px 8px;" oninput="orCalcTotales()">
       </div>
       <div class="orden-total-row"><span class="lbl">Saldo pendiente</span><span id="or-t-saldo">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span>TOTAL</span><span id="or-t-total">$0.00 MXN</span></div>
+      <div class="orden-total-row main-total"><span>TOTAL</span><span id="or-t-total">$0.00 MXN</span></div>
+    </div>
+    <div class="payment-reference-box">
+      <div>
+        <div class="payment-reference-label">Referencia de cobro</div>
+        <div class="payment-reference-note">Adelanto sugerido, no se suma al total.</div>
+      </div>
+      <div class="payment-reference-amount" id="or-t-dep-sug">$0.00 MXN</div>
     </div>
 
     <button class="btn-orden-generate" id="or-btn-generar" onclick="orGenerarOrden()">
@@ -1785,9 +1797,15 @@
     <div class="section-title" style="margin-top:16px">Resumen</div>
     <div class="orden-total-box">
       <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="cot-t-subtotal">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span class="lbl">Adelanto sugerido (50%)</span><span id="cot-t-dep-sug">$0.00 MXN</span></div>
       <div class="orden-total-row" id="cot-iva-row" style="display:none"><span class="lbl">IVA 16%</span><span id="cot-t-iva">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span>TOTAL</span><span id="cot-t-total">$0.00 MXN</span></div>
+      <div class="orden-total-row main-total"><span>TOTAL</span><span id="cot-t-total">$0.00 MXN</span></div>
+    </div>
+    <div class="payment-reference-box">
+      <div>
+        <div class="payment-reference-label">Referencia de apartado</div>
+        <div class="payment-reference-note">Adelanto sugerido, no se suma al total.</div>
+      </div>
+      <div class="payment-reference-amount" id="cot-t-dep-sug">$0.00 MXN</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
       <input type="checkbox" id="cot-iva" style="width:16px;height:16px;accent-color:var(--gold);" onchange="cotCalcTotales()">
@@ -5852,7 +5870,7 @@ function cotGenerarDocumento() {
       <div class="doc-totals">
         <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmt(subtotal)}</span></div>
         ${ivaOn ? `<div class="doc-total-row"><span class="doc-total-label">IVA 16%</span><span>${fmt(iva)}</span></div>` : ''}
-        <div class="doc-total-row"><span class="doc-total-label">Adelanto sugerido (50%)</span><span>${fmt(total * 0.5)}</span></div>
+        <div class="doc-total-row"><span class="doc-total-label">Referencia de apartado sugerida</span><span>${fmt(total * 0.5)}</span></div>
         <div class="doc-total-row"><span>TOTAL ESTIMADO</span><span>${fmt(total)}</span></div>
       </div>
     </div>
