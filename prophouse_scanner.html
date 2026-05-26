@@ -671,6 +671,11 @@
         <span class="quick-btn-label">Generar orden de renta</span>
         <span class="quick-btn-arrow">›</span>
       </button>
+      <button class="quick-btn" onclick="showCotizacionView()">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="12" y1="17" x2="8" y2="17"/></svg>
+        <span class="quick-btn-label">Nueva cotización</span>
+        <span class="quick-btn-arrow">›</span>
+      </button>
       <button class="quick-btn" onclick="showPagosView()">
         <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
         <span class="quick-btn-label">Registrar pago</span>
@@ -1342,6 +1347,113 @@
     </div>
     <div class="document" id="or-documento"></div>
     <button class="btn-preview-home" onclick="navBack(() => goHome())">← Volver atrás</button>
+  </div>
+</div>
+
+<!-- COTIZACIÓN VIEW -->
+<div id="cotizacion-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="view-title">Nueva cotización</div>
+    <div class="mode-badge" style="background:rgba(52,152,219,0.15);color:#3498db;border:1px solid #2980b944;">Cotización</div>
+  </div>
+
+  <div id="cot-form-section">
+    <div class="section-title" style="margin-top:0">Cliente</div>
+    <input type="text" class="orden-input" id="cot-cliente-nombre" placeholder="Nombre o empresa del cliente" style="width:100%;margin-bottom:8px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+      <input type="text" class="orden-input" id="cot-cliente-tel" placeholder="Teléfono">
+      <input type="text" class="orden-input" id="cot-cliente-email" placeholder="Email">
+    </div>
+
+    <div class="section-title">Fechas tentativas</div>
+    <div class="orden-form-grid">
+      <div class="orden-form-group">
+        <div class="orden-label">Salida estimada</div>
+        <input type="date" class="orden-input" id="cot-fecha-salida">
+      </div>
+      <div class="orden-form-group">
+        <div class="orden-label">Regreso estimado</div>
+        <input type="date" class="orden-input" id="cot-fecha-regreso">
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-bottom:10px">Props cotizados</div>
+    <div class="orden-props-header">
+      <div class="orden-prop-header-label">Prop</div>
+      <div class="orden-prop-header-label">Código</div>
+      <div class="orden-prop-header-label">Días</div>
+      <div class="orden-prop-header-label">$/día</div>
+      <div></div>
+    </div>
+    <div id="cot-props-list"></div>
+    <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+      <button class="btn-orden-add" onclick="cotAddPropRow()">+ Manual</button>
+      <button class="btn-orden-add" onclick="cotAbrirScanner()" style="border-color:var(--gold);color:var(--gold)">📷 Escanear</button>
+    </div>
+    <div id="cot-scanner-section" style="display:none;margin-top:14px;">
+      <div class="divider">busca por código</div>
+      <div class="search-row">
+        <input type="text" class="search-input" id="cot-scan-code" placeholder="RT-001" onkeyup="if(event.key==='Enter') cotScanCode()">
+        <button class="btn-search" onclick="abrirScannerUniversal('cot-scan-code', cotScanCode)">📷</button>
+        <button class="btn-search" onclick="cotScanCode()">→</button>
+      </div>
+      <div id="cot-scan-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
+    </div>
+
+    <div class="section-title" style="margin-top:16px">Resumen</div>
+    <div class="orden-total-box">
+      <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="cot-t-subtotal">$0.00 MXN</span></div>
+      <div class="orden-total-row"><span class="lbl">Adelanto sugerido (50%)</span><span id="cot-t-dep-sug">$0.00 MXN</span></div>
+      <div class="orden-total-row" id="cot-iva-row" style="display:none"><span class="lbl">IVA 16%</span><span id="cot-t-iva">$0.00 MXN</span></div>
+      <div class="orden-total-row"><span>TOTAL</span><span id="cot-t-total">$0.00 MXN</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <input type="checkbox" id="cot-iva" style="width:16px;height:16px;accent-color:var(--gold);" onchange="cotCalcTotales()">
+      <label for="cot-iva" style="font-size:11px;color:var(--white);letter-spacing:1px;">Aplicar IVA 16%</label>
+    </div>
+    <div class="alta-field">
+      <div class="alta-label">Notas para el cliente</div>
+      <input type="text" class="orden-input" id="cot-notas" placeholder="Condiciones especiales, observaciones…" style="width:100%;">
+    </div>
+
+    <button class="btn-orden-generate" onclick="cotGenerarDocumento()" style="background:#3498db;">
+      📄 Generar cotización
+    </button>
+    <button class="btn-accion btn-secondary" onclick="navBack()" style="margin-top:8px">Cancelar</button>
+  </div>
+
+  <!-- Preview cotización -->
+  <div id="cot-preview" style="display:none;">
+    <div class="orden-preview-actions">
+      <button class="btn-preview-back" onclick="cotVolverForm()">← Editar</button>
+      <button class="btn-preview-print" onclick="window.print()">💾 Guardar PDF</button>
+      <button class="btn-preview-wha" onclick="cotCompartirWhatsApp()">💬 WhatsApp</button>
+    </div>
+    <div class="document" id="cot-documento"></div>
+    <button class="btn-preview-home" onclick="navBack(() => goHome())">← Volver atrás</button>
+  </div>
+</div>
+
+<!-- EDITAR PROPS DE RENTA VIEW -->
+<div id="editar-props-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="view-title" id="editar-props-title">Editar props</div>
+    <div class="mode-badge mode-buscar">Editar</div>
+  </div>
+  <div id="editar-props-content">
+    <div class="section-title" style="margin-top:0">Props actuales</div>
+    <div id="ep-lista-actual"></div>
+    <div class="section-title" style="margin-top:16px">Agregar prop</div>
+    <div class="search-row" style="margin-bottom:8px;">
+      <input type="text" class="search-input" id="ep-codigo" placeholder="Código ej. RT-001" onkeyup="if(event.key==='Enter') epAgregarProp()">
+      <button class="btn-search" onclick="abrirScannerUniversal('ep-codigo', epAgregarProp)">📷</button>
+      <button class="btn-search" onclick="epAgregarProp()">＋</button>
+    </div>
+    <div id="ep-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;min-height:18px;margin-bottom:16px;"></div>
+    <button class="btn-alta-guardar" id="ep-btn-guardar" onclick="epGuardar()">Guardar cambios en Airtable</button>
+    <button class="btn-accion btn-secondary" onclick="navBack()" style="margin-top:8px;">Cancelar</button>
   </div>
 </div>
 
@@ -2746,7 +2858,9 @@ async function rentasVerDetalle(rentaRecordId) {
         <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--bg-deep);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
         <button class="btn-accion" onclick="_navHistory.push(_getCurrentViewId());pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
       </div>
-      ${f['Estado de la renta']==='Activa' ? `<button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
+      ${f['Estado de la renta']==='Activa' ? `
+      <button onclick="epAbrirEditar('${rentaRecordId}')" style="width:100%;background:none;border:1px solid var(--border);color:var(--white-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0;margin-top:8px;border-radius:4px;">✏ Editar props de la renta</button>
+      <button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
     `;
   } catch(e) {
     document.getElementById('props-flow-content').innerHTML =
@@ -4394,6 +4508,334 @@ async function galeríaAbrirDetalle(recordId) {
   } catch(e) {
     document.getElementById('prop-detail-content').innerHTML =
       `<div class="empty-state" style="color:#e74c3c">Error: ${e.message}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// COTIZACIONES
+// ═══════════════════════════════════════════════════════
+let cotPropRows = [];
+let cotPropCounter = 0;
+
+function showCotizacionView() {
+  _navHistory.push(_getCurrentViewId());
+  showView('cotizacion-view');
+  // Limpiar form
+  cotPropRows = [];
+  cotPropCounter = 0;
+  document.getElementById('cot-props-list').innerHTML = '';
+  document.getElementById('cot-cliente-nombre').value = '';
+  document.getElementById('cot-cliente-tel').value = '';
+  document.getElementById('cot-cliente-email').value = '';
+  document.getElementById('cot-notas').value = '';
+  document.getElementById('cot-iva').checked = false;
+  const hoy = new Date().toISOString().split('T')[0];
+  document.getElementById('cot-fecha-salida').value = hoy;
+  document.getElementById('cot-fecha-regreso').value = hoy;
+  document.getElementById('cot-form-section').style.display = 'block';
+  document.getElementById('cot-preview').style.display = 'none';
+  // Dos filas vacías de arranque
+  cotAddPropRow();
+  cotAddPropRow();
+  cotCalcTotales();
+}
+
+function cotAddPropRow(nombre = '', codigo = '', precio = '') {
+  const id = ++cotPropCounter;
+  const row = document.createElement('div');
+  row.className = 'orden-prop-row';
+  row.id = 'cot-prop-row-' + id;
+  row.innerHTML = `
+    <input type="text" class="orden-input" id="cot-p-nombre-${id}" placeholder="Prop" value="${nombre}" style="font-size:11px;padding:7px 8px;">
+    <input type="text" class="orden-input" id="cot-p-codigo-${id}" placeholder="RT-001" value="${codigo}" style="font-size:11px;padding:7px 8px;">
+    <input type="number" class="orden-input" id="cot-p-dias-${id}" value="1" min="1" oninput="cotCalcTotales()" style="font-size:11px;padding:7px 8px;">
+    <input type="number" class="orden-input" id="cot-p-precio-${id}" placeholder="0" value="${precio}" oninput="cotCalcTotales()" style="font-size:11px;padding:7px 8px;">
+    <button class="btn-orden-remove" onclick="cotRemovePropRow(${id})">✕</button>`;
+  document.getElementById('cot-props-list').appendChild(row);
+  cotPropRows.push(id);
+  if (precio) cotCalcTotales();
+}
+
+function cotRemovePropRow(id) {
+  document.getElementById('cot-prop-row-' + id)?.remove();
+  cotPropRows = cotPropRows.filter(r => r !== id);
+  cotCalcTotales();
+}
+
+function cotCalcTotales() {
+  let subtotal = 0;
+  cotPropRows.forEach(id => {
+    const dias = parseFloat(document.getElementById('cot-p-dias-' + id)?.value) || 0;
+    const precio = parseFloat(document.getElementById('cot-p-precio-' + id)?.value) || 0;
+    subtotal += dias * precio;
+  });
+  const ivaOn = document.getElementById('cot-iva')?.checked;
+  const iva = ivaOn ? subtotal * 0.16 : 0;
+  const total = subtotal + iva;
+  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  document.getElementById('cot-t-subtotal').textContent = fmt(subtotal);
+  document.getElementById('cot-t-dep-sug').textContent = fmt(total * 0.5);
+  document.getElementById('cot-t-iva').textContent = fmt(iva);
+  document.getElementById('cot-t-total').textContent = fmt(total);
+  document.getElementById('cot-iva-row').style.display = ivaOn ? 'flex' : 'none';
+}
+
+function cotAbrirScanner() {
+  const sec = document.getElementById('cot-scanner-section');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+}
+
+async function cotScanCode() {
+  const code = document.getElementById('cot-scan-code').value.trim().toUpperCase();
+  if (!code) return;
+  document.getElementById('cot-scan-code').value = '';
+  document.getElementById('cot-scan-status').textContent = `Buscando ${code}…`;
+  try {
+    const prop = await findPropByCode(code);
+    if (!prop) { document.getElementById('cot-scan-status').textContent = `No encontrado: ${code}`; return; }
+    cotAddPropRow(prop.fields['Nombre del prop'] || code, code, prop.fields['Renta x 1 día'] || 0);
+    document.getElementById('cot-scan-status').textContent = `✓ ${prop.fields['Nombre del prop']} agregado`;
+    setTimeout(() => { document.getElementById('cot-scan-status').textContent = ''; }, 2000);
+  } catch(e) {
+    document.getElementById('cot-scan-status').textContent = `Error: ${e.message}`;
+  }
+}
+
+function cotVolverForm() {
+  document.getElementById('cot-form-section').style.display = 'block';
+  document.getElementById('cot-preview').style.display = 'none';
+}
+
+function cotGenerarDocumento() {
+  const clienteNombre = document.getElementById('cot-cliente-nombre').value.trim() || 'Cliente';
+  const clienteTel = document.getElementById('cot-cliente-tel').value.trim();
+  const clienteEmail = document.getElementById('cot-cliente-email').value.trim();
+  const salida = document.getElementById('cot-fecha-salida').value;
+  const regreso = document.getElementById('cot-fecha-regreso').value;
+  const notas = document.getElementById('cot-notas').value.trim();
+  const ivaOn = document.getElementById('cot-iva').checked;
+
+  let subtotal = 0;
+  const propsData = [];
+  cotPropRows.forEach(id => {
+    const nombre = document.getElementById('cot-p-nombre-' + id)?.value?.trim();
+    const codigo = document.getElementById('cot-p-codigo-' + id)?.value?.trim() || '—';
+    const dias = parseFloat(document.getElementById('cot-p-dias-' + id)?.value) || 1;
+    const precio = parseFloat(document.getElementById('cot-p-precio-' + id)?.value) || 0;
+    if (nombre) { subtotal += dias * precio; propsData.push({ nombre, codigo, dias, precio, total: dias * precio }); }
+  });
+
+  const iva = ivaOn ? subtotal * 0.16 : 0;
+  const total = subtotal + iva;
+  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  const fmtF = fecha => {
+    if (!fecha) return '—';
+    const [y, m, d] = fecha.split('-');
+    return `${d} ${'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m) - 1]} ${y}`;
+  };
+  const hoy = new Date().toISOString().split('T')[0];
+  // ID de cotización temporal: COT-YYYYMMDD-HHMM
+  const now = new Date();
+  const cotId = `COT-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const propsHtml = propsData.map(p => `
+    <tr>
+      <td>${p.nombre}</td><td>${p.codigo}</td>
+      <td class="right">${p.dias}</td>
+      <td class="right">${fmt(p.precio)}</td>
+      <td class="right">${fmt(p.total)}</td>
+    </tr>`).join('');
+
+  document.getElementById('cot-documento').innerHTML = `
+    <div class="doc-header">
+      <div><div class="doc-logo">Hora Dorada</div><div class="doc-tagline">Prop House — Monterrey, México</div></div>
+      <div class="doc-contact">analuisamg97@gmail.com<br>81 1717 0541<br>Monterrey, Nuevo León</div>
+    </div>
+    <div class="doc-title-section">
+      <div>
+        <div class="doc-title">Cotización</div>
+        <div class="doc-id">${cotId}</div>
+        <div style="font-size:9px;letter-spacing:1px;color:#3498db;margin-top:4px;">📄 Documento de cotización — no confirma renta</div>
+      </div>
+      <div class="doc-meta">
+        Emisión: ${fmtF(hoy)}<br>
+        Válida: 7 días<br>
+        Salida est.: ${fmtF(salida)}<br>
+        Regreso est.: ${fmtF(regreso)}
+      </div>
+    </div>
+    <div class="doc-section">
+      <div class="doc-section-title">Cliente</div>
+      <div class="doc-client-grid">
+        <div><div class="doc-field-label">Nombre</div><div class="doc-field-value">${clienteNombre}</div></div>
+        ${clienteTel ? `<div><div class="doc-field-label">Teléfono</div><div class="doc-field-value">${clienteTel}</div></div>` : ''}
+        ${clienteEmail ? `<div><div class="doc-field-label">Email</div><div class="doc-field-value">${clienteEmail}</div></div>` : ''}
+      </div>
+    </div>
+    <div class="doc-section">
+      <div class="doc-section-title">Props cotizados</div>
+      <table class="doc-table">
+        <thead><tr><th>Prop</th><th>Código</th><th class="right">Días</th><th class="right">$/día</th><th class="right">Subtotal</th></tr></thead>
+        <tbody>${propsHtml}</tbody>
+      </table>
+      <div class="doc-totals">
+        <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmt(subtotal)}</span></div>
+        ${ivaOn ? `<div class="doc-total-row"><span class="doc-total-label">IVA 16%</span><span>${fmt(iva)}</span></div>` : ''}
+        <div class="doc-total-row"><span class="doc-total-label">Adelanto sugerido (50%)</span><span>${fmt(total * 0.5)}</span></div>
+        <div class="doc-total-row"><span>TOTAL ESTIMADO</span><span>${fmt(total)}</span></div>
+      </div>
+    </div>
+    ${notas ? `<div class="doc-section"><div class="doc-section-title">Notas</div><p style="font-size:10px;color:#444;line-height:1.6;">${notas}</p></div>` : ''}
+    <div class="doc-section">
+      <div class="doc-section-title">Condiciones</div>
+      <div class="doc-clausulas-list">
+        <div class="doc-clausula">Esta cotización es una estimación de precio y disponibilidad, no confirma ni reserva la renta.</div>
+        <div class="doc-clausula">La disponibilidad de los props está sujeta a confirmación al momento de formalizar la renta.</div>
+        <div class="doc-clausula">Para confirmar la renta se requiere un adelanto del 50% del total.</div>
+        <div class="doc-clausula">Esta cotización tiene validez de 7 días a partir de su emisión.</div>
+        <div class="doc-clausula">Los precios mostrados no incluyen IVA a menos que se indique lo contrario.</div>
+      </div>
+    </div>
+    <div class="doc-footer-doc">Hora Dorada Prop House · Monterrey, Nuevo León · analuisamg97@gmail.com · 81 1717 0541<br>Cotización ${cotId} · Válida por 7 días</div>`;
+
+  document.getElementById('cot-form-section').style.display = 'none';
+  document.getElementById('cot-preview').style.display = 'block';
+  showToast('✓ Cotización generada');
+}
+
+function cotCompartirWhatsApp() {
+  let subtotal = 0;
+  cotPropRows.forEach(id => {
+    const dias = parseFloat(document.getElementById('cot-p-dias-' + id)?.value) || 0;
+    const precio = parseFloat(document.getElementById('cot-p-precio-' + id)?.value) || 0;
+    subtotal += dias * precio;
+  });
+  const ivaOn = document.getElementById('cot-iva')?.checked;
+  const total = ivaOn ? subtotal * 1.16 : subtotal;
+  const cliente = document.getElementById('cot-cliente-nombre').value.trim() || 'Cliente';
+  const salida = document.getElementById('cot-fecha-salida').value;
+  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Cotización para ${cliente}*\n\n📤 Salida est.: ${salida}\n\n💰 Total estimado: ${fmt(total)}\n✅ Adelanto sugerido (50%): ${fmt(total * 0.5)}\n\n📌 Esta cotización es orientativa y no confirma la renta.\nPara reservar: 81 1717 0541`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
+}
+
+// ═══════════════════════════════════════════════════════
+// EDITAR PROPS DE RENTA ACTIVA
+// ═══════════════════════════════════════════════════════
+let _epRentaId = '';       // recordId de la renta en Airtable
+let _epPropsActuales = []; // [{ id, nombre, codigo }]
+
+async function epAbrirEditar(rentaRecordId) {
+  _navHistory.push(_getCurrentViewId());
+  _epRentaId = rentaRecordId;
+  _epPropsActuales = [];
+  showView('editar-props-view');
+  document.getElementById('ep-codigo').value = '';
+  document.getElementById('ep-status').textContent = '';
+  document.getElementById('ep-lista-actual').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando props...</div>';
+
+  try {
+    const renta = await db_getRenta(rentaRecordId);
+    const f = renta.fields;
+    document.getElementById('editar-props-title').textContent = `Editar — ${f['ID de renta'] || '—'}`;
+    const propsIds = f['Props rentados'] || [];
+
+    // Cargar datos de cada prop
+    for (const pid of propsIds) {
+      try {
+        const p = await db_getProp(pid);
+        _epPropsActuales.push({
+          id: pid,
+          nombre: p.fields['Nombre del prop'] || '—',
+          codigo: p.fields['Código único'] || '—'
+        });
+      } catch(e) {
+        // Si no se puede cargar, igual guardamos el id para no perderlo
+        _epPropsActuales.push({ id: pid, nombre: '(sin datos)', codigo: pid });
+      }
+    }
+    epRenderLista();
+  } catch(e) {
+    document.getElementById('ep-lista-actual').innerHTML =
+      `<div class="alert alert-red">Error: ${e.message}</div>`;
+  }
+}
+
+function epRenderLista() {
+  const el = document.getElementById('ep-lista-actual');
+  if (_epPropsActuales.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:16px 0;">Sin props vinculados</div>';
+    return;
+  }
+  el.innerHTML = _epPropsActuales.map((p, i) => `
+    <div class="prop-list-item" id="ep-item-${i}">
+      <div class="prop-info">
+        <div class="prop-item-name">${p.nombre}</div>
+        <div class="prop-item-code">${p.codigo}</div>
+      </div>
+      <button onclick="epQuitarProp(${i})"
+        style="background:none;border:1px solid #c0392b44;color:#e74c3c;border-radius:4px;
+               padding:6px 10px;font-size:10px;cursor:pointer;flex-shrink:0;">
+        ✕ Quitar
+      </button>
+    </div>`).join('');
+}
+
+function epQuitarProp(index) {
+  _epPropsActuales.splice(index, 1);
+  epRenderLista();
+  showToast('Prop quitado — guarda para confirmar');
+}
+
+async function epAgregarProp() {
+  const codigo = document.getElementById('ep-codigo').value.trim().toUpperCase();
+  if (!codigo) return;
+  // Evitar duplicados
+  if (_epPropsActuales.find(p => p.codigo === codigo)) {
+    showToast('Ese prop ya está en la renta', true);
+    document.getElementById('ep-codigo').value = '';
+    return;
+  }
+  document.getElementById('ep-status').textContent = `Buscando ${codigo}…`;
+  try {
+    const prop = await findPropByCode(codigo);
+    if (!prop) {
+      document.getElementById('ep-status').textContent = `No encontrado: ${codigo}`;
+      return;
+    }
+    _epPropsActuales.push({
+      id: prop.id,
+      nombre: prop.fields['Nombre del prop'] || codigo,
+      codigo: prop.fields['Código único'] || codigo
+    });
+    epRenderLista();
+    document.getElementById('ep-codigo').value = '';
+    document.getElementById('ep-status').textContent = `✓ ${prop.fields['Nombre del prop']} agregado`;
+    setTimeout(() => { document.getElementById('ep-status').textContent = ''; }, 2000);
+  } catch(e) {
+    document.getElementById('ep-status').textContent = `Error: ${e.message}`;
+  }
+}
+
+async function epGuardar() {
+  const btn = document.getElementById('ep-btn-guardar');
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando…';
+  try {
+    const propsIds = _epPropsActuales.map(p => p.id);
+    await airtablePatch('RENTAS', _epRentaId, {
+      'Props rentados': propsIds
+    });
+    showToast(`✓ ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''} guardados`);
+    // Invalidar cache y volver al detalle de la renta
+    db_invalidarCacheProps();
+    navBack(() => showRentasActivas());
+  } catch(e) {
+    showToast('Error: ' + e.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar cambios en Airtable';
   }
 }
 
