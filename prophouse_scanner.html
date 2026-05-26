@@ -798,7 +798,7 @@
   <!-- RENTAS ACTIVAS VIEW -->
   <div id="rentas-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="btn-back" onclick="backFromRentasView()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Rentas activas</div>
     </div>
     <div id="rentas-content">
@@ -1011,7 +1011,7 @@
 <!-- PAGOS VIEW -->
 <div id="pagos-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="backFromPagosView()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Registrar pago</div>
     <div class="mode-badge" style="background:rgba(39,174,96,0.2);color:#2ecc71;border:1px solid #27ae60;">Pagos</div>
   </div>
@@ -1771,6 +1771,21 @@ function backFromDetail() {
   }
 }
 
+function backFromRentasView() {
+  // rentas-view siempre viene de rentas-menu-view (tab Rentas)
+  showView('rentas-menu-view');
+}
+
+function backFromPagosView() {
+  // Si venimos del detalle de una renta, volver a props-flow-view
+  if (previousView === 'rentas-activas' || previousView === 'renta-detail') {
+    showView('props-flow-view');
+  } else {
+    // Si venimos del menú de rentas o del home móvil
+    showView('rentas-menu-view');
+  }
+}
+
 // ── SVG ÍCONOS INLINE — sin dependencia de CDN ──────────
 const SVG = {
   check:        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
@@ -1855,32 +1870,35 @@ async function airtableGet(table, params = '') {
 }
 
 async function airtablePatch(table, recordId, fields) {
+  if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales');
+  if (!recordId) throw new Error('recordId vacío en airtablePatch');
   const url = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}/${recordId}`;
   const res = await fetch(url, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields })
   });
-  return res.json();
+  if (res.status === 401) throw new Error('Token inválido o expirado');
+  if (res.status === 403) throw new Error('Sin permisos de escritura — revisa scopes del token');
+  if (res.status === 404) throw new Error(`Registro ${recordId} no encontrado en ${table}`);
+  if (res.status === 422) throw new Error('Datos inválidos — revisa nombres de campos');
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || data.error.type || 'Error Airtable PATCH');
+  return data;
 }
 
 // Llamada en cada escaneo: actualiza estado, ubicacion y timestamp
 async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
-  if (!recordId) { console.warn('registrarVerificacion: recordId vacío'); return; }
+  if (!recordId) throw new Error('registrarVerificacion: recordId vacío');
   // Airtable DateTime acepta ISO 8601 — usar formato sin milisegundos para mayor compatibilidad
   const ahora = new Date();
   const isoStr = ahora.toISOString().replace(/\.\d{3}Z$/, '.000Z');
   const fields = {
-    "Última verificación física": isoStr
+    [F.ULT_VERIF]: isoStr
   };
-  if (nuevoEstado) fields["Estado"] = nuevoEstado;
+  if (nuevoEstado) fields[F.ESTADO] = nuevoEstado;
   if (nuevaUbicacion) fields["Ubicación"] = nuevaUbicacion;
-  try {
-    return await airtablePatch("INVENTARIO", recordId, fields);
-  } catch(e) {
-    console.error('Error al registrar verificación:', e.message);
-    // No lanzar — la verificación falla silenciosamente para no interrumpir el flujo
-  }
+  return airtablePatch("INVENTARIO", recordId, fields);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2622,7 +2640,7 @@ async function rentasVerDetalle(rentaRecordId) {
 
       <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
         <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--bg-deep);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
-        <button class="btn-accion" onclick="pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
+        <button class="btn-accion" onclick="previousView='renta-detail';pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
       </div>
       ${f['Estado de la renta']==='Activa' ? `<button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
     `;
@@ -2655,6 +2673,7 @@ async function rentasCancelarFlow(rentaRecordId, fechaSalida) {
 
 // ── RENTAS ACTIVAS ──────────────────────────────────────
 async function showRentasActivas() {
+  previousView = 'rentas-menu'; // para que backFromRentasView tenga contexto si se necesita
   showView('rentas-view');
   try {
     const rentas = await db_getRentas({ soloActivas: true, maxRecords: 50 });
@@ -3458,11 +3477,8 @@ async function showDanosView() {
       return `<option value="${r.id}" data-cliente="${nombre}">${r.fields['ID de renta'] || '—'}${nombre ? ' · ' + nombre : ''}</option>`;
     }).join('');
     select.innerHTML = '<option value="">— Sin renta asociada —</option>' + opts;
-    select.onchange = () => {
-      const opt = select.options[select.selectedIndex];
-      const cliente = opt?.dataset?.cliente || '';
-      document.getElementById('danos-cliente-auto').textContent = cliente ? `Cliente: ${cliente}` : '';
-    };
+    // NO sobreescribir onchange — el HTML ya tiene onchange="danosCambiarRenta()"
+    // danosCambiarRenta() maneja tanto el label de cliente como la carga de props
   } catch(e) {}
 }
 
@@ -3642,6 +3658,7 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
 let pagosRentaActual = null;
 
 async function showPagosView() {
+  previousView = 'rentas-menu'; // vino del menú de rentas o home
   showView('pagos-view');
   document.getElementById('pagos-selector').style.display = 'block';
   document.getElementById('pagos-form').style.display = 'none';
