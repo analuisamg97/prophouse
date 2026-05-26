@@ -835,6 +835,55 @@
     .rentas-search { min-width:100%; }
     .rentas-table-card, .rentas-side-card { border-radius:8px; }
   }
+  /* ── CRM CLIENTES ───────────────────────────────────── */
+  .crm-table { width:100%; border-collapse:collapse; }
+  .crm-table thead tr { border-bottom:1px solid var(--border); }
+  .crm-table th { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); padding:8px 12px; text-align:left; font-weight:500; white-space:nowrap; }
+  .crm-table th.right { text-align:right; }
+  .crm-table td { padding:0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .crm-table tbody tr:last-child td { border-bottom:none; }
+  .crm-row { display:table-row; cursor:pointer; transition:background 0.15s; }
+  .crm-row:hover td { background:#2c2a28; }
+  .crm-cell { display:table-cell; padding:13px 12px; vertical-align:middle; }
+  .crm-cell.right { text-align:right; }
+  .crm-name { font-size:13px; color:var(--white); font-weight:500; margin-bottom:2px; }
+  .crm-email { font-size:10px; color:var(--text-muted); }
+  .crm-tipo-badge { display:inline-block; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:3px 8px; border-radius:20px; background:rgba(212,168,83,0.1); color:var(--gold); border:1px solid rgba(212,168,83,0.3); white-space:nowrap; }
+  .crm-tipo-badge.vip { background:rgba(212,168,83,0.2); border-color:var(--gold); font-weight:700; }
+  .crm-num { font-family:'Playfair Display',serif; font-size:16px; color:var(--white); }
+  .crm-money { font-family:'DM Mono',monospace; font-size:12px; color:var(--gold); }
+  .crm-date { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+  .crm-arr { font-size:14px; color:#444038; }
+  /* Detalle cliente */
+  .cd-header-block { display:flex; align-items:flex-start; gap:20px; margin-bottom:20px; }
+  .cd-avatar { width:56px; height:56px; border-radius:50%; background:rgba(212,168,83,0.1); border:1px solid rgba(212,168,83,0.3); display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); flex-shrink:0; }
+  .cd-name { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); line-height:1.2; }
+  .cd-meta { font-size:11px; color:var(--text-muted); margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; }
+  .cd-meta span { display:flex; align-items:center; gap:4px; }
+  .cd-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:20px; }
+  @media (max-width:767px) { .cd-metrics { grid-template-columns:repeat(2,1fr); } }
+  .cd-metric { background:#252320; border:1px solid var(--border); border-radius:8px; padding:14px; }
+  .cd-metric-lbl { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+  .cd-metric-val { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); line-height:1; }
+  .cd-metric-val.white { color:var(--white); }
+  .cd-metric-sub { font-size:9px; color:#555048; margin-top:4px; }
+  .cd-section { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin:20px 0 10px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .cd-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:4px; }
+  .cd-info-row { background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:10px 12px; }
+  .cd-info-lbl { font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
+  .cd-info-val { font-size:12px; color:var(--white-dim); }
+  .cd-acciones { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:4px; }
+  .cd-btn { display:flex; align-items:center; gap:7px; padding:10px 16px; background:transparent; border:1px solid var(--border); border-radius:6px; color:var(--text-dim); font-size:11px; font-family:'DM Mono',monospace; letter-spacing:1px; text-transform:uppercase; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .cd-btn:hover { border-color:var(--gold); color:var(--gold); }
+  .cd-btn.gold { background:var(--gold); color:var(--bg-deep); border-color:var(--gold); font-weight:600; }
+  .cd-btn.gold:hover { opacity:0.9; }
+  .cd-btn i { font-size:15px; }
+  .cd-renta-row { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; cursor:pointer; transition:border-color 0.15s; }
+  .cd-renta-row:hover { border-color:var(--gold-dim); }
+  .cd-renta-id { font-size:11px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:2px; white-space:nowrap; }
+  .cd-renta-dates { font-size:10px; color:var(--text-muted); }
+  .cd-renta-money { font-family:'DM Mono',monospace; font-size:12px; color:var(--white); margin-left:auto; white-space:nowrap; }
+  .cd-origen-badge { display:inline-flex; align-items:center; gap:5px; font-size:10px; padding:4px 10px; border-radius:20px; background:rgba(52,152,219,0.12); color:#3498db; border:1px solid rgba(52,152,219,0.3); }
   @media print {
     body { background:white; }
     #app-screen > .header, #orden-view > .view-header, .orden-preview-actions, .btn-preview-home { display:none !important; }
@@ -1446,8 +1495,36 @@
     <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Clientes</div>
   </div>
-  <div style="padding:0 28px 28px;" id="clientes-content">
-    <div class="loading"><div class="spinner"></div>Cargando clientes...</div>
+  <div style="padding:0 28px 28px;">
+    <!-- Toolbar -->
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;">
+      <input class="rentas-search" id="crm-search" placeholder="Buscar por nombre, email o teléfono…" oninput="crmFiltrar()" style="flex:1;min-width:200px;">
+      <div class="rentas-filtros">
+        <button class="rentas-pill activo" data-tipo="" onclick="crmSetTipo(this)">Todos</button>
+        <button class="rentas-pill" data-tipo="Productora" onclick="crmSetTipo(this)">Productora</button>
+        <button class="rentas-pill" data-tipo="Agencia" onclick="crmSetTipo(this)">Agencia</button>
+        <button class="rentas-pill" data-tipo="Fotógrafo" onclick="crmSetTipo(this)">Fotógrafo</button>
+        <button class="rentas-pill" data-tipo="Director de Arte" onclick="crmSetTipo(this)">Director de Arte</button>
+        <button class="rentas-pill" data-tipo="Independiente" onclick="crmSetTipo(this)">Independiente</button>
+        <button class="rentas-pill" data-tipo="Empresa" onclick="crmSetTipo(this)">Empresa</button>
+        <button class="rentas-pill" data-tipo="Particular" onclick="crmSetTipo(this)">Particular</button>
+      </div>
+    </div>
+    <!-- Tabla CRM -->
+    <div id="crm-content">
+      <div class="loading"><div class="spinner"></div>Cargando clientes...</div>
+    </div>
+  </div>
+</div>
+
+<!-- DETALLE DE CLIENTE -->
+<div id="cliente-detail-view" class="view">
+  <div class="view-header">
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <div class="view-title" id="cd-titulo">Cliente</div>
+  </div>
+  <div id="cd-content" style="padding:0 28px 28px;">
+    <div class="loading"><div class="spinner"></div>Cargando...</div>
   </div>
 </div>
 
@@ -2111,7 +2188,8 @@ function _getCurrentViewId() {
   const views = ['home-view','inventario-menu-view','buscar-view','prop-detail-view',
     'alta-prop-view','inventario-view','rentas-menu-view','rentas-view','props-flow-view',
     'renta-select-view','nueva-renta-view','pagos-view','orden-view','danos-view',
-    'clientes-view','finanzas-menu-view','agregar-gasto-view'];
+    'clientes-view','cliente-detail-view','finanzas-menu-view','agregar-gasto-view',
+    'cotizacion-view','editar-props-view'];
   return views.find(id => {
     const el = document.getElementById(id);
     return el && el.style.display !== 'none';
@@ -2130,6 +2208,7 @@ function _renderView(viewId) {
     case 'pagos-view': showPagosView(); break;
     case 'danos-view': showDanosView(); break;
     case 'clientes-view': showClientesView(); break;
+    case 'cliente-detail-view': showView('cliente-detail-view'); break;
     case 'finanzas-menu-view': showView('finanzas-menu-view'); break;
     default: showView(viewId); break;
   }
@@ -2394,7 +2473,7 @@ function showView(id) {
     'pagos-view':'Registrar pago','alta-prop-view':'Alta de prop',
     'inventario-view':'Inventario físico','danos-view':'Registrar daño',
     'finanzas-menu-view':'Finanzas','agregar-gasto-view':'Registrar gasto',
-    'inventario-menu-view':'Inventario','rentas-menu-view':'Rentas','clientes-view':'Clientes',
+    'inventario-menu-view':'Inventario','rentas-menu-view':'Rentas','clientes-view':'Clientes','cliente-detail-view':'Cliente',
   };
   const titleEl = document.getElementById('desk-topbar-title');
   if (titleEl && titles[id]) titleEl.textContent = titles[id];
@@ -4929,34 +5008,236 @@ function orCompartirWhatsApp() {
 }
 
 // ── CLIENTES VIEW ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════
+// CRM — CLIENTES
+// ═══════════════════════════════════════════════════════
+let _crmRegistros  = [];
+let _crmTipoFiltro = '';
+
 async function showClientesView() {
   _navHistory.push(_getCurrentViewId());
   showView('clientes-view');
   setNavActive('clientes');
-  document.getElementById('clientes-content').innerHTML =
+  document.getElementById('crm-content').innerHTML =
     '<div class="loading"><div class="spinner"></div>Cargando clientes...</div>';
   try {
-    const clientes = await db_getClientes();
-    if (!clientes.length) {
-      document.getElementById('clientes-content').innerHTML =
-        '<div class="empty-state">Sin clientes registrados</div>';
-      return;
-    }
-    document.getElementById('clientes-content').innerHTML = clientes.map(c => {
+    const [clientes, rentas] = await Promise.all([
+      db_getClientes(),
+      db_getRentas({ maxRecords: 500 })
+    ]);
+
+    const rentasPorCliente = new Map();
+    rentas.forEach(r => {
+      (r.fields['Cliente'] || []).forEach(cid => {
+        if (!rentasPorCliente.has(cid)) rentasPorCliente.set(cid, []);
+        rentasPorCliente.get(cid).push(r);
+      });
+    });
+
+    _crmRegistros = clientes.map(c => {
       const f = c.fields;
-      return `<div class="pago-section" style="margin-bottom:10px;cursor:default;">
-        <div class="pago-title">${f['Nombre o empresa'] || '—'}</div>
-        <div class="pago-row"><span class="label">Teléfono</span><span class="value">${f['Teléfono'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Email</span><span class="value">${f['Email'] || '—'}</span></div>
-        ${f['Origen'] ? `<div class="pago-row"><span class="label">Origen</span><span class="value">${f['Origen']}</span></div>` : ''}
-        ${f['RFC'] ? `<div class="pago-row"><span class="label">RFC</span><span class="value">${f['RFC']}</span></div>` : ''}
-      </div>`;
-    }).join('');
+      const misRentas = (rentasPorCliente.get(c.id) || [])
+        .filter(r => r.fields['Estado de la renta'] !== 'Cotización');
+      const total = misRentas.reduce((s, r) => s + Number(r.fields['Monto total'] || 0), 0);
+      const fechas = misRentas.map(r => r.fields['Fecha de salida'] || '').filter(Boolean).sort();
+      return {
+        id: c.id, fields: f,
+        nombre: f['Nombre o empresa'] || '—',
+        tipo: f['Tipo'] || '',
+        email: f['Email'] || '',
+        tel: f['Teléfono'] || '',
+        origen: f['Origen'] || '',
+        total,
+        nRentas: misRentas.length,
+        ticket: misRentas.length ? total / misRentas.length : 0,
+        ultimaRenta: fechas.length ? fechas[fechas.length - 1] : null,
+        clienteDesde: fechas.length ? fechas[0] : null,
+        tieneActiva: misRentas.some(r => r.fields['Estado de la renta'] === 'Activa'),
+        rentas: misRentas,
+        search: [f['Nombre o empresa'], f['Email'], f['Teléfono']].join(' ').toLowerCase()
+      };
+    });
+    _crmRegistros.sort((a, b) => b.total - a.total);
+    // Resetear filtros
+    document.querySelectorAll('#clientes-view .rentas-pill').forEach(b => b.classList.remove('activo'));
+    const allBtn = document.querySelector('#clientes-view .rentas-pill[data-tipo=""]');
+    if (allBtn) allBtn.classList.add('activo');
+    _crmTipoFiltro = '';
+    if (document.getElementById('crm-search')) document.getElementById('crm-search').value = '';
+    crmRenderizar();
   } catch(e) {
-    document.getElementById('clientes-content').innerHTML =
+    document.getElementById('crm-content').innerHTML =
       `<div class="alert alert-red">Error: ${e.message}</div>`;
   }
 }
+
+function crmSetTipo(btn) {
+  document.querySelectorAll('#clientes-view .rentas-pill').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  _crmTipoFiltro = btn.dataset.tipo || '';
+  crmRenderizar();
+}
+
+function crmFiltrar() { crmRenderizar(); }
+
+function crmRenderizar() {
+  const query = (document.getElementById('crm-search')?.value || '').toLowerCase().trim();
+  const rows = _crmRegistros.filter(c => {
+    const matchTipo = !_crmTipoFiltro || c.tipo === _crmTipoFiltro;
+    const matchQ    = !query || c.search.includes(query) || c.nombre.toLowerCase().includes(query);
+    return matchTipo && matchQ;
+  });
+  const el = document.getElementById('crm-content');
+  if (!rows.length) { el.innerHTML = '<div class="empty-state">Sin clientes que coincidan</div>'; return; }
+
+  const fmtM = n => n > 0 ? '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }) : '—';
+  const fmtD = d => { if (!d) return '—'; const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y.slice(2)}`; };
+  const tipoBadge = t => t ? `<span class="crm-tipo-badge">${t}</span>` : '<span style="color:#444038;font-size:11px;">—</span>';
+  const estadoBadge = c => c.tieneActiva
+    ? `<span class="rentas-badge activa">Activa</span>`
+    : c.nRentas > 0 ? `<span class="rentas-badge cerrada">Histórico</span>`
+    : `<span style="color:#444038;font-size:11px;">Sin rentas</span>`;
+
+  el.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="crm-table">
+        <thead><tr>
+          <th>Cliente</th><th>Tipo</th><th>Última renta</th>
+          <th class="right">Rentas</th><th class="right">Total generado</th><th>Estado</th><th></th>
+        </tr></thead>
+        <tbody>${rows.map(c => `
+          <tr class="crm-row" onclick="crmAbrirDetalle('${c.id}')">
+            <td class="crm-cell"><div class="crm-name">${c.nombre}</div>${c.email?`<div class="crm-email">${c.email}</div>`:''}</td>
+            <td class="crm-cell">${tipoBadge(c.tipo)}</td>
+            <td class="crm-cell"><span class="crm-date">${fmtD(c.ultimaRenta)}</span></td>
+            <td class="crm-cell right"><span class="crm-num">${c.nRentas}</span></td>
+            <td class="crm-cell right"><span class="crm-money">${fmtM(c.total)}</span></td>
+            <td class="crm-cell">${estadoBadge(c)}</td>
+            <td class="crm-cell"><span class="crm-arr">›</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="font-size:10px;color:#444038;margin-top:12px;text-align:right;">${rows.length} cliente${rows.length!==1?'s':''}</div>`;
+}
+
+async function crmAbrirDetalle(clienteId) {
+  _navHistory.push(_getCurrentViewId());
+  showView('cliente-detail-view');
+  document.getElementById('cd-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+
+  const c = _crmRegistros.find(x => x.id === clienteId);
+  if (!c) { document.getElementById('cd-content').innerHTML = '<div class="alert alert-red">Cliente no encontrado</div>'; return; }
+
+  document.getElementById('cd-titulo').textContent = c.nombre;
+  const f = c.fields;
+  const fmtM = n => n > 0 ? '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }) + ' MXN' : '—';
+  const fmtD = d => {
+    if (!d) return '—';
+    const [y, m, dd] = d.split('-');
+    const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    return `${parseInt(dd)} ${meses[parseInt(m)-1]} ${y}`;
+  };
+  const iniciales = c.nombre.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const rentasOrden = [...c.rentas].sort((a,b) =>
+    String(b.fields['Fecha de salida']||'').localeCompare(String(a.fields['Fecha de salida']||'')));
+
+  const rentasHtml = rentasOrden.length ? rentasOrden.map(r => {
+    const rf = r.fields;
+    const estado = rf['Estado de la renta'] || '—';
+    const cls = estado==='Activa'?'activa':estado==='Cerrada'?'cerrada':'cotizacion';
+    return `<div class="cd-renta-row" onclick="event.stopPropagation();rentasVerDetalle('${r.id}')">
+      <div style="flex:1">
+        <div class="cd-renta-id">${rf['ID de renta']||'—'}</div>
+        <div class="cd-renta-dates">${fmtD(rf['Fecha de salida'])} → ${fmtD(rf['Fecha de regreso'])}</div>
+      </div>
+      <span class="rentas-badge ${cls}">${estado}</span>
+      <div class="cd-renta-money">${fmtM(rf['Monto total']||0)}</div>
+      <span style="font-size:13px;color:#444038">›</span>
+    </div>`;
+  }).join('') : '<div class="empty-state" style="padding:20px 0">Sin rentas registradas</div>';
+
+  // Info fiscal — solo si hay algún dato
+  const hasFiscal = f['RFC'] || f['Razón social'] || f['Régimen fiscal'] || f['Dirección fiscal'];
+  const fiscalHtml = hasFiscal ? `
+    <div class="cd-section">Datos fiscales</div>
+    <div class="cd-info-grid">
+      ${f['RFC']?`<div class="cd-info-row"><div class="cd-info-lbl">RFC</div><div class="cd-info-val">${f['RFC']}</div></div>`:''}
+      ${f['Razón social']?`<div class="cd-info-row"><div class="cd-info-lbl">Razón social</div><div class="cd-info-val">${f['Razón social']}</div></div>`:''}
+      ${f['Régimen fiscal']?`<div class="cd-info-row"><div class="cd-info-lbl">Régimen</div><div class="cd-info-val">${f['Régimen fiscal']}</div></div>`:''}
+      ${f['Dirección fiscal']?`<div class="cd-info-row" style="grid-column:1/-1"><div class="cd-info-lbl">Dirección</div><div class="cd-info-val">${f['Dirección fiscal']}</div></div>`:''}
+    </div>` : '';
+
+  document.getElementById('cd-content').innerHTML = `
+    <div class="cd-header-block">
+      <div class="cd-avatar">${iniciales}</div>
+      <div style="flex:1">
+        <div class="cd-name">${c.nombre}</div>
+        <div class="cd-meta">
+          ${c.tipo?`<span><i class="ti ti-tag" aria-hidden="true"></i>${c.tipo}</span>`:''}
+          ${c.tel?`<span><i class="ti ti-phone" aria-hidden="true"></i>${c.tel}</span>`:''}
+          ${c.email?`<span><i class="ti ti-mail" aria-hidden="true"></i>${c.email}</span>`:''}
+        </div>
+        ${c.origen?`<div style="margin-top:8px"><span class="cd-origen-badge"><i class="ti ti-map-pin" aria-hidden="true"></i>${c.origen}</span></div>`:''}
+      </div>
+    </div>
+
+    <div class="cd-metrics">
+      <div class="cd-metric">
+        <div class="cd-metric-lbl">Total generado</div>
+        <div class="cd-metric-val">${fmtM(c.total)}</div>
+        <div class="cd-metric-sub">histórico</div>
+      </div>
+      <div class="cd-metric">
+        <div class="cd-metric-lbl">Número de rentas</div>
+        <div class="cd-metric-val white">${c.nRentas}</div>
+        <div class="cd-metric-sub">renta${c.nRentas!==1?'s':''}</div>
+      </div>
+      <div class="cd-metric">
+        <div class="cd-metric-lbl">Ticket promedio</div>
+        <div class="cd-metric-val">${fmtM(c.ticket)}</div>
+        <div class="cd-metric-sub">por renta</div>
+      </div>
+      <div class="cd-metric">
+        <div class="cd-metric-lbl">Última renta</div>
+        <div class="cd-metric-val white" style="font-size:14px;">${fmtD(c.ultimaRenta)}</div>
+        <div class="cd-metric-sub">${c.clienteDesde?'cliente desde '+fmtD(c.clienteDesde):'sin rentas'}</div>
+      </div>
+    </div>
+
+    <div class="cd-section">Acciones rápidas</div>
+    <div class="cd-acciones">
+      <button class="cd-btn gold" onclick="crmNuevaRenta('${c.id}','${c.nombre.replace(/'/g,"\\'")}')">
+        <i class="ti ti-plus" aria-hidden="true"></i>Nueva renta
+      </button>
+      <button class="cd-btn" onclick="showCotizacionView()">
+        <i class="ti ti-file-dollar" aria-hidden="true"></i>Cotización
+      </button>
+      <button class="cd-btn" onclick="showPagosView()">
+        <i class="ti ti-credit-card" aria-hidden="true"></i>Registrar pago
+      </button>
+    </div>
+
+    ${fiscalHtml}
+
+    ${f['Notas'] ? `
+    <div class="cd-section">Notas</div>
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--white-dim);line-height:1.7;white-space:pre-wrap;">${f['Notas']}</div>` : ''}
+
+    <div class="cd-section">Historial de rentas</div>
+    ${rentasHtml}`;
+}
+
+function crmNuevaRenta(clienteId, clienteNombre) {
+  quickNuevaRenta();
+  setTimeout(() => {
+    const sel = document.getElementById('nr-cliente-select');
+    if (sel) Array.from(sel.options).forEach(opt => { if (opt.value === clienteId) sel.value = clienteId; });
+  }, 900);
+}
+
+
 
 // ── INVENTARIO RÁPIDO ───────────────────────────────────
 let invVerificados = [];
