@@ -178,6 +178,39 @@
   .dash-row-id { font-size:11px; color:var(--gold); font-family:'DM Mono',monospace; }
   .dash-row-name { font-size:12px; color:var(--white); margin-top:2px; }
   .dash-row-sub { font-size:10px; color:var(--text-dim); margin-top:1px; }
+  .dash-subtitle { font-size:11px; color:var(--text-muted); margin-top:3px; font-family:'Inter',-apple-system,sans-serif; }
+  .dash-control { display:flex; flex-direction:column; gap:14px; }
+  .dash-feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .dash-feature-grid.compact { grid-template-columns:0.95fr 1.05fr; }
+  .dash-split { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px; }
+  .dash-mini-panel { background:#252320; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+  .dash-mini-title { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; padding:10px 12px 0; }
+  .dash-move-row { display:grid; grid-template-columns:72px minmax(0,1fr) auto; align-items:center; gap:10px; padding:11px 12px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+  .dash-move-row:last-child { border-bottom:none; }
+  .dash-day { font-family:'DM Mono',monospace; color:var(--gold); font-size:10px; letter-spacing:1px; text-transform:uppercase; }
+  .dash-alert-value { font-family:'Playfair Display',serif; font-size:22px; line-height:1; }
+  .dash-alert-value.red { color:var(--red); }
+  .dash-alert-value.gold { color:var(--gold); }
+  .dash-inventory-bars { padding:14px; display:grid; gap:10px; }
+  .dash-bar-row { display:grid; grid-template-columns:92px 1fr 38px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); }
+  .dash-bar-track { height:7px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .dash-bar-fill { height:100%; border-radius:4px; }
+  .dash-bar-fill.green { background:var(--green); }
+  .dash-bar-fill.gold { background:var(--gold); }
+  .dash-bar-fill.red { background:var(--red); }
+  .dash-actions { display:flex; gap:0; }
+  .dash-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
+  .dash-action-btn { display:flex; flex-direction:column; align-items:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); }
+  .dash-action-btn:last-child { border-right:none; }
+  .dash-action-btn:hover { background:var(--bg-card); }
+  .dash-action-btn.gold { color:var(--gold); }
+  .dash-action-btn i { font-size:24px; }
+  .dash-action-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
+  @media (max-width:980px) {
+    .dash-feature-grid, .dash-feature-grid.compact, .dash-split { grid-template-columns:1fr; }
+    .dash-actions { overflow-x:auto; padding-bottom:2px; }
+    .dash-action-bar { min-width:max-content; }
+  }
 
   /* HOME ACTION GRID */
   .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:0; }
@@ -730,27 +763,68 @@
     <!-- DASHBOARD DESKTOP -->
     <div id="desk-dashboard" style="display:none;">
       <div class="desktop-topbar">
-        <div class="desktop-topbar-title" id="desk-topbar-title">Dashboard</div>
+        <div>
+          <div class="desktop-topbar-title" id="desk-topbar-title">Dashboard</div>
+          <div class="dash-subtitle">Resumen operativo de rentas, inventario, pagos y alertas.</div>
+        </div>
         <div class="desktop-topbar-actions">
           <button class="btn-desk-ghost" onclick="startFlow('buscar')"><i class="ti ti-search" aria-hidden="true"></i>Buscar prop</button>
           <button class="btn-desk-primary" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i>Nueva renta</button>
         </div>
       </div>
       <div style="padding:20px 28px;">
-        <div class="dash-stats">
-          <div class="dash-stat"><div class="dash-stat-label">Rentas activas</div><div class="dash-stat-value gold" id="ds-rentas">—</div><div class="dash-stat-sub" id="ds-rentas-sub">Cargando...</div></div>
-          <div class="dash-stat"><div class="dash-stat-label">Ingresos del mes</div><div class="dash-stat-value green" id="ds-ingresos">—</div><div class="dash-stat-sub" id="ds-mes">este mes</div></div>
-          <div class="dash-stat"><div class="dash-stat-label">Props disponibles</div><div class="dash-stat-value" id="ds-props">—</div><div class="dash-stat-sub" id="ds-props-sub">en inventario</div></div>
-          <div class="dash-stat"><div class="dash-stat-label">Por cobrar</div><div class="dash-stat-value red" id="ds-cobrar">—</div><div class="dash-stat-sub" id="ds-cobrar-sub">pendientes</div></div>
-        </div>
-        <div class="dash-panels">
+        <div class="dash-control">
           <div class="dash-panel">
-            <div class="dash-panel-header"><div class="dash-panel-title">Rentas activas</div><div class="dash-panel-link" onclick="showRentasActivas()">Ver todas →</div></div>
-            <div id="ds-rentas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+            <div class="dash-panel-header"><div class="dash-panel-title">Rentas próximas</div><div class="dash-panel-link">Esta semana</div></div>
+            <div class="dash-split">
+              <div class="dash-mini-panel">
+                <div class="dash-mini-title">Próximas salidas</div>
+                <div id="ds-salidas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+              </div>
+              <div class="dash-mini-panel">
+                <div class="dash-mini-title">Próximos regresos</div>
+                <div id="ds-regresos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+              </div>
+            </div>
           </div>
-          <div class="dash-panel">
-            <div class="dash-panel-header"><div class="dash-panel-title">Inventario reciente</div><div class="dash-panel-link" onclick="navGo('inventario')">Ver todos →</div></div>
-            <div id="ds-props-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+
+          <div class="dash-stats" style="margin-bottom:0;">
+            <div class="dash-stat"><div class="dash-stat-label">Rentas activas</div><div class="dash-stat-value gold" id="ds-rentas">—</div><div class="dash-stat-sub" id="ds-rentas-sub">Cargando...</div></div>
+            <div class="dash-stat"><div class="dash-stat-label">Por cobrar</div><div class="dash-stat-value red" id="ds-cobrar">—</div><div class="dash-stat-sub" id="ds-cobrar-sub">pendientes</div></div>
+            <div class="dash-stat"><div class="dash-stat-label">Ingresos del mes</div><div class="dash-stat-value green" id="ds-ingresos">—</div><div class="dash-stat-sub" id="ds-mes">este mes</div></div>
+            <div class="dash-stat"><div class="dash-stat-label">Props disponibles</div><div class="dash-stat-value" id="ds-props">—</div><div class="dash-stat-sub" id="ds-props-sub">en inventario</div></div>
+          </div>
+
+          <div class="dash-feature-grid compact">
+            <div class="dash-panel">
+              <div class="dash-panel-header"><div class="dash-panel-title">Alertas</div><div class="dash-panel-link">Hoy</div></div>
+              <div id="ds-alertas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+            </div>
+            <div class="dash-panel">
+              <div class="dash-panel-header"><div class="dash-panel-title">Estado del inventario</div><div class="dash-panel-link" onclick="navGo('inventario')">Ver inventario →</div></div>
+              <div id="ds-inventario-status"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+            </div>
+          </div>
+
+          <div class="dash-feature-grid">
+            <div class="dash-panel">
+              <div class="dash-panel-header"><div class="dash-panel-title">Actividad reciente</div><div class="dash-panel-link">Últimos movimientos</div></div>
+              <div id="ds-activity-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+            </div>
+            <div class="dash-panel">
+              <div class="dash-panel-header"><div class="dash-panel-title">Acciones rápidas</div><div class="dash-panel-link">Operación</div></div>
+              <div style="padding:14px;">
+                <div class="dash-actions">
+                  <div class="dash-action-bar">
+                    <button class="dash-action-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
+                    <button class="dash-action-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
+                    <button class="dash-action-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
+                    <button class="dash-action-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
+                    <button class="dash-action-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1165,8 +1239,14 @@
     <div class="setup-label">Fecha de salida</div>
     <input type="date" class="setup-input" id="nr-fecha-salida" onchange="nrCalcMonto()">
 
+    <div class="setup-label">Hora de salida</div>
+    <input type="text" class="setup-input" id="nr-hora-salida" placeholder="3:00 PM">
+
     <div class="setup-label">Fecha de regreso</div>
     <input type="date" class="setup-input" id="nr-fecha-regreso" onchange="nrCalcMonto()">
+
+    <div class="setup-label">Hora de regreso</div>
+    <input type="text" class="setup-input" id="nr-hora-regreso" placeholder="10:00 AM">
 
     <div id="nr-dias-info" style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:16px;display:none;"></div>
 
@@ -2219,70 +2299,177 @@ async function cargarDashboard() {
   if (_dashboardLoading) return;
   _dashboardLoading = true;
   try {
-    const [rentas, props] = await Promise.all([
-      db_getRentas({ maxRecords: 200 }),
-      db_getProps()
+    const [rentasRes, propsRes, clientesRes, pagosRes, danosRes] = await Promise.allSettled([
+      db_getRentas({ maxRecords: 300 }),
+      db_getProps(),
+      db_getClientes(),
+      db_getPagos({ maxRecords: 200 }),
+      airtableGet('DAÑOS', '?maxRecords=100')
     ]);
+
+    const rentas = rentasRes.status === 'fulfilled' ? rentasRes.value : [];
+    const props = propsRes.status === 'fulfilled' ? propsRes.value : [];
+    const clientes = clientesRes.status === 'fulfilled' ? clientesRes.value : [];
+    const pagos = pagosRes.status === 'fulfilled' ? pagosRes.value : [];
+    const danos = danosRes.status === 'fulfilled' ? (danosRes.value.records || []) : [];
 
     const ahora = new Date();
     const mesActual = ahora.toISOString().slice(0, 7);
+    const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+    const en7 = new Date(hoy); en7.setDate(hoy.getDate() + 7);
+    const en3 = new Date(hoy); en3.setDate(hoy.getDate() + 3);
+    const fmtM = n => '$' + Number(n || 0).toLocaleString('es-MX');
+    const parseDate = fecha => {
+      if (!fecha) return null;
+      const parts = String(fecha).split('-').map(Number);
+      if (parts.length < 3 || parts.some(isNaN)) return null;
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    };
+    const inRange = d => d && d >= hoy && d <= en7;
+    const clientName = f => {
+      const id = (f['Cliente'] || [])[0];
+      const c = clientes.find(x => x.id === id);
+      return c ? (c.fields['Nombre o empresa'] || '—') : '—';
+    };
+    const dayLabel = fecha => {
+      const d = parseDate(fecha);
+      if (!d) return 'Fecha pendiente';
+      const diff = Math.round((d - hoy) / (1000 * 60 * 60 * 24));
+      if (diff === 0) return 'Hoy';
+      if (diff === 1) return 'Mañana';
+      const diasCortos = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+      return diasCortos[d.getDay()];
+    };
+    const formatFecha = fecha => fecha || 'Fecha pendiente';
+    const statusBadge = f => {
+      const saldo = Number(f['Monto a liquidar'] || 0);
+      const estadoPago = f['Estado del pago'] || 'Pendiente';
+      if (saldo > 0) return mkBadge('pend', SVG.alertCircle, 'Saldo');
+      if (estadoPago === 'Pagado') return mkBadge('ok', SVG.check, 'Pagado');
+      return mkBadge('adel', SVG.clock, 'Revisar');
+    };
+
     const rentasActivas = rentas.filter(r => r.fields['Estado de la renta'] === 'Activa');
     const rentasMes = rentas.filter(r => (r.fields['Fecha de salida'] || '').startsWith(mesActual));
     const ingresosMes = rentasMes.reduce((s, r) => s + (r.fields['Monto total'] || 0), 0);
     const propsDisp = props.filter(p => p.fields['Estado'] === 'Disponible').length;
+    const propsRentados = props.filter(p => p.fields['Estado'] === 'Rentado').length;
+    const propsRep = props.filter(p => p.fields['Estado'] === 'En reparación').length;
     const porCobrar = rentasActivas.reduce((s, r) => s + (r.fields['Monto a liquidar'] || 0), 0);
+    const pagosPendientes = rentasActivas.filter(r => (r.fields['Monto a liquidar'] || 0) > 0);
+    const rentasPorVencer = rentasActivas.filter(r => {
+      const d = parseDate(r.fields['Fecha de regreso']);
+      return d && d >= hoy && d <= en3;
+    });
+    const rentasSinCerrar = rentasActivas.filter(r => {
+      const d = parseDate(r.fields['Fecha de regreso']);
+      return d && d < hoy;
+    });
 
     document.getElementById('ds-rentas').textContent = rentasActivas.length;
     document.getElementById('ds-rentas-sub').textContent = `${rentasActivas.length === 1 ? '1 renta activa' : rentasActivas.length + ' rentas activas'}`;
-    document.getElementById('ds-ingresos').textContent = '$' + ingresosMes.toLocaleString('es-MX');
+    document.getElementById('ds-ingresos').textContent = fmtM(ingresosMes);
     document.getElementById('ds-mes').textContent = `${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][ahora.getMonth()]} ${ahora.getFullYear()}`;
     document.getElementById('ds-props').textContent = propsDisp;
     document.getElementById('ds-props-sub').textContent = `de ${props.length} en inventario`;
-    document.getElementById('ds-cobrar').textContent = '$' + porCobrar.toLocaleString('es-MX');
-    document.getElementById('ds-cobrar-sub').textContent = `${rentasActivas.filter(r => (r.fields['Monto a liquidar'] || 0) > 0).length} rentas`;
+    document.getElementById('ds-cobrar').textContent = fmtM(porCobrar);
+    document.getElementById('ds-cobrar-sub').textContent = `${pagosPendientes.length} rentas`;
 
-    // Lista de rentas
-    const clientes = await db_getClientes();
-    document.getElementById('ds-rentas-list').innerHTML = (await Promise.all(rentasActivas.slice(0, 4).map(async r => {
-      const f = r.fields;
-      const cId = (f['Cliente'] || [])[0];
-      const c = clientes.find(x => x.id === cId);
-      const nombre = c ? (c.fields['Nombre o empresa'] || '—') : '—';
-      const saldo = f['Monto a liquidar'] || 0;
-      const estado = f['Estado del pago'] || 'Pendiente';
-      const badgeClass = estado === 'Pagado' ? 'ok' : estado === 'Pago parcial' ? 'adel' : 'pend';
-      const badgeIconSVG = estado === 'Pagado' ? SVG.check : estado === 'Pago parcial' ? SVG.clock : SVG.alertCircle;
-      const badgeLabel = estado === 'Pagado' ? 'Pagado' : estado === 'Pago parcial' ? 'Parcial' : 'Pendiente';
-      const thumb = await rentaFirstPropThumbHtml(f);
-      return `<div class="dash-panel-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
-        <div class="renta-card-with-thumb">
-          ${thumb}
+    const renderMovimiento = (items, tipo) => {
+      if (items.length === 0) return '<div class="empty-state" style="padding:24px 12px;">Sin movimientos próximos</div>';
+      return items.slice(0, 4).map(r => {
+        const f = r.fields;
+        const fecha = tipo === 'salida' ? f['Fecha de salida'] : f['Fecha de regreso'];
+        const hora = tipo === 'salida' ? f['Hora de salida'] : f['Hora de regreso'];
+        const propsCount = (f['Props rentados'] || []).length;
+        return `<div class="dash-move-row" onclick="rentasVerDetalle('${r.id}')">
+          <div class="dash-day">${dayLabel(fecha)}</div>
           <div>
             <div class="dash-row-id">${f['ID de renta'] || '—'}</div>
-            <div class="dash-row-name">${nombre}</div>
-            <div class="dash-row-sub">${f['Fecha de salida'] || '—'} · $${(f['Monto total'] || 0).toLocaleString()}</div>
+            <div class="dash-row-name">${clientName(f)}</div>
+            <div class="dash-row-sub">${tipo === 'salida' ? 'Salida' : 'Regreso'} · ${hora || 'Hora pendiente'} · ${propsCount} prop${propsCount === 1 ? '' : 's'}</div>
           </div>
-        </div>
-        ${mkBadge(badgeClass, badgeIconSVG, badgeLabel)}
-      </div>`;
-    }))).join('') || '<div class="empty-state">Sin rentas activas</div>';
+          ${statusBadge(f)}
+        </div>`;
+      }).join('');
+    };
 
-    // Lista de props
-    document.getElementById('ds-props-list').innerHTML = props.slice(0, 4).map(p => {
-      const f = p.fields;
-      const estado = f['Estado'] || 'Disponible';
-      const sc = estado === 'Disponible' ? 'disp' : estado === 'Rentado' ? 'rent' : 'rep';
-      const si = estado === 'Disponible' ? SVG.circleCheck : estado === 'Rentado' ? SVG.package : SVG.tool;
-      const sl = estado === 'Disponible' ? 'Disponible' : estado === 'Rentado' ? 'Rentado' : 'Reparación';
-      return `<div class="dash-panel-row">
+    const salidas = rentasActivas
+      .filter(r => inRange(parseDate(r.fields['Fecha de salida'])))
+      .sort((a, b) => String(a.fields['Fecha de salida'] || '').localeCompare(String(b.fields['Fecha de salida'] || '')));
+    const regresos = rentasActivas
+      .filter(r => inRange(parseDate(r.fields['Fecha de regreso'])))
+      .sort((a, b) => String(a.fields['Fecha de regreso'] || '').localeCompare(String(b.fields['Fecha de regreso'] || '')));
+    document.getElementById('ds-salidas-list').innerHTML = renderMovimiento(salidas, 'salida');
+    document.getElementById('ds-regresos-list').innerHTML = renderMovimiento(regresos, 'regreso');
+
+    const alertaRows = [
+      { label:'Pagos pendientes', sub:`${pagosPendientes.length} rentas con saldo abierto`, value:pagosPendientes.length, cls:'red' },
+      { label:'Rentas por vencer', sub:`${rentasPorVencer.length} regresos en próximas 72 h`, value:rentasPorVencer.length, cls:'gold' },
+      { label:'Props en reparación', sub:'Piezas fuera de rotación', value:propsRep, cls:'gold' },
+      { label:'Rentas sin cerrar', sub:'Regresos atrasados por confirmar', value:rentasSinCerrar.length, cls:'red' }
+    ];
+    document.getElementById('ds-alertas-list').innerHTML = alertaRows.map(a => `
+      <div class="dash-panel-row">
         <div>
-          <div class="dash-row-id">${f['Código único'] || '—'}</div>
-          <div class="dash-row-name">${f['Nombre del prop'] || '—'}</div>
-          <div class="dash-row-sub">${f['Categoría'] || '—'}</div>
+          <div class="dash-row-name">${a.label}</div>
+          <div class="dash-row-sub">${a.sub}</div>
         </div>
-        ${mkBadge(sc, si, sl)}
+        <div class="dash-alert-value ${a.cls === 'red' ? 'red' : 'gold'}">${a.value}</div>
+      </div>`).join('');
+
+    const totalProps = Math.max(props.length, 1);
+    document.getElementById('ds-inventario-status').innerHTML = `
+      <div class="dash-inventory-bars">
+        <div class="dash-bar-row"><span>Disponibles</span><div class="dash-bar-track"><div class="dash-bar-fill green" style="width:${Math.round((propsDisp/totalProps)*100)}%"></div></div><strong>${propsDisp}</strong></div>
+        <div class="dash-bar-row"><span>Rentados</span><div class="dash-bar-track"><div class="dash-bar-fill gold" style="width:${Math.round((propsRentados/totalProps)*100)}%"></div></div><strong>${propsRentados}</strong></div>
+        <div class="dash-bar-row"><span>Reparación</span><div class="dash-bar-track"><div class="dash-bar-fill red" style="width:${Math.round((propsRep/totalProps)*100)}%"></div></div><strong>${propsRep}</strong></div>
       </div>`;
-    }).join('') || '<div class="empty-state">Sin props</div>';
+
+    const activity = [];
+    pagos.forEach(p => {
+      const f = p.fields;
+      activity.push({
+        date: f['Fecha de pago'] || '',
+        html: `<div class="dash-panel-row">
+          <div><div class="dash-row-id">${formatFecha(f['Fecha de pago'])}</div><div class="dash-row-name">Pago registrado</div><div class="dash-row-sub">${f['ID pago'] || 'Pago'} · ${fmtM(f['Monto'] || 0)} · ${f['Tipo de pago'] || 'Pago'}</div></div>
+          ${mkBadge('ok', SVG.check, 'Pago')}
+        </div>`
+      });
+    });
+    rentas.forEach(r => {
+      const f = r.fields;
+      activity.push({
+        date: f['Fecha de registro'] || f['Fecha de salida'] || '',
+        html: `<div class="dash-panel-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
+          <div><div class="dash-row-id">${formatFecha(f['Fecha de registro'] || f['Fecha de salida'])}</div><div class="dash-row-name">Nueva renta creada</div><div class="dash-row-sub">${f['ID de renta'] || '—'} · ${clientName(f)}</div></div>
+          ${mkBadge('adel', SVG.clock, 'Renta')}
+        </div>`
+      });
+    });
+    danos.forEach(d => {
+      const f = d.fields;
+      activity.push({
+        date: f['Fecha del reporte'] || '',
+        html: `<div class="dash-panel-row">
+          <div><div class="dash-row-id">${formatFecha(f['Fecha del reporte'])}</div><div class="dash-row-name">Daño registrado</div><div class="dash-row-sub">${f['ID daño'] || 'Daño'} · ${f['Descripción del daño'] || 'Sin descripción'}</div></div>
+          ${mkBadge('pend', SVG.alertTriangle, 'Daño')}
+        </div>`
+      });
+    });
+    props.filter(p => p.fields['Estado'] === 'En reparación').slice(0, 4).forEach(p => {
+      const f = p.fields;
+      activity.push({
+        date: f['Última verificación física'] || '',
+        html: `<div class="dash-panel-row">
+          <div><div class="dash-row-id">${formatFecha(f['Última verificación física'])}</div><div class="dash-row-name">Prop marcado en reparación</div><div class="dash-row-sub">${f['Código único'] || '—'} · ${f['Nombre del prop'] || '—'}</div></div>
+          ${mkBadge('rep', SVG.tool, 'Reparación')}
+        </div>`
+      });
+    });
+
+    activity.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+    document.getElementById('ds-activity-list').innerHTML = activity.slice(0, 6).map(a => a.html).join('') || '<div class="empty-state">Sin actividad reciente</div>';
 
   } catch(e) {
     console.error('Dashboard error:', e);
@@ -2337,6 +2524,8 @@ const F = {
   ID_RENTA:        'ID de renta',
   FECHA_SALIDA:    'Fecha de salida',
   FECHA_REGRESO:   'Fecha de regreso',
+  HORA_SALIDA:     'Hora de salida',
+  HORA_REGRESO:    'Hora de regreso',
   SUBTOTAL:         'Subtotal',
   MONTO_TOTAL:     'Monto total',
   TOTAL_PAGADO:    'Total pagado',
@@ -2820,7 +3009,7 @@ async function db_crearPago({ rentaRecordId, monto, tipo = 'Pago parcial', metod
   return airtablePost('PAGOS', fields);
 }
 
-async function db_crearRenta({ rentaId, salida, regreso, subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
+async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRegreso = '', subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
   const fields = {
     'ID de renta': rentaId,
     'Fecha de salida': salida,
@@ -2832,6 +3021,8 @@ async function db_crearRenta({ rentaId, salida, regreso, subtotal, total, client
     'Estado de la renta': 'Activa',
     'Fecha de registro': new Date().toISOString().split('T')[0]
   };
+  if (horaSalida) fields[F.HORA_SALIDA] = horaSalida;
+  if (horaRegreso) fields[F.HORA_REGRESO] = horaRegreso;
   if (notas) fields['Notas'] = notas;
   if (clienteId) fields['Cliente'] = [clienteId];
   if (propsIds.length > 0) fields['Props rentados'] = propsIds;
@@ -3586,6 +3777,10 @@ async function showNuevaRenta() {
   const hoy = new Date().toISOString().split('T')[0];
   document.getElementById('nr-fecha-salida').value = hoy;
   document.getElementById('nr-fecha-regreso').value = hoy;
+  const horaSalidaEl = document.getElementById('nr-hora-salida');
+  const horaRegresoEl = document.getElementById('nr-hora-regreso');
+  if (horaSalidaEl) horaSalidaEl.value = '';
+  if (horaRegresoEl) horaRegresoEl.value = '';
   document.getElementById('nr-deposito').value = '';
   const metodoPagoEl = document.getElementById('nr-metodo-pago');
   if (metodoPagoEl) metodoPagoEl.value = 'Transferencia';
@@ -3718,6 +3913,8 @@ async function crearNuevaRenta() {
   const clienteSelect = document.getElementById('nr-cliente-select').value;
   const fechaSalida = document.getElementById('nr-fecha-salida').value;
   const fechaRegreso = document.getElementById('nr-fecha-regreso').value;
+  const horaSalida = document.getElementById('nr-hora-salida')?.value.trim() || '';
+  const horaRegreso = document.getElementById('nr-hora-regreso')?.value.trim() || '';
   const deposito = parseFloat(document.getElementById('nr-deposito').value) || 0;
   const metodoPagoInicial = document.getElementById('nr-metodo-pago')?.value || 'Transferencia';
   const notas = document.getElementById('nr-notas').value;
@@ -3759,6 +3956,7 @@ async function crearNuevaRenta() {
     const newRenta = await db_crearRenta({
       rentaId, salida: fechaSalida, regreso: fechaRegreso,
       subtotal, total, clienteId, propsIds, notas,
+      horaSalida, horaRegreso,
       ivaAplicado, montoIva: iva
     });
 
