@@ -161,8 +161,8 @@
 
   /* DASHBOARD STATS (desktop) */
   /* ── ACTION BAR CENTRALIZADA — aplica en dashboard, rentas, inventario, galería ── */
-  .action-bar-universal { display:inline-flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; width:100%; }
-  .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; flex:1; min-width:100px; position:relative; transition:background 0.15s; color:var(--white-dim); }
+  .action-bar-universal { display:flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; }
+  .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; flex:1; min-width:110px; position:relative; transition:background 0.15s; color:var(--white-dim); }
   .abu-btn:last-child { border-right:none; }
   .abu-btn:hover { background:var(--bg-card); }
   .abu-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
@@ -962,13 +962,13 @@
         </div>
 
         <!-- Acciones rápidas — action-bar-universal centralizada -->
-        <div class="action-bar-universal" style="margin-bottom:16px;">
+        <div style="display:flex;margin-bottom:16px;"><div class="action-bar-universal" style="flex:1;">
           <button class="abu-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
           <button class="abu-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
           <button class="abu-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
           <button class="abu-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
           <button class="abu-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
-        </div>
+        </div></div>
 
         <!-- KPIs — sin hover, solo info -->
         <div class="dash-kpis-bar">
