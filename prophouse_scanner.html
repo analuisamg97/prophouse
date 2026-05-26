@@ -456,6 +456,33 @@
   .fin-card-label { font-size:9px; letter-spacing:2px; text-transform:uppercase; margin-bottom:6px; }
   .fin-card-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); }
 
+  /* ── GALERÍA DE PROPS ───────────────────────────────── */
+  .galeria-toolbar { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  .galeria-search { flex:1; min-width:120px; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:9px 14px; outline:none; }
+  .galeria-search:focus { border-color:var(--gold); }
+  .galeria-filtros { display:flex; gap:6px; flex-wrap:wrap; }
+  .filtro-btn { font-size:9px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; padding:5px 10px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .filtro-btn.activo { background:var(--gold); color:var(--bg-deep); border-color:var(--gold); }
+  .galeria-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+  @media (max-width:767px) { .galeria-grid { grid-template-columns:repeat(2,1fr); } }
+  .prop-galeria-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; }
+  .prop-galeria-card:hover { border-color:var(--gold-dim); }
+  .prop-galeria-card:active { border-color:var(--gold); }
+  .prop-galeria-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:var(--bg-deep); }
+  .prop-galeria-noimg { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:var(--bg-deep); color:var(--text-muted); font-size:32px; }
+  .prop-galeria-body { padding:9px 10px; }
+  .prop-galeria-code { font-size:9px; letter-spacing:1.5px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:2px; }
+  .prop-galeria-name { font-size:11px; color:var(--white); font-weight:500; line-height:1.3; margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .prop-galeria-status { display:inline-flex; align-items:center; gap:4px; font-size:9px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; padding:3px 7px; border-radius:20px; }
+  .gs-disponible { background:rgba(39,174,96,0.15); color:#2ecc71; border:1px solid #27ae6044; }
+  .gs-rentado { background:rgba(231,76,60,0.15); color:#e74c3c; border:1px solid #c0392b44; }
+  .gs-reparacion { background:rgba(241,196,15,0.15); color:#f1c40f; border:1px solid #f39c1244; }
+  .gs-otro { background:rgba(136,128,112,0.15); color:var(--text-dim); border:1px solid #33302844; }
+  .galeria-acciones { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+  /* ── FOTO EN DETALLE DE PROP ────────────────────────── */
+  .prop-foto { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; margin-bottom:16px; display:block; background:var(--bg-deep); }
+  .prop-foto-placeholder { width:100%; aspect-ratio:4/3; border-radius:8px; margin-bottom:16px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:36px; }
+
   @media print {
     body { background:white; }
     #app-screen > .header, #orden-view > .view-header, .orden-preview-actions, .btn-preview-home { display:none !important; }
@@ -587,32 +614,39 @@
     </div><!-- fin mob-home -->
   </div>
 
-  <!-- SUBMENU INVENTARIO -->
+  <!-- GALERÍA DE INVENTARIO (reemplaza el menú) -->
   <div id="inventario-menu-view" class="view">
     <div class="view-header">
       <div class="view-title" style="font-size:18px;">Inventario</div>
     </div>
-    <div class="quick-actions">
-      <button class="quick-btn gold" onclick="startFlow('buscar')">
-        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <span class="quick-btn-label">Consultar prop</span>
-        <span class="quick-btn-arrow">›</span>
+    <!-- Acciones rápidas -->
+    <div class="galeria-acciones">
+      <button class="btn-desk-ghost" onclick="showAltaProp()" style="font-size:11px;padding:7px 14px;">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Alta de prop
       </button>
-      <button class="quick-btn" onclick="showAltaProp()">
-        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span class="quick-btn-label">Dar de alta prop</span>
-        <span class="quick-btn-arrow">›</span>
+      <button class="btn-desk-ghost" onclick="showInventarioView()" style="font-size:11px;padding:7px 14px;">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Inventario físico
       </button>
-      <button class="quick-btn" onclick="showInventarioView()">
-        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        <span class="quick-btn-label">Inventario físico</span>
-        <span class="quick-btn-arrow">›</span>
+      <button class="btn-desk-ghost" onclick="startFlow('buscar')" style="font-size:11px;padding:7px 14px;">
+        <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar por código
       </button>
-      <button class="quick-btn red" onclick="showDanosView()">
-        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span class="quick-btn-label">Registrar daño</span>
-        <span class="quick-btn-arrow">›</span>
-      </button>
+    </div>
+    <!-- Buscador y filtros -->
+    <div class="galeria-toolbar">
+      <input class="galeria-search" id="galeria-search" placeholder="Buscar por nombre o código…" oninput="galeríaFiltrar()">
+      <div class="galeria-filtros">
+        <button class="filtro-btn activo" data-estado="" onclick="galeríaSetFiltro(this)">Todos</button>
+        <button class="filtro-btn" data-estado="Disponible" onclick="galeríaSetFiltro(this)">Disponible</button>
+        <button class="filtro-btn" data-estado="Rentado" onclick="galeríaSetFiltro(this)">Rentado</button>
+        <button class="filtro-btn" data-estado="En reparación" onclick="galeríaSetFiltro(this)">Reparación</button>
+      </div>
+    </div>
+    <!-- Grid de cards -->
+    <div id="galeria-grid" class="galeria-grid">
+      <div class="loading"><div class="spinner"></div>Cargando inventario...</div>
     </div>
   </div>
 
@@ -1511,6 +1545,7 @@ function _navGoInterno(tab) {
     return;
   } else if (tab === 'inventario') {
     document.getElementById('inventario-menu-view').style.display = 'block';
+    galeriaCargar();
   } else if (tab === 'rentas') {
     document.getElementById('rentas-menu-view').style.display = 'block';
   } else if (tab === 'finanzas') {
@@ -2559,7 +2594,18 @@ function showPropDetail(prop, fromFlow) {
       <div id="estado-change-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
     </div>`;
 
+  // Foto principal — Airtable devuelve attachments como array
+  const fotos = f['Foto principal'];
+  let fotoHtml = '';
+  if (fotos && fotos.length > 0) {
+    const url = fotos[0].thumbnails?.large?.url || fotos[0].url;
+    fotoHtml = `<img class="prop-foto" src="${url}" alt="${f['Nombre del prop'] || ''}" loading="lazy" onerror="this.style.display='none'">`;
+  } else {
+    fotoHtml = `<div class="prop-foto-placeholder">📷</div>`;
+  }
+
   document.getElementById('prop-detail-content').innerHTML = `
+    ${fotoHtml}
     <div class="prop-name">${f['Nombre del prop'] || 'Sin nombre'}</div>
     <div class="prop-code">${code}</div>
     <div class="status-badge ${statusClass}" id="prop-estado-badge">${estado}</div>
@@ -4246,6 +4292,110 @@ async function orAbrirDesdeRenta() {
 }
 
 // orGenerarId eliminado — usar db_generarRentaId() directamente
+
+// ── GALERÍA DE INVENTARIO ────────────────────────────────
+let _galeriaProps = [];       // todos los props cargados
+let _galeriaFiltroEstado = ''; // '' = todos
+
+async function galeriaCargar() {
+  const grid = document.getElementById('galeria-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando inventario...</div>';
+  try {
+    _galeriaProps = await db_getProps();
+    galeríaRenderizar();
+  } catch(e) {
+    grid.innerHTML = `<div class="empty-state" style="color:#e74c3c">Error: ${e.message}</div>`;
+  }
+}
+
+function galeríaSetFiltro(btn) {
+  document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  _galeriaFiltroEstado = btn.dataset.estado;
+  galeríaRenderizar();
+}
+
+function galeríaFiltrar() {
+  galeríaRenderizar();
+}
+
+function galeríaRenderizar() {
+  const grid = document.getElementById('galeria-grid');
+  if (!grid) return;
+  const query = (document.getElementById('galeria-search')?.value || '').toLowerCase().trim();
+
+  const props = _galeriaProps.filter(p => {
+    const f = p.fields;
+    const estado = f['Estado'] || '';
+    const nombre = (f['Nombre del prop'] || '').toLowerCase();
+    const codigo = (f['Código único'] || '').toLowerCase();
+    const matchEstado = !_galeriaFiltroEstado || estado === _galeriaFiltroEstado;
+    const matchQuery = !query || nombre.includes(query) || codigo.includes(query);
+    return matchEstado && matchQuery;
+  });
+
+  if (props.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">Sin props que coincidan</div>';
+    return;
+  }
+
+  grid.innerHTML = props.map(p => {
+    const f = p.fields;
+    const estado = f['Estado'] || 'Disponible';
+    const nombre = f['Nombre del prop'] || 'Sin nombre';
+    const codigo = f['Código único'] || '—';
+
+    // Airtable devuelve attachments como array de objetos con .url y .thumbnails
+    const fotos = f['Foto principal'];
+    let imgHtml;
+    if (fotos && fotos.length > 0) {
+      // Usar thumbnail si existe (más rápido), si no la URL original
+      const thumb = fotos[0].thumbnails?.large?.url || fotos[0].url;
+      imgHtml = `<img class="prop-galeria-img" src="${thumb}" alt="${nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                 <div class="prop-galeria-noimg" style="display:none">📷</div>`;
+    } else {
+      imgHtml = `<div class="prop-galeria-noimg">📷</div>`;
+    }
+
+    const statusClass =
+      estado === 'Disponible'    ? 'gs-disponible' :
+      estado === 'Rentado'       ? 'gs-rentado' :
+      estado.includes('reparac') ? 'gs-reparacion' : 'gs-otro';
+
+    const statusLabel =
+      estado === 'Disponible'    ? '● Disponible' :
+      estado === 'Rentado'       ? '● Rentado' :
+      estado === 'En reparación' ? '● Reparación' :
+      estado === 'En mantenimiento' ? '● Manten.' : `● ${estado}`;
+
+    return `<div class="prop-galeria-card" onclick="galeríaAbrirDetalle('${p.id}')">
+      ${imgHtml}
+      <div class="prop-galeria-body">
+        <div class="prop-galeria-code">${codigo}</div>
+        <div class="prop-galeria-name" title="${nombre}">${nombre}</div>
+        <span class="prop-galeria-status ${statusClass}">${statusLabel}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function galeríaAbrirDetalle(recordId) {
+  _navHistory.push(_getCurrentViewId());
+  showView('prop-detail-view');
+  document.getElementById('detail-view-title').textContent = 'Detalle del prop';
+  document.getElementById('prop-detail-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando...</div>';
+  try {
+    const prop = await db_getProp(recordId);
+    currentProp = prop;
+    registrarVerificacion(prop.id, null, null).catch(e => console.warn('Timestamp galería:', e.message));
+    showPropDetail(prop, false);
+  } catch(e) {
+    document.getElementById('prop-detail-content').innerHTML =
+      `<div class="empty-state" style="color:#e74c3c">Error: ${e.message}</div>`;
+  }
+}
 
 loadCredentials();
 </script>
