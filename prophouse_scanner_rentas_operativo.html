@@ -347,6 +347,7 @@
   /* VIEWS */
   .view { display:none; padding:0 24px 24px; }
   .view-header { display:flex; align-items:center; gap:12px; padding:16px 28px 16px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; }
+  .main-view-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 28px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; box-sizing:border-box; width:100%; }
   .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; } .btn-back:hover { border-color:var(--gold); } .btn-back:active { background:var(--bg-card); }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .view-title { font-size:22px; letter-spacing:0.3px; color:var(--white); font-family:'Playfair Display',serif; }
@@ -953,9 +954,8 @@
   <div id="home-view">
     <!-- DASHBOARD DESKTOP -->
     <div id="desk-dashboard" style="display:none;">
-      <!-- Header idéntico al view-header de Rentas e Inventario -->
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);margin-bottom:20px;background:var(--bg);position:sticky;top:0;z-index:10;">
-        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--white);">Dashboard</div>
+      <div class="main-view-header">
+        <div class="view-title" id="dash-saludo">Buenos días, Ana Luisa</div>
         <div class="dash-date" id="dash-fecha-hoy" style="font-size:11px;color:var(--text-muted);letter-spacing:1px;">—</div>
       </div>
 
@@ -1061,7 +1061,7 @@
 
   <!-- GALERÍA DE INVENTARIO (reemplaza el menú) -->
   <div id="inventario-menu-view" class="view">
-    <div class="view-header">
+    <div class="main-view-header">
       <div class="view-title">Inventario</div>
     </div>
     <!-- Acciones rápidas -->
@@ -1099,7 +1099,7 @@
 
   <!-- SUBMENU RENTAS -->
   <div id="rentas-menu-view" class="view">
-    <div class="view-header">
+    <div class="main-view-header">
       <div>
         <div class="view-title">Rentas</div>
       </div>
@@ -2514,7 +2514,16 @@ function goHome() {
   const mob = document.getElementById('mob-home');
   if (desk) desk.style.display = isDesktop ? 'block' : 'none';
   if (mob) mob.style.display = isDesktop ? 'none' : 'block';
+  actualizarSaludoDashboard();
   if (isDesktop) cargarDashboard();
+}
+
+function actualizarSaludoDashboard() {
+  const saludoEl = document.getElementById('dash-saludo');
+  if (!saludoEl) return;
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
+  saludoEl.textContent = `${saludo}, Ana Luisa`;
 }
 
 
