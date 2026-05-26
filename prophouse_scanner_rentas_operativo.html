@@ -735,8 +735,8 @@
   /* ── CENTRO OPERATIVO DE RENTAS ─────────────────────── */
   .rentas-centro { display:flex; flex-direction:column; gap:18px; }
   .rentas-acciones { display:flex; gap:0; margin-bottom:14px; }
-  .rentas-action-bar { display:inline-flex; width:1190px !important; max-width:100%; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
-  .rentas-action-btn { display:flex; flex:0 0 238px !important; width:238px; max-width:238px; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); position:relative; }
+  .rentas-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
+  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); position:relative; }
   .rentas-action-btn:last-child { border-right:none; }
   .rentas-action-btn:hover { background:var(--bg-card); }
   .rentas-action-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
@@ -825,8 +825,6 @@
   @media (max-width:900px) {
     .rentas-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); }
     .rentas-main-grid { grid-template-columns:1fr; }
-    .rentas-action-bar { width:100%; }
-    .rentas-action-btn { flex:1 1 0 !important; width:auto; max-width:none; }
   }
   @media (max-width:767px) {
     .rentas-acciones { overflow-x:auto; padding-bottom:2px; }
@@ -964,12 +962,12 @@
       <div style="padding:0 28px 28px;">
         <!-- Acciones rápidas — misma clase que Rentas, ancho completo -->
         <div class="rentas-acciones" style="margin-bottom:16px;">
-          <div class="rentas-action-bar">
-            <button class="rentas-action-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
-            <button class="rentas-action-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
-            <button class="rentas-action-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
-            <button class="rentas-action-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
-            <button class="rentas-action-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
+          <div class="rentas-action-bar" style="width:100%;">
+            <button class="rentas-action-btn gold" style="flex:1;" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
+            <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
           </div>
         </div>
 
@@ -1108,24 +1106,24 @@
     </div>
     <div class="rentas-centro">
       <div class="rentas-acciones">
-        <div class="rentas-action-bar">
-          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()">
+        <div class="rentas-action-bar" style="width:100%;">
+          <button class="rentas-action-btn gold" style="flex:1;" onclick="quickNuevaRenta()">
             <i class="ti ti-plus" aria-hidden="true"></i>
             <span>Nueva renta</span>
           </button>
-          <button class="rentas-action-btn" onclick="showCotizacionView()">
+          <button class="rentas-action-btn" style="flex:1;" onclick="showCotizacionView()">
             <i class="ti ti-file-dollar" aria-hidden="true"></i>
             <span>Nueva cotización</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('salida')">
+          <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('salida')">
             <i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
             <span>Registrar salida</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('entrada')">
+          <button class="rentas-action-btn" style="flex:1;" onclick="startFlow('entrada')">
             <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
             <span>Registrar regreso</span>
           </button>
-          <button class="rentas-action-btn" onclick="showPagosView()">
+          <button class="rentas-action-btn" style="flex:1;" onclick="showPagosView()">
             <i class="ti ti-credit-card" aria-hidden="true"></i>
             <span>Registrar pago</span>
           </button>
