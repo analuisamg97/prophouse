@@ -167,12 +167,12 @@
   .abu-btn:hover { background:var(--bg-card); }
   .abu-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
   .abu-btn:hover::after { opacity:0.6; }
-  .abu-btn i { font-size:22px; color:#888070; transition:color 0.15s; }
+  .abu-btn i { font-size:24px; color:#888070; transition:color 0.15s; }
   .abu-btn:hover i { color:var(--white-dim); }
   .abu-btn.gold i { color:var(--gold); }
   .abu-btn.gold span { color:var(--gold); }
   .abu-btn:hover.gold i { color:var(--gold); }
-  .abu-btn span { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:#555048; white-space:nowrap; transition:color 0.15s; font-family:'Inter',-apple-system,sans-serif; }
+  .abu-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:#555048; white-space:nowrap; transition:color 0.15s; font-family:'Inter',-apple-system,sans-serif; }
   .abu-btn:hover span { color:var(--white-dim); }
   .abu-btn:hover.gold span { color:var(--gold); }
 
@@ -349,7 +349,7 @@
   .view-header { display:flex; align-items:center; gap:12px; padding:16px 28px 16px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; }
   .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; } .btn-back:hover { border-color:var(--gold); } .btn-back:active { background:var(--bg-card); }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
-  .view-title { font-size:15px; letter-spacing:0.5px; color:var(--white); font-family:'Playfair Display',serif; }
+  .view-title { font-size:22px; letter-spacing:0.3px; color:var(--white); font-family:'Playfair Display',serif; }
   .mode-badge { margin-left:auto; font-size:9px; letter-spacing:1px; padding:4px 10px; border-radius:20px; text-transform:uppercase; }
   .mode-salida { background:rgba(192,57,43,0.15); color:#e74c3c; border:1px solid #c0392b44; }
   .mode-entrada { background:rgba(39,174,96,0.15); color:#2ecc71; border:1px solid #27ae6044; }
@@ -955,7 +955,7 @@
     <div id="desk-dashboard" style="display:none;">
       <!-- Header idéntico al view-header de Rentas e Inventario -->
       <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 28px;border-bottom:1px solid var(--border);margin-bottom:20px;background:var(--bg);position:sticky;top:0;z-index:10;">
-        <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);">Dashboard</div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;color:var(--white);">Dashboard</div>
         <div class="dash-date" id="dash-fecha-hoy" style="font-size:11px;color:var(--text-muted);letter-spacing:1px;">—</div>
       </div>
 
@@ -1060,7 +1060,7 @@
   <!-- GALERÍA DE INVENTARIO (reemplaza el menú) -->
   <div id="inventario-menu-view" class="view">
     <div class="view-header">
-      <div class="view-title" style="font-size:18px;">Inventario</div>
+      <div class="view-title">Inventario</div>
     </div>
     <!-- Acciones rápidas -->
     <div class="galeria-acciones">
@@ -1099,7 +1099,7 @@
   <div id="rentas-menu-view" class="view">
     <div class="view-header">
       <div>
-        <div class="view-title" style="font-size:18px;">Rentas</div>
+        <div class="view-title">Rentas</div>
       </div>
     </div>
     <div class="rentas-centro">
@@ -1208,7 +1208,7 @@
   <!-- FINANZAS VIEW -->
   <div id="finanzas-menu-view" class="view">
     <div class="view-header">
-      <div class="view-title" style="font-size:18px;">Finanzas</div>
+      <div class="view-title">Finanzas</div>
       <button onclick="pinSesionActiva=false;navGo('inicio')" style="margin-left:auto;background:none;border:none;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;">🔒 cerrar</button>
     </div>
 
