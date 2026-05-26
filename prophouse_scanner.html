@@ -1946,9 +1946,10 @@ async function airtablePatch(table, recordId, fields) {
 // Llamada en cada escaneo: actualiza estado, ubicacion y timestamp
 async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
   if (!recordId) throw new Error('registrarVerificacion: recordId vacío');
-  const isoStr = new Date().toISOString();
+  // "Última verificación física" es campo Date en Airtable — solo acepta YYYY-MM-DD
+  const hoy = new Date().toISOString().split('T')[0];
   const fields = {
-    [F.ULT_VERIF]: isoStr
+    [F.ULT_VERIF]: hoy
   };
   if (nuevoEstado) fields[F.ESTADO] = nuevoEstado;
   if (nuevaUbicacion) fields['Ubicación'] = nuevaUbicacion;
@@ -3709,10 +3710,21 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
   const nuevoEstado = conCargo ? 'Cancelada con cargo' : 'Cancelada';
   const hoy = ahora.toISOString().split('T')[0];
 
-  await airtablePatch('RENTAS', rentaRecordId, {
-    [F.ESTADO_RENTA]: nuevoEstado,
-    [F.FECHA_CANCEL]: hoy
-  });
+  try {
+    await airtablePatch('RENTAS', rentaRecordId, {
+      [F.ESTADO_RENTA]: nuevoEstado,
+      [F.FECHA_CANCEL]: hoy
+    });
+  } catch(e) {
+    // Airtable rechaza si la opción no existe en el Single Select
+    if (e.message && e.message.includes('select option')) {
+      throw new Error(
+        `La opción "${nuevoEstado}" no existe en tu base de Airtable. ` +
+        `Agrégala en la columna "Estado de la renta" de la tabla RENTAS y vuelve a intentar.`
+      );
+    }
+    throw e;
+  }
 
   return { nuevoEstado, conCargo };
 }
