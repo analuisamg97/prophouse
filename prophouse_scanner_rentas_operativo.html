@@ -2633,11 +2633,54 @@ async function airtablePost(table, fields) {
     headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields })
   });
+  const data = await res.json().catch(() => ({}));
   if (res.status === 401) throw new Error('Token inválido o expirado');
-  if (res.status === 422) throw new Error('Datos inválidos — revisa los nombres de campos');
-  const data = await res.json();
+  if (res.status === 403) throw new Error('Sin permisos de escritura — revisa scopes del token');
+  if (res.status === 422) {
+    const detail = data?.error?.message || data?.error?.type || JSON.stringify(data?.error || data);
+    throw new Error('Datos inválidos en ' + table + ': ' + detail);
+  }
+  if (!res.ok) throw new Error(`Error HTTP ${res.status} en ${table}`);
   if (data.error) throw new Error(data.error.message || data.error.type);
   return data;
+}
+
+function getUnknownAirtableField(message = '', optionalFields = []) {
+  return optionalFields.find(field =>
+    message.includes(field) ||
+    message.includes(`"${field}"`) ||
+    message.includes(`'${field}'`)
+  );
+}
+
+async function airtablePostConCamposOpcionales(table, fields, optionalFields = []) {
+  const cleanFields = { ...fields };
+  for (let i = 0; i <= optionalFields.length; i++) {
+    try {
+      return await airtablePost(table, cleanFields);
+    } catch (e) {
+      const missingField = getUnknownAirtableField(e.message, optionalFields);
+      if (!missingField || cleanFields[missingField] === undefined) throw e;
+      delete cleanFields[missingField];
+      console.warn(`Campo opcional omitido en ${table}: ${missingField}`);
+    }
+  }
+  return airtablePost(table, cleanFields);
+}
+
+async function airtablePatchConCamposOpcionales(table, recordId, fields, optionalFields = []) {
+  const cleanFields = { ...fields };
+  for (let i = 0; i <= optionalFields.length; i++) {
+    try {
+      return await airtablePatch(table, recordId, cleanFields);
+    } catch (e) {
+      const missingField = getUnknownAirtableField(e.message, optionalFields);
+      if (!missingField || cleanFields[missingField] === undefined) throw e;
+      delete cleanFields[missingField];
+      console.warn(`Campo opcional omitido en ${table}: ${missingField}`);
+    }
+  }
+  return airtablePatch(table, recordId, cleanFields);
 }
 
 // ── CLIENTES ─────────────────────────────────────────
@@ -3011,14 +3054,14 @@ async function db_crearPago({ rentaRecordId, monto, tipo = 'Pago parcial', metod
 
 async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRegreso = '', subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
   const fields = {
-    'ID de renta': rentaId,
-    'Fecha de salida': salida,
-    'Fecha de regreso': regreso || salida,
+    [F.ID_RENTA]: rentaId,
+    [F.FECHA_SALIDA]: salida,
+    [F.FECHA_REGRESO]: regreso || salida,
     [F.SUBTOTAL]: subtotal,
     [F.MONTO_TOTAL]: total,
-    'IVA aplicado': ivaAplicado,
-    'Monto IVA': montoIva,
-    'Estado de la renta': 'Activa',
+    [F.IVA_APLICADO]: ivaAplicado,
+    [F.MONTO_IVA]: montoIva,
+    [F.ESTADO_RENTA]: 'Activa',
     'Fecha de registro': new Date().toISOString().split('T')[0]
   };
   if (horaSalida) fields[F.HORA_SALIDA] = horaSalida;
@@ -3026,7 +3069,40 @@ async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRe
   if (notas) fields['Notas'] = notas;
   if (clienteId) fields['Cliente'] = [clienteId];
   if (propsIds.length > 0) fields['Props rentados'] = propsIds;
-  return airtablePost('RENTAS', fields);
+  return airtablePostConCamposOpcionales('RENTAS', fields, [
+    F.SUBTOTAL,
+    F.IVA_APLICADO,
+    F.MONTO_IVA,
+    F.HORA_SALIDA,
+    F.HORA_REGRESO,
+    'Notas',
+    'Fecha de registro'
+  ]);
+}
+
+async function db_actualizarRenta(rentaRecordId, { salida, regreso, horaSalida = '', horaRegreso = '', subtotal, total, clienteId, estado, notas = '', ivaAplicado = false, montoIva = 0 }) {
+  if (!rentaRecordId) throw new Error('Falta el record de la renta');
+  const fields = {
+    [F.FECHA_SALIDA]: salida,
+    [F.FECHA_REGRESO]: regreso || salida,
+    [F.SUBTOTAL]: subtotal,
+    [F.MONTO_TOTAL]: total,
+    [F.IVA_APLICADO]: ivaAplicado,
+    [F.MONTO_IVA]: montoIva,
+    [F.HORA_SALIDA]: horaSalida || '',
+    [F.HORA_REGRESO]: horaRegreso || '',
+    [F.ESTADO_RENTA]: estado || 'Activa',
+    'Notas': notas || ''
+  };
+  if (clienteId) fields['Cliente'] = [clienteId];
+  return airtablePatchConCamposOpcionales('RENTAS', rentaRecordId, fields, [
+    F.SUBTOTAL,
+    F.IVA_APLICADO,
+    F.MONTO_IVA,
+    F.HORA_SALIDA,
+    F.HORA_REGRESO,
+    'Notas'
+  ]);
 }
 
 // Lógica central de estado del pago
@@ -3655,8 +3731,8 @@ async function rentasVerDetalle(rentaRecordId) {
       <div class="pago-section">
         <div class="pago-title">Datos de la renta</div>
         <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
-        <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Salida</span><span class="value">${f[F.FECHA_SALIDA] || '—'}${f[F.HORA_SALIDA] ? ' · ' + f[F.HORA_SALIDA] : ''}</span></div>
+        <div class="pago-row"><span class="label">Regreso</span><span class="value">${f[F.FECHA_REGRESO] || '—'}${f[F.HORA_REGRESO] ? ' · ' + f[F.HORA_REGRESO] : ''}</span></div>
         <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
@@ -3669,6 +3745,7 @@ async function rentasVerDetalle(rentaRecordId) {
         <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--bg-deep);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
         <button class="btn-accion" onclick="_navHistory.push(_getCurrentViewId());pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
       </div>
+      <button onclick="rentasEditarDatos('${rentaRecordId}')" style="width:100%;background:none;border:1px solid var(--border);color:var(--white-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0;margin-top:8px;border-radius:4px;">✏ Editar datos de la renta</button>
       ${f['Estado de la renta']==='Activa' ? `
       <button onclick="epAbrirEditar('${rentaRecordId}')" style="width:100%;background:none;border:1px solid var(--border);color:var(--white-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0;margin-top:8px;border-radius:4px;">✏ Editar props de la renta</button>
       <button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
@@ -3676,6 +3753,168 @@ async function rentasVerDetalle(rentaRecordId) {
   } catch(e) {
     document.getElementById('props-flow-content').innerHTML =
       `<div class="alert alert-red">Error al cargar renta: ${e.message}</div>`;
+  }
+}
+
+let rentaEditProps = [];
+let rentaEditRecordId = null;
+
+function rentaDiasCobradosEntre(salida, regreso) {
+  if (!salida || !regreso) return 1;
+  const diff = Math.round((new Date(regreso) - new Date(salida)) / (1000*60*60*24));
+  return Math.max(1, diff - 1);
+}
+
+function rentaImportesDesdeProps(props = [], salida, regreso, ivaAplicado) {
+  const dias = rentaDiasCobradosEntre(salida, regreso);
+  const subtotal = props.reduce((sum, p) => sum + ((parseFloat(p.fields?.[F.RENTA_DIA]) || 0) * dias), 0);
+  const iva = ivaAplicado ? subtotal * 0.16 : 0;
+  return { dias, subtotal, iva, total: subtotal + iva };
+}
+
+async function rentasEditarDatos(rentaRecordId) {
+  rentaEditRecordId = rentaRecordId;
+  document.getElementById('props-flow-content').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Cargando edición...</div>';
+
+  try {
+    const [renta, clientes] = await Promise.all([db_getRenta(rentaRecordId), db_getClientes()]);
+    const f = renta.fields;
+    const propsIds = f['Props rentados'] || [];
+    rentaEditProps = [];
+    for (const pid of propsIds) {
+      try {
+        rentaEditProps.push(await db_getProp(pid));
+      } catch(e) {}
+    }
+
+    const clienteActual = (f['Cliente'] || [])[0] || '';
+    const clienteOptions = clientes.map(c => {
+      const nombre = rentasCentroEsc(c.fields[F.NOMBRE_CLIENTE] || 'Sin nombre');
+      const selected = c.id === clienteActual ? 'selected' : '';
+      return `<option value="${c.id}" ${selected}>${nombre}</option>`;
+    }).join('');
+
+    const estados = ['Activa', 'Por regresar', 'Cancelada', 'Cancelada con cargo', 'Cerrada'];
+    const estadoActual = f[F.ESTADO_RENTA] || 'Activa';
+    const estadoOptions = estados.map(e =>
+      `<option value="${rentasCentroEsc(e)}" ${e === estadoActual ? 'selected' : ''}>${rentasCentroEsc(e)}</option>`
+    ).join('');
+
+    const ivaChecked = f[F.IVA_APLICADO] ? 'checked' : '';
+    const propsResumen = rentaEditProps.map(p => {
+      const pf = p.fields || {};
+      return `<div class="prop-list-item">
+        ${propThumbHtml(pf)}
+        <div class="prop-info">
+          <div class="prop-item-name">${rentasCentroEsc(pf[F.NOMBRE_PROP] || '—')}</div>
+          <div class="prop-item-code">${rentasCentroEsc(pf[F.CODIGO] || '—')} · $${(parseFloat(pf[F.RENTA_DIA]) || 0).toLocaleString()}/día</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('props-flow-title').textContent = `Editar ${f[F.ID_RENTA] || 'renta'}`;
+    document.getElementById('props-mode-badge').textContent = 'Editar';
+    document.getElementById('props-mode-badge').className = 'mode-badge mode-buscar';
+    document.getElementById('props-flow-content').innerHTML = `
+      <div class="pago-section">
+        <div class="pago-title">Datos editables</div>
+        <label class="form-label">Cliente</label>
+        <select class="setup-input" id="er-cliente">${clienteOptions}</select>
+
+        <label class="form-label">Fecha de salida</label>
+        <input type="date" class="setup-input" id="er-fecha-salida" value="${rentasCentroEsc(f[F.FECHA_SALIDA] || '')}" onchange="rentasEditCalcMonto()">
+
+        <label class="form-label">Hora de salida</label>
+        <input type="text" class="setup-input" id="er-hora-salida" value="${rentasCentroEsc(f[F.HORA_SALIDA] || '')}" placeholder="3:00 PM">
+
+        <label class="form-label">Fecha de regreso</label>
+        <input type="date" class="setup-input" id="er-fecha-regreso" value="${rentasCentroEsc(f[F.FECHA_REGRESO] || '')}" onchange="rentasEditCalcMonto()">
+
+        <label class="form-label">Hora de regreso</label>
+        <input type="text" class="setup-input" id="er-hora-regreso" value="${rentasCentroEsc(f[F.HORA_REGRESO] || '')}" placeholder="10:00 AM">
+
+        <label class="form-label">Estado de la renta</label>
+        <select class="setup-input" id="er-estado">${estadoOptions}</select>
+
+        <div style="display:flex;align-items:center;gap:10px;margin:16px 0;">
+          <input type="checkbox" id="er-iva" style="width:18px;height:18px;accent-color:var(--gold);" onchange="rentasEditCalcMonto()" ${ivaChecked}>
+          <label for="er-iva" style="font-size:11px;color:var(--white);letter-spacing:1px;">Aplicar IVA 16%</label>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:16px;">
+          <div class="pago-row"><span class="label">Días cobrados</span><span class="value" id="er-dias">—</span></div>
+          <div class="pago-row"><span class="label">Subtotal</span><span class="value" id="er-subtotal">—</span></div>
+          <div class="pago-row"><span class="label">IVA 16%</span><span class="value" id="er-iva-monto">—</span></div>
+          <div class="pago-row"><span class="label">Total</span><span class="value" id="er-total" style="color:var(--gold);">—</span></div>
+        </div>
+
+        <label class="form-label">Notas</label>
+        <input type="text" class="setup-input" id="er-notas" value="${rentasCentroEsc(f['Notas'] || '')}" placeholder="Detalles de la renta...">
+      </div>
+
+      <div class="section-title" style="margin-bottom:12px;">Props vinculados</div>
+      ${propsResumen || '<div class="empty-state">Sin props vinculados</div>'}
+
+      <button class="btn-accion" onclick="rentasGuardarEdicion()" style="width:100%;background:var(--gold);color:var(--bg-deep);border:none;padding:14px;font-size:10px;margin-top:16px;">Guardar cambios</button>
+      <button onclick="rentasVerDetalle('${rentaRecordId}')" style="width:100%;background:none;border:1px solid var(--border);color:var(--text-dim);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0;margin-top:8px;border-radius:4px;">Cancelar</button>
+    `;
+    rentasEditCalcMonto();
+  } catch(e) {
+    document.getElementById('props-flow-content').innerHTML =
+      `<div class="alert alert-red">Error al cargar edición: ${rentasCentroEsc(e.message)}</div>`;
+  }
+}
+
+function rentasEditCalcMonto() {
+  const salida = document.getElementById('er-fecha-salida')?.value || '';
+  const regreso = document.getElementById('er-fecha-regreso')?.value || salida;
+  const ivaAplicado = document.getElementById('er-iva')?.checked || false;
+  const { dias, subtotal, iva, total } = rentaImportesDesdeProps(rentaEditProps, salida, regreso, ivaAplicado);
+  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  const diasEl = document.getElementById('er-dias');
+  if (diasEl) diasEl.textContent = `${dias} día${dias > 1 ? 's' : ''}`;
+  const subtotalEl = document.getElementById('er-subtotal');
+  if (subtotalEl) subtotalEl.textContent = fmt(subtotal);
+  const ivaEl = document.getElementById('er-iva-monto');
+  if (ivaEl) ivaEl.textContent = fmt(iva);
+  const totalEl = document.getElementById('er-total');
+  if (totalEl) totalEl.textContent = fmt(total);
+  return { dias, subtotal, iva, total, ivaAplicado };
+}
+
+async function rentasGuardarEdicion() {
+  if (!rentaEditRecordId) return;
+  const salida = document.getElementById('er-fecha-salida')?.value || '';
+  const regreso = document.getElementById('er-fecha-regreso')?.value || '';
+  if (!salida) { showToast('Ingresa fecha de salida', true); return; }
+  if (!regreso) { showToast('Ingresa fecha de regreso', true); return; }
+
+  const clienteId = document.getElementById('er-cliente')?.value || '';
+  const horaSalida = document.getElementById('er-hora-salida')?.value.trim() || '';
+  const horaRegreso = document.getElementById('er-hora-regreso')?.value.trim() || '';
+  const estado = document.getElementById('er-estado')?.value || 'Activa';
+  const notas = document.getElementById('er-notas')?.value || '';
+  const { subtotal, iva, total, ivaAplicado } = rentasEditCalcMonto();
+
+  try {
+    await db_actualizarRenta(rentaEditRecordId, {
+      salida,
+      regreso,
+      horaSalida,
+      horaRegreso,
+      subtotal,
+      total,
+      clienteId,
+      estado,
+      notas,
+      ivaAplicado,
+      montoIva: iva
+    });
+    showToast('✓ Renta actualizada');
+    await rentasVerDetalle(rentaEditRecordId);
+  } catch(e) {
+    showToast('Error al actualizar renta: ' + e.message, true);
   }
 }
 
