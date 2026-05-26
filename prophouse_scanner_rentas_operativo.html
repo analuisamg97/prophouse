@@ -161,8 +161,8 @@
 
   /* DASHBOARD STATS (desktop) */
   /* ── ACTION BAR CENTRALIZADA — aplica en dashboard, rentas, inventario, galería ── */
-  .action-bar-universal { display:flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; }
-  .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; min-width:100px; position:relative; transition:background 0.15s; color:var(--white-dim); }
+  .action-bar-universal { display:inline-flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; width:100%; }
+  .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; flex:1; min-width:100px; position:relative; transition:background 0.15s; color:var(--white-dim); }
   .abu-btn:last-child { border-right:none; }
   .abu-btn:hover { background:var(--bg-card); }
   .abu-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
