@@ -953,15 +953,14 @@
   <div id="home-view">
     <!-- DASHBOARD DESKTOP -->
     <div id="desk-dashboard" style="display:none;">
-      <div style="padding:20px 28px 28px;">
+      <!-- Header igual que Rentas e Inventario -->
+      <div style="display:flex;align-items:baseline;justify-content:space-between;padding:16px 28px 16px;border-bottom:1px solid var(--border);margin-bottom:20px;background:var(--bg);position:sticky;top:0;z-index:10;">
+        <div class="dash-greet">Bienvenida, Ana Luisa</div>
+        <div class="dash-date" id="dash-fecha-hoy">—</div>
+      </div>
 
-        <!-- Saludo -->
-        <div class="dash-welcome">
-          <div class="dash-greet">Bienvenida, Ana Luisa</div>
-          <div class="dash-date" id="dash-fecha-hoy">—</div>
-        </div>
-
-        <!-- Acciones rápidas — action-bar-universal centralizada -->
+      <div style="padding:0 28px 28px;">
+        <!-- Acciones rápidas -->
         <div class="rentas-acciones"><div class="action-bar-universal">
           <button class="abu-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
           <button class="abu-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
