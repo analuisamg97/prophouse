@@ -576,11 +576,11 @@
   .rentas-centro { display:flex; flex-direction:column; gap:18px; }
   .rentas-acciones { display:flex; gap:0; margin-bottom:14px; }
   .rentas-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
-  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:16px 24px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:124px; color:var(--white-dim); }
+  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); }
   .rentas-action-btn:last-child { border-right:none; }
   .rentas-action-btn:hover { background:var(--bg-card); }
   .rentas-action-btn:active { background:var(--bg-hover); }
-  .rentas-action-btn i { font-size:26px; line-height:1; color:currentColor; }
+  .rentas-action-btn i { font-size:24px; line-height:1; color:currentColor; }
   .rentas-action-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
   .rentas-action-btn.gold { color:var(--gold); }
   .rentas-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
@@ -602,6 +602,9 @@
   .rentas-table-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border); }
   .rentas-panel-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-family:'DM Mono',monospace; }
   .rentas-count { font-size:10px; color:var(--text-muted); }
+  .rentas-table-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+  .rentas-head-btn { background:transparent; border:1px solid rgba(212,168,83,0.38); color:var(--gold); border-radius:5px; padding:7px 10px; font-size:9px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; cursor:pointer; white-space:nowrap; transition:all 0.15s; }
+  .rentas-head-btn:hover { background:rgba(212,168,83,0.08); border-color:var(--gold); }
   .rentas-table-wrap { padding:12px; }
   .rentas-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
   .rentas-op-card { background:#252320; border:1px solid var(--border); border-radius:8px; padding:14px; cursor:pointer; transition:border-color 0.15s, background 0.15s; min-height:168px; display:flex; flex-direction:column; gap:11px; }
@@ -640,7 +643,7 @@
   @media (max-width:767px) {
     .rentas-acciones { overflow-x:auto; padding-bottom:2px; }
     .rentas-action-bar { min-width:max-content; }
-    .rentas-action-btn { min-width:104px; padding:14px 16px; }
+    .rentas-action-btn { min-width:100px; padding:16px 28px; }
     .rentas-kpis { grid-template-columns:1fr 1fr; }
     .rentas-toolbar { align-items:stretch; }
     .rentas-search { min-width:100%; }
@@ -829,25 +832,21 @@
             <i class="ti ti-plus" aria-hidden="true"></i>
             <span>Nueva renta</span>
           </button>
-          <button class="rentas-action-btn" onclick="showRentasActivas()">
-            <i class="ti ti-file-text" aria-hidden="true"></i>
-            <span>Rentas activas</span>
+          <button class="rentas-action-btn" onclick="showCotizacionView()">
+            <i class="ti ti-file-dollar" aria-hidden="true"></i>
+            <span>Nueva cotización</span>
           </button>
-          <button class="rentas-action-btn" onclick="showOrdenView()">
-            <i class="ti ti-file-invoice" aria-hidden="true"></i>
-            <span>Orden PDF</span>
-          </button>
-          <button class="rentas-action-btn" onclick="showPagosView()">
-            <i class="ti ti-credit-card" aria-hidden="true"></i>
-            <span>Registrar pago</span>
+          <button class="rentas-action-btn" onclick="startFlow('salida')">
+            <i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
+            <span>Registrar salida</span>
           </button>
           <button class="rentas-action-btn" onclick="startFlow('entrada')">
             <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
             <span>Registrar regreso</span>
           </button>
-          <button class="rentas-action-btn" onclick="showCotizacionView()">
-            <i class="ti ti-file-dollar" aria-hidden="true"></i>
-            <span>Cotización</span>
+          <button class="rentas-action-btn" onclick="showPagosView()">
+            <i class="ti ti-credit-card" aria-hidden="true"></i>
+            <span>Registrar pago</span>
           </button>
         </div>
       </div>
@@ -890,7 +889,11 @@
         <div class="rentas-table-card">
           <div class="rentas-table-head">
             <div class="rentas-panel-title">Rentas y cotizaciones</div>
-            <div class="rentas-count" id="rentas-centro-count">—</div>
+            <div class="rentas-table-actions">
+              <button class="rentas-head-btn" onclick="showRentasActivas()">Rentas activas</button>
+              <button class="rentas-head-btn" onclick="showCotizacionView()">Nueva cotización</button>
+              <div class="rentas-count" id="rentas-centro-count">—</div>
+            </div>
           </div>
           <div class="rentas-table-wrap" id="rentas-centro-table">
             <div class="loading"><div class="spinner"></div>Cargando rentas...</div>
