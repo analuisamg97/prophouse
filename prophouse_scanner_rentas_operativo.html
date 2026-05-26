@@ -2542,11 +2542,11 @@ async function cargarDashboard() {
   _dashboardLoading = true;
   try {
     const [rentasRes, propsRes, clientesRes, pagosRes, danosRes] = await Promise.allSettled([
-      db_getRentas({ maxRecords: 300 }),
+      db_getRentas(),
       db_getProps(),
       db_getClientes(),
-      db_getPagos({ maxRecords: 200 }),
-      airtableGet('DAÑOS', '?maxRecords=100')
+      db_getPagos({ maxRecords: 0 }),
+      airtableGetAll('DAÑOS')
     ]);
 
     const rentas = rentasRes.status === 'fulfilled' ? rentasRes.value : [];
@@ -2632,7 +2632,7 @@ async function cargarDashboard() {
       const primerPropId = propsIds[0];
       const primerProp = primerPropId ? props.find(p => p.id === primerPropId) : null;
       const fotos = primerProp?.fields?.['Foto principal'];
-      const fotoUrl = fotos?.length ? (fotos[0].thumbnails?.large?.url || fotos[0].url) : null;
+      const fotoUrl = fotos?.length ? safeUrl(fotos[0].thumbnails?.large?.url || fotos[0].url) : null;
       const fotoHtml = fotoUrl
         ? `<img class="tl-foto" src="${fotoUrl}" alt="prop" loading="lazy" onerror="this.style.display='none'">`
         : `<div class="tl-foto-ph"><i class="ti ti-camera-off" aria-hidden="true"></i></div>`;
@@ -2650,9 +2650,9 @@ async function cargarDashboard() {
           fecha: f['Fecha de salida'], fechaD,
           html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
             ${fotoHtml}
-            <div style="text-align:center"><div class="tl-day">${dayLabel(f['Fecha de salida'])}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
-            <div><div class="tl-id">${f['ID de renta'] || '—'}</div><div class="tl-client">${clientName(f)}</div>
-              <div class="tl-sub"><span class="tl-dot out"></span>Salida · ${f['Hora de salida'] || 'Hora pendiente'} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
+            <div style="text-align:center"><div class="tl-day">${rentasCentroEsc(dayLabel(f['Fecha de salida']))}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+            <div><div class="tl-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div><div class="tl-client">${rentasCentroEsc(clientName(f))}</div>
+              <div class="tl-sub"><span class="tl-dot out"></span>Salida · ${rentasCentroEsc(f['Hora de salida'] || 'Hora pendiente')} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
           </div>`
         });
@@ -2663,9 +2663,9 @@ async function cargarDashboard() {
           fecha: f['Fecha de regreso'], fechaD,
           html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
             ${fotoHtml}
-            <div style="text-align:center"><div class="tl-day">${dayLabel(f['Fecha de regreso'])}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
-            <div><div class="tl-id">${f['ID de renta'] || '—'}</div><div class="tl-client">${clientName(f)}</div>
-              <div class="tl-sub"><span class="tl-dot in"></span>Regreso · ${f['Hora de regreso'] || 'Hora pendiente'} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
+            <div style="text-align:center"><div class="tl-day">${rentasCentroEsc(dayLabel(f['Fecha de regreso']))}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+            <div><div class="tl-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div><div class="tl-client">${rentasCentroEsc(clientName(f))}</div>
+              <div class="tl-sub"><span class="tl-dot in"></span>Regreso · ${rentasCentroEsc(f['Hora de regreso'] || 'Hora pendiente')} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
             <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
           </div>`
         });
@@ -2734,7 +2734,7 @@ async function cargarDashboard() {
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de pago'])}</div>
             <div class="dash-act-text">Pago registrado</div>
-            <div class="dash-act-sub">${f['ID pago'] || 'Pago'} · ${fmtM(f['Monto'] || 0)} · ${f['Tipo de pago'] || 'Pago'}</div></div>
+            <div class="dash-act-sub">${rentasCentroEsc(f['ID pago'] || 'Pago')} · ${fmtM(f['Monto'] || 0)} · ${rentasCentroEsc(f['Tipo de pago'] || 'Pago')}</div></div>
         </div>` });
     });
     rentas.forEach(r => {
@@ -2745,7 +2745,7 @@ async function cargarDashboard() {
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de registro'] || f['Fecha de salida'])}</div>
             <div class="dash-act-text">Nueva renta creada</div>
-            <div class="dash-act-sub">${f['ID de renta'] || '—'} · ${clientName(f)}</div></div>
+            <div class="dash-act-sub">${rentasCentroEsc(f['ID de renta'] || '—')} · ${rentasCentroEsc(clientName(f))}</div></div>
         </div>` });
     });
     danos.forEach(d => {
@@ -2756,7 +2756,7 @@ async function cargarDashboard() {
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha del reporte'])}</div>
             <div class="dash-act-text">Daño registrado</div>
-            <div class="dash-act-sub">${f['ID daño'] || 'Daño'} · ${(f['Descripción del daño'] || 'Sin descripción').slice(0,40)}</div></div>
+            <div class="dash-act-sub">${rentasCentroEsc(f['ID daño'] || 'Daño')} · ${rentasCentroEsc((f['Descripción del daño'] || 'Sin descripción').slice(0,40))}</div></div>
         </div>` });
     });
     props.filter(p => p.fields['Estado'] === 'En reparación').slice(0, 3).forEach(p => {
@@ -2767,7 +2767,7 @@ async function cargarDashboard() {
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Última verificación física'])}</div>
             <div class="dash-act-text">Prop en reparación</div>
-            <div class="dash-act-sub">${f['Código único'] || '—'} · ${f['Nombre del prop'] || '—'}</div></div>
+            <div class="dash-act-sub">${rentasCentroEsc(f['Código único'] || '—')} · ${rentasCentroEsc(f['Nombre del prop'] || '—')}</div></div>
         </div>` });
     });
     activity.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
@@ -2887,6 +2887,29 @@ async function airtableGet(table, params = '') {
   return data;
 }
 
+async function airtableGetAll(table, params = '') {
+  const search = new URLSearchParams(String(params || '').replace(/^\?/, ''));
+  const requestedMax = parseInt(search.get('maxRecords') || '', 10);
+  search.delete('maxRecords');
+  search.set('pageSize', '100');
+
+  let all = [], offset = '', pages = 0;
+  do {
+    if (offset) search.set('offset', offset);
+    else search.delete('offset');
+
+    const data = await airtableGet(table, '?' + search.toString());
+    const records = data.records || [];
+    all = all.concat(records);
+    if (requestedMax && all.length >= requestedMax) return all.slice(0, requestedMax);
+    offset = data.offset || '';
+    pages++;
+    if (pages > 100) throw new Error(`Demasiadas páginas al cargar ${table}`);
+  } while (offset);
+
+  return all;
+}
+
 async function airtablePatch(table, recordId, fields) {
   if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales');
   if (!recordId) throw new Error('recordId vacío en airtablePatch');
@@ -2987,8 +3010,7 @@ async function airtablePatchConCamposOpcionales(table, recordId, fields, optiona
 
 // ── CLIENTES ─────────────────────────────────────────
 async function db_getClientes() {
-  const data = await airtableGet('CLIENTES', '?maxRecords=200');
-  return data.records || [];
+  return airtableGetAll('CLIENTES');
 }
 
 async function db_crearCliente({ nombre, tel = '', email = '', origen = '', rfc = '', razon = '', regimen = '', direccion = '', cp = '' }) {
@@ -3018,12 +3040,11 @@ async function db_buscarOCrearCliente({ nombre, tel = '', email = '' }) {
 }
 
 // ── RENTAS ───────────────────────────────────────────
-async function db_getRentas({ soloActivas = false, maxRecords = 200 } = {}) {
+async function db_getRentas({ soloActivas = false, maxRecords = 0 } = {}) {
   const params = soloActivas
     ? `?filterByFormula=${encodeURIComponent('{Estado de la renta}="Activa"')}&maxRecords=${maxRecords}`
     : `?maxRecords=${maxRecords}`;
-  const data = await airtableGet('RENTAS', params);
-  return data.records || [];
+  return airtableGetAll('RENTAS', params);
 }
 
 async function db_getRenta(recordId) {
@@ -3044,16 +3065,26 @@ function rentasCentroEsc(v) {
   }[ch]));
 }
 
+function safeUrl(v) {
+  const raw = String(v ?? '').trim();
+  if (!raw) return '';
+  try {
+    const parsed = new URL(raw, window.location.href);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return rentasCentroEsc(raw);
+  } catch(e) {}
+  return '';
+}
+
 function propFotoUrl(fields = {}) {
   const fotos = fields['Foto principal'] || [];
-  return fotos.length ? (fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url) : '';
+  return fotos.length ? safeUrl(fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url) : '';
 }
 
 function propThumbHtml(fields = {}, className = 'prop-list-thumb') {
   const url = propFotoUrl(fields);
   const alt = rentasCentroEsc(fields[F.NOMBRE_PROP] || fields[F.CODIGO] || 'Prop');
   if (!url) return `<div class="${className}"><i class="ti ti-camera" aria-hidden="true"></i></div>`;
-  return `<div class="${className}"><img src="${rentasCentroEsc(url)}" alt="${alt}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=&quot;ti ti-camera&quot; aria-hidden=&quot;true&quot;></i>'"></div>`;
+  return `<div class="${className}"><img src="${url}" alt="${alt}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML='<i class=&quot;ti ti-camera&quot; aria-hidden=&quot;true&quot;></i>'"></div>`;
 }
 
 async function rentaFirstPropThumbHtml(fields = {}) {
@@ -3161,10 +3192,10 @@ async function rentasCentroCargar() {
 
   try {
     const [rentas, clientes, props, pagos] = await Promise.all([
-      db_getRentas({ maxRecords: 200 }),
+      db_getRentas(),
       db_getClientes(),
-      db_getProps({ maxRecords: 500 }),
-      db_getPagos({ maxRecords: 500 })
+      db_getProps(),
+      db_getPagos({ maxRecords: 0 })
     ]);
     const clientesMap = new Map(clientes.map(c => [c.id, c.fields[F.NOMBRE_CLIENTE] || '—']));
     const pagosPorRenta = new Map();
@@ -3373,7 +3404,7 @@ function rentasCentroRenderTabla(rows) {
 
 async function db_generarRentaId() {
   const year = new Date().getFullYear();
-  const rentas = await db_getRentas({ maxRecords: 500 });
+  const rentas = await db_getRentas({ maxRecords: 0 });
   const ids = rentas
     .map(r => r.fields['ID de renta'] || '')
     .filter(id => id.startsWith('RNT-' + year))
@@ -3384,14 +3415,13 @@ async function db_generarRentaId() {
 }
 
 async function db_getPagos({ maxRecords = 500 } = {}) {
-  const data = await airtableGet('PAGOS', `?maxRecords=${maxRecords}`);
-  return data.records || [];
+  return airtableGetAll('PAGOS', maxRecords ? `?maxRecords=${maxRecords}` : '');
 }
 
 async function db_totalPagadoRenta(rentaRecordId) {
   if (!rentaRecordId) return 0;
   try {
-    const pagos = await db_getPagos({ maxRecords: 500 });
+    const pagos = await db_getPagos({ maxRecords: 0 });
     return pagos
       .filter(p => (p.fields[F.PAGO_RENTA] || []).includes(rentaRecordId))
       .reduce((sum, p) => sum + (parseFloat(p.fields[F.PAGO_MONTO]) || 0), 0);
@@ -3401,7 +3431,7 @@ async function db_totalPagadoRenta(rentaRecordId) {
 }
 
 async function db_generarPagoId() {
-  const pagos = await db_getPagos({ maxRecords: 500 });
+  const pagos = await db_getPagos({ maxRecords: 0 });
   const nums = pagos
     .map(p => p.fields[F.ID_PAGO] || '')
     .map(id => parseInt(String(id).split('-').pop()) || 0)
@@ -3508,22 +3538,13 @@ let _propsCache = null;
 let _propsCacheTime = 0;
 const PROPS_CACHE_TTL = 60000; // 1 minuto
 
-async function db_getProps({ maxRecords = 500, forceRefresh = false } = {}) {
+async function db_getProps({ maxRecords = 0, forceRefresh = false } = {}) {
   // Cache de 1 minuto para evitar fetches repetidos al cargar vistas
   const now = Date.now();
   if (!forceRefresh && _propsCache && (now - _propsCacheTime) < PROPS_CACHE_TTL) {
     return _propsCache;
   }
-  let all = [], offset = '', pages = 0;
-  do {
-    const params = `?pageSize=100${offset ? '&offset=' + offset : ''}`;
-    const data = await airtableGet('INVENTARIO', params);
-    if (!data.records) break;
-    all = all.concat(data.records);
-    offset = data.offset || '';
-    pages++;
-    if (pages > 20) break;
-  } while (offset);
+  const all = await airtableGetAll('INVENTARIO', maxRecords ? `?maxRecords=${maxRecords}` : '');
   _propsCache = all;
   _propsCacheTime = now;
   return all;
@@ -3603,8 +3624,7 @@ async function loadRentasFiltradas() {
       AND(IS_AFTER({Fecha de regreso},'${fmt(desde)}'),IS_BEFORE({Fecha de regreso},'${fmt(hasta)}'))
     )`;
 
-    const data = await airtableGet('RENTAS', `?filterByFormula=${encodeURIComponent(formula)}&maxRecords=50`);
-    const rentas = data.records || [];
+    const rentas = await airtableGetAll('RENTAS', `?filterByFormula=${encodeURIComponent(formula)}`);
 
 
     if (rentas.length === 0) {
@@ -3632,7 +3652,7 @@ async function loadTodasRentas() {
   document.getElementById('renta-list-content').innerHTML =
     '<div class="loading"><div class="spinner"></div>Cargando...</div>';
   try {
-    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 100 });
+    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 0 });
     renderRentaList(rentas);
   } catch(e) {
     showToast('Error de conexión', true);
@@ -3661,12 +3681,12 @@ async function renderRentaList(rentas) {
       <div class="renta-card-with-thumb" onclick="selectRenta('${r.id}')" style="cursor:pointer">
         ${thumb}
         <div>
-          <div class="renta-card-id">${f['ID de renta'] || 'Sin ID'}</div>
+          <div class="renta-card-id">${rentasCentroEsc(f['ID de renta'] || 'Sin ID')}</div>
           <div class="renta-card-info">
-            Salida: <span>${f['Fecha de salida'] || '—'}</span> &nbsp;·&nbsp;
-            Regreso: <span>${f['Fecha de regreso'] || '—'}</span><br>
+            Salida: <span>${rentasCentroEsc(f['Fecha de salida'] || '—')}</span> &nbsp;·&nbsp;
+            Regreso: <span>${rentasCentroEsc(f['Fecha de regreso'] || '—')}</span><br>
             Props: <span>${propsCount} vinculados</span> &nbsp;·&nbsp;
-            Saldo: <span class="${deuda > 0 ? 'pago-estado-pendiente' : 'pago-estado-pagado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'Saldado ✓'}</span>
+            Saldo: <span class="${deuda > 0 ? 'pago-estado-pendiente' : 'pago-estado-pagado'}">${deuda > 0 ? '$' + Number(deuda || 0).toLocaleString() + ' pendiente' : 'Saldado ✓'}</span>
           </div>
         </div>
       </div>
@@ -3741,12 +3761,14 @@ function renderPropsFlow() {
     const pf = p.fields;
     const code = Object.entries(pf).find(([k]) => k.toLowerCase().includes('digo'))?.[1] || '';
     const isDone = p.scanned;
+    const nombre = rentasCentroEsc(pf['Nombre del prop'] || 'Sin nombre');
+    const codigo = rentasCentroEsc(code);
     return `<div class="prop-list-item" id="prop-item-${p.id}">
       <div class="prop-check ${isDone ? 'done' : 'pending'}">${isDone ? '✓' : ''}</div>
       ${propThumbHtml(pf)}
       <div class="prop-info">
-        <div class="prop-item-name">${pf['Nombre del prop'] || 'Sin nombre'}</div>
-        <div class="prop-item-code">${code}</div>
+        <div class="prop-item-name">${nombre}</div>
+        <div class="prop-item-code">${codigo}</div>
       </div>
       <div class="prop-item-status ${isDone ? 'ok' : 'pending'}">${isDone ? (currentMode === 'salida' ? 'ENTREGADO' : 'RECIBIDO') : 'PENDIENTE'}</div>
     </div>`;
@@ -3763,9 +3785,9 @@ function renderPropsFlow() {
 
     <div class="pago-section">
       <div class="pago-title">💳 Estado de pago</div>
-      <div class="pago-row"><span class="label">Total</span><span class="value">$${totalPago.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${pagado.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'SALDADO ✓'}</span></div>
+      <div class="pago-row"><span class="label">Total</span><span class="value">$${Number(totalPago || 0).toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${Number(pagado || 0).toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + Number(deuda || 0).toLocaleString() + ' pendiente' : 'SALDADO ✓'}</span></div>
     </div>
 
     <div class="section-title" style="margin-bottom:12px">Props de esta renta</div>
@@ -3833,26 +3855,31 @@ async function handleFlowScan(code) {
   });
 
   if (inRenta) {
-    if (inRenta.scanned) {
-      showToast('Ya escaneado ✓', false);
-      return;
-    }
-    // Validar estado
-    const estado = inRenta.fields['Estado'] || '';
-    if (currentMode === 'salida' && estado === 'Rentado') {
-      showToast('⚠️ Ya está rentado', true); return;
-    }
-    if (currentMode === 'entrada' && estado === 'Disponible') {
-      showToast('⚠️ Ya está en bodega', true); return;
-    }
+    try {
+      if (inRenta.scanned) {
+        showToast('Ya escaneado ✓', false);
+        return;
+      }
+      // Validar estado
+      const estado = inRenta.fields['Estado'] || '';
+      if (currentMode === 'salida' && estado === 'Rentado') {
+        showToast('⚠️ Ya está rentado', true); return;
+      }
+      if (currentMode === 'entrada' && estado === 'Disponible') {
+        showToast('⚠️ Ya está en bodega', true); return;
+      }
 
-    // Actualizar en Airtable
-    const nuevoEstado = currentMode === 'salida' ? 'Rentado' : 'Disponible';
-    await registrarVerificacion(inRenta.id, nuevoEstado, null);
-    inRenta.scanned = true;
-    inRenta.fields['Estado'] = nuevoEstado;
-    showToast(`✓ ${inRenta.fields['Nombre del prop']}`);
-    renderPropsFlow();
+      // Actualizar en Airtable
+      const nuevoEstado = currentMode === 'salida' ? 'Rentado' : 'Disponible';
+      await registrarVerificacion(inRenta.id, nuevoEstado, null);
+      inRenta.scanned = true;
+      inRenta.fields['Estado'] = nuevoEstado;
+      showToast(`✓ ${inRenta.fields['Nombre del prop'] || 'Prop escaneado'}`);
+      renderPropsFlow();
+    } catch(e) {
+      showToast('No se guardó el escaneo: ' + e.message, true);
+      renderPropsFlow();
+    }
   } else {
     // Prop no está en la lista — buscar en inventario general
     showToast('Buscando prop...', false);
@@ -3935,7 +3962,7 @@ async function loadPropDetail(code) {
   if (!prop) {
     showToast('Prop no encontrado: ' + code, true);
     document.getElementById('prop-detail-content').innerHTML =
-      `<div class="empty-state" style="color:#e74c3c">No se encontró ningún prop con código <strong>${code}</strong></div>`;
+      `<div class="empty-state" style="color:#e74c3c">No se encontró ningún prop con código <strong>${rentasCentroEsc(code)}</strong></div>`;
     return;
   }
   currentProp = prop;
@@ -3950,6 +3977,9 @@ function showPropDetail(prop, fromFlow) {
   const estado = f['Estado'] || 'Desconocido';
   const statusClass = estado === 'Disponible' ? 'status-disponible' : estado === 'Rentado' ? 'status-rentado' : 'status-reparacion';
   const code = String(f['Código único'] || '');
+  const nombre = rentasCentroEsc(f['Nombre del prop'] || 'Sin nombre');
+  const estadoTxt = rentasCentroEsc(estado);
+  const codeTxt = rentasCentroEsc(code);
 
   // Opciones de estado disponibles
   const estados = ['Disponible', 'Rentado', 'En reparación', 'En mantenimiento', 'Baja'];
@@ -3984,24 +4014,26 @@ function showPropDetail(prop, fromFlow) {
   const fotos = f['Foto principal'];
   let fotoHtml = '';
   if (fotos && fotos.length > 0) {
-    const url = fotos[0].thumbnails?.large?.url || fotos[0].url;
-    fotoHtml = `<img class="prop-foto" src="${url}" alt="${f['Nombre del prop'] || ''}" loading="lazy" onerror="this.style.display='none'">`;
+    const url = safeUrl(fotos[0].thumbnails?.large?.url || fotos[0].url);
+    fotoHtml = url
+      ? `<img class="prop-foto" src="${url}" alt="${nombre}" loading="lazy" onerror="this.style.display='none'">`
+      : `<div class="prop-foto-placeholder">📷</div>`;
   } else {
     fotoHtml = `<div class="prop-foto-placeholder">📷</div>`;
   }
 
   document.getElementById('prop-detail-content').innerHTML = `
     ${fotoHtml}
-    <div class="prop-name">${f['Nombre del prop'] || 'Sin nombre'}</div>
-    <div class="prop-code">${code}</div>
-    <div class="status-badge ${statusClass}" id="prop-estado-badge">${estado}</div>
+    <div class="prop-name">${nombre}</div>
+    <div class="prop-code">${codeTxt}</div>
+    <div class="status-badge ${statusClass}" id="prop-estado-badge">${estadoTxt}</div>
     <div class="info-grid">
-      <div class="info-card"><div class="info-card-label">Categoría</div><div class="info-card-value">${f['Categoría'] || '—'}</div></div>
-      <div class="info-card"><div class="info-card-label">Nivel visual</div><div class="info-card-value gold">${f['Nivel Visual'] || '—'}</div></div>
-      <div class="info-card"><div class="info-card-label">Precio / día</div><div class="info-card-value">$${f['Renta x 1 día'] || '0'} MXN</div></div>
-      <div class="info-card"><div class="info-card-label">Veces rentado</div><div class="info-card-value">${f['Veces rentado'] || '0'}</div></div>
+      <div class="info-card"><div class="info-card-label">Categoría</div><div class="info-card-value">${rentasCentroEsc(f['Categoría'] || '—')}</div></div>
+      <div class="info-card"><div class="info-card-label">Nivel visual</div><div class="info-card-value gold">${rentasCentroEsc(f['Nivel Visual'] || '—')}</div></div>
+      <div class="info-card"><div class="info-card-label">Precio / día</div><div class="info-card-value">$${Number(f['Renta x 1 día'] || 0).toLocaleString('es-MX')} MXN</div></div>
+      <div class="info-card"><div class="info-card-label">Veces rentado</div><div class="info-card-value">${Number(f['Veces rentado'] || 0).toLocaleString('es-MX')}</div></div>
     </div>
-    ${f['Notas cinematográficas'] ? `<div class="notes-section">${f['Notas cinematográficas']}</div>` : ''}
+    ${f['Notas cinematográficas'] ? `<div class="notes-section">${rentasCentroEsc(f['Notas cinematográficas'])}</div>` : ''}
     ${estadoSelector}
     ${accionHTML}
   `;
@@ -4045,13 +4077,18 @@ async function propCambiarEstado(recordId, nuevoEstado, btn) {
 function confirmFinalizarRenta() {
   const f = currentRenta.fields;
   const scanned = rentaProps.filter(p => p.scanned).length;
+  const pendientes = rentaProps.length - scanned;
+  if (pendientes > 0) {
+    showToast(`Faltan ${pendientes} prop${pendientes !== 1 ? 's' : ''} por escanear`, true);
+    return;
+  }
   document.getElementById('modal-title').textContent = currentMode === 'salida' ? 'Confirmar salida' : 'Confirmar entrada';
   document.getElementById('modal-subtitle').textContent = `${scanned} props en total`;
   document.getElementById('modal-info').innerHTML = `
-    Renta: <span>${f['ID de renta'] || '—'}</span><br>
+    Renta: <span>${rentasCentroEsc(f['ID de renta'] || '—')}</span><br>
     Acción: <span>${currentMode === 'salida' ? 'Marcar como RENTADOS' : 'Marcar como DISPONIBLES'}</span><br>
     Props: <span>${scanned} props</span><br>
-    Fecha/hora: <span>${new Date().toLocaleString('es-MX')}</span>`;
+    Fecha/hora: <span>${rentasCentroEsc(new Date().toLocaleString('es-MX'))}</span>`;
   document.getElementById('modal-confirm-btn').dataset.tipo = 'renta';
   document.getElementById('confirm-modal').classList.add('show');
 }
@@ -4062,10 +4099,56 @@ function closeModal() {
 
 async function executeAction() {
   closeModal();
-  showToast('Actualizando...');
-  // Los props ya fueron actualizados uno por uno al escanear
-  showToast('✓ ' + (currentMode === 'salida' ? 'Salida registrada' : 'Entrada registrada'));
-  setTimeout(() => goHome(), 1500);
+  if (document.getElementById('modal-confirm-btn').dataset.tipo !== 'renta') return;
+  await finalizarFlujoRenta();
+}
+
+async function finalizarFlujoRenta() {
+  if (!currentRenta || !rentaProps.length) {
+    showToast('No hay renta cargada para finalizar', true);
+    return;
+  }
+
+  const expectedEstado = currentMode === 'salida' ? 'Rentado' : 'Disponible';
+  const scannedIds = new Set(rentaProps.filter(p => p.scanned).map(p => p.id));
+  if (scannedIds.size !== rentaProps.length) {
+    showToast('Faltan props por escanear', true);
+    renderPropsFlow();
+    return;
+  }
+
+  showToast('Verificando en Airtable...');
+  _operacionEnCurso = true;
+
+  try {
+    const faltantes = [];
+    for (const p of rentaProps) {
+      const fresh = await db_getProp(p.id);
+      const estadoActual = fresh?.fields?.[F.ESTADO] || fresh?.fields?.['Estado'] || '';
+      if (estadoActual !== expectedEstado) {
+        faltantes.push(fresh?.fields?.[F.CODIGO] || fresh?.fields?.['Código único'] || p.id);
+      }
+    }
+
+    if (faltantes.length) {
+      showToast(`No se cerró: ${faltantes.length} prop${faltantes.length !== 1 ? 's' : ''} sin guardar`, true);
+      document.getElementById('props-flow-content').insertAdjacentHTML('afterbegin',
+        `<div class="alert alert-red">No se cerró la ${currentMode === 'salida' ? 'salida' : 'entrada'} porque Airtable no confirmó: ${faltantes.map(rentasCentroEsc).join(', ')}</div>`);
+      return;
+    }
+
+    await airtablePatchConCamposOpcionales('RENTAS', currentRenta.id, {
+      [F.ESTADO_RENTA]: currentMode === 'entrada' ? 'Cerrada' : 'Activa'
+    }, [F.ESTADO_RENTA]);
+
+    currentRenta.fields[F.ESTADO_RENTA] = currentMode === 'entrada' ? 'Cerrada' : 'Activa';
+    showToast('✓ ' + (currentMode === 'salida' ? 'Salida verificada' : 'Entrada verificada y cerrada'));
+    setTimeout(() => goHome(), 1500);
+  } catch(e) {
+    showToast('No se pudo finalizar: ' + e.message, true);
+  } finally {
+    _operacionEnCurso = false;
+  }
 }
 
 // ── VER DETALLE DE RENTA DESDE RENTAS ACTIVAS ──────────
@@ -4106,10 +4189,10 @@ async function rentasVerDetalle(rentaRecordId) {
         propsHtml += `<div class="prop-list-item">
           ${propThumbHtml(pf)}
           <div class="prop-info">
-            <div class="prop-item-name">${pf['Nombre del prop'] || '—'}</div>
-            <div class="prop-item-code">${pf['Código único'] || '—'}</div>
+            <div class="prop-item-name">${rentasCentroEsc(pf['Nombre del prop'] || '—')}</div>
+            <div class="prop-item-code">${rentasCentroEsc(pf['Código único'] || '—')}</div>
           </div>
-          <div class="prop-item-status ${pf['Estado']==='Disponible'?'ok':'pending'}">${pf['Estado'] || '—'}</div>
+          <div class="prop-item-status ${pf['Estado']==='Disponible'?'ok':'pending'}">${rentasCentroEsc(pf['Estado'] || '—')}</div>
         </div>`;
       } catch(e) {}
     }
@@ -4121,13 +4204,13 @@ async function rentasVerDetalle(rentaRecordId) {
     document.getElementById('props-flow-content').innerHTML = `
       <div class="pago-section">
         <div class="pago-title">Datos de la renta</div>
-        <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
-        <div class="pago-row"><span class="label">Salida</span><span class="value">${f[F.FECHA_SALIDA] || '—'}${f[F.HORA_SALIDA] ? ' · ' + f[F.HORA_SALIDA] : ''}</span></div>
-        <div class="pago-row"><span class="label">Regreso</span><span class="value">${f[F.FECHA_REGRESO] || '—'}${f[F.HORA_REGRESO] ? ' · ' + f[F.HORA_REGRESO] : ''}</span></div>
-        <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(estadoPago)};font-weight:500;">${estadoPago}</span></div>
+        <div class="pago-row"><span class="label">Cliente</span><span class="value">${rentasCentroEsc(clienteNombre)}</span></div>
+        <div class="pago-row"><span class="label">Salida</span><span class="value">${rentasCentroEsc(f[F.FECHA_SALIDA] || '—')}${f[F.HORA_SALIDA] ? ' · ' + rentasCentroEsc(f[F.HORA_SALIDA]) : ''}</span></div>
+        <div class="pago-row"><span class="label">Regreso</span><span class="value">${rentasCentroEsc(f[F.FECHA_REGRESO] || '—')}${f[F.HORA_REGRESO] ? ' · ' + rentasCentroEsc(f[F.HORA_REGRESO]) : ''}</span></div>
+        <div class="pago-row"><span class="label">Estado</span><span class="value">${rentasCentroEsc(f['Estado de la renta'] || '—')}</span></div>
+        <div class="pago-row"><span class="label">Total</span><span class="value">$${Number(total || 0).toLocaleString()} MXN</span></div>
+        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+Number(saldo || 0).toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(estadoPago)};font-weight:500;">${rentasCentroEsc(estadoPago)}</span></div>
       </div>
 
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
@@ -4336,13 +4419,13 @@ async function showRentasActivas() {
   previousView = 'rentas-menu';
   showView('rentas-view');
   try {
-    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 50 });
+    const rentas = await db_getRentas({ soloActivas: true });
     if (rentas.length === 0) {
       document.getElementById('rentas-content').innerHTML = '<div class="empty-state">No hay rentas activas</div>';
       return;
     }
     // Cargar nombres de clientes y pagos reales para mostrar en cards
-    const [clientesAll, pagos] = await Promise.all([db_getClientes(), db_getPagos({ maxRecords: 500 })]);
+    const [clientesAll, pagos] = await Promise.all([db_getClientes(), db_getPagos({ maxRecords: 0 })]);
     const pagosPorRenta = new Map();
     pagos.forEach(p => {
       (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
@@ -4359,19 +4442,19 @@ async function showRentasActivas() {
       const thumb = await rentaFirstPropThumbHtml(f);
       return `<div class="pago-section" style="margin-bottom:12px;cursor:pointer;" onclick="rentasVerDetalle('${r.id}')">
         <div class="pago-title" style="display:flex;justify-content:space-between;align-items:center;">
-          <span>${f['ID de renta'] || '—'}</span>
+          <span>${rentasCentroEsc(f['ID de renta'] || '—')}</span>
           <span style="font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace;">ver →</span>
         </div>
         <div class="renta-card-with-thumb" style="margin-bottom:10px;">
           ${thumb}
           <div class="renta-card-info">Primer prop vinculado</div>
         </div>
-        <div class="pago-row"><span class="label">Cliente</span><span class="value">${clienteNombre}</span></div>
-        <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(f[F.ESTADO_PAGO])};font-weight:500;">${f[F.ESTADO_PAGO] || '—'}</span></div>
-        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + saldo.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
+        <div class="pago-row"><span class="label">Cliente</span><span class="value">${rentasCentroEsc(clienteNombre)}</span></div>
+        <div class="pago-row"><span class="label">Salida</span><span class="value">${rentasCentroEsc(f['Fecha de salida'] || '—')}</span></div>
+        <div class="pago-row"><span class="label">Regreso</span><span class="value">${rentasCentroEsc(f['Fecha de regreso'] || '—')}</span></div>
+        <div class="pago-row"><span class="label">Total</span><span class="value">$${Number(total || 0).toLocaleString()} MXN</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(f[F.ESTADO_PAGO])};font-weight:500;">${rentasCentroEsc(f[F.ESTADO_PAGO] || '—')}</span></div>
+        <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + Number(saldo || 0).toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
       ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
     }))).join('');
@@ -4430,7 +4513,7 @@ async function showNuevaRenta() {
     clientesCache = await db_getClientes();
     const select = document.getElementById('nr-cliente-select');
     const options = clientesCache.map(c =>
-      `<option value="${c.id}">${c.fields['Nombre o empresa'] || 'Sin nombre'}</option>`
+      `<option value="${c.id}">${rentasCentroEsc(c.fields['Nombre o empresa'] || 'Sin nombre')}</option>`
     ).join('');
     select.innerHTML = '<option value="">— Seleccionar cliente existente —</option>' +
       options + '<option value="__nuevo__">+ Nuevo cliente</option>';
@@ -4660,7 +4743,7 @@ async function showOrdenView() {
     <div id="or-sel-list"><div class="loading"><div class="spinner"></div>Cargando rentas…</div></div>`;
 
   try {
-    const rentas = (await db_getRentas({ maxRecords: 100 })).filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
+    const rentas = (await db_getRentas()).filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
     if (rentas.length === 0) {
       document.getElementById('or-sel-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
       return;
@@ -4672,10 +4755,10 @@ async function showOrdenView() {
         <div class="renta-card-with-thumb">
           ${thumb}
           <div>
-            <div class="renta-card-id">${f['ID de renta'] || 'Sin ID'}</div>
+            <div class="renta-card-id">${rentasCentroEsc(f['ID de renta'] || 'Sin ID')}</div>
             <div class="renta-card-info">
-              Salida: <span>${f['Fecha de salida'] || '—'}</span> &nbsp;·&nbsp; Regreso: <span>${f['Fecha de regreso'] || '—'}</span><br>
-              Estado: <span>${f['Estado de la renta'] || '—'}</span> &nbsp;·&nbsp; Pago: <span>${f['Estado del pago'] || '—'}</span>
+              Salida: <span>${rentasCentroEsc(f['Fecha de salida'] || '—')}</span> &nbsp;·&nbsp; Regreso: <span>${rentasCentroEsc(f['Fecha de regreso'] || '—')}</span><br>
+              Estado: <span>${rentasCentroEsc(f['Estado de la renta'] || '—')}</span> &nbsp;·&nbsp; Pago: <span>${rentasCentroEsc(f['Estado del pago'] || '—')}</span>
             </div>
           </div>
         </div>
@@ -4801,8 +4884,8 @@ async function orGenerarId() {
   const year = new Date().getFullYear();
   let nextNum = 1;
   try {
-    const data = await airtableGet('RENTAS', '?maxRecords=200');
-    const ids = (data.records || [])
+    const records = await airtableGetAll('RENTAS');
+    const ids = records
       .map(r => r.fields['ID de renta'] || '')
       .filter(id => id.startsWith('RNT-' + year))
       .map(id => parseInt(id.split('-')[2]) || 0);
@@ -5053,7 +5136,7 @@ async function showClientesView() {
   try {
     const [clientes, rentas] = await Promise.all([
       db_getClientes(),
-      db_getRentas({ maxRecords: 500 })
+      db_getRentas()
     ]);
 
     const rentasPorCliente = new Map();
@@ -5193,10 +5276,10 @@ async function crmAbrirDetalle(clienteId) {
   const fiscalHtml = hasFiscal ? `
     <div class="cd-section">Datos fiscales</div>
     <div class="cd-info-grid">
-      ${f['RFC']?`<div class="cd-info-row"><div class="cd-info-lbl">RFC</div><div class="cd-info-val">${f['RFC']}</div></div>`:''}
-      ${f['Razón social']?`<div class="cd-info-row"><div class="cd-info-lbl">Razón social</div><div class="cd-info-val">${f['Razón social']}</div></div>`:''}
-      ${f['Régimen fiscal']?`<div class="cd-info-row"><div class="cd-info-lbl">Régimen</div><div class="cd-info-val">${f['Régimen fiscal']}</div></div>`:''}
-      ${f['Dirección fiscal']?`<div class="cd-info-row" style="grid-column:1/-1"><div class="cd-info-lbl">Dirección</div><div class="cd-info-val">${f['Dirección fiscal']}</div></div>`:''}
+      ${f['RFC']?`<div class="cd-info-row"><div class="cd-info-lbl">RFC</div><div class="cd-info-val">${rentasCentroEsc(f['RFC'])}</div></div>`:''}
+      ${f['Razón social']?`<div class="cd-info-row"><div class="cd-info-lbl">Razón social</div><div class="cd-info-val">${rentasCentroEsc(f['Razón social'])}</div></div>`:''}
+      ${f['Régimen fiscal']?`<div class="cd-info-row"><div class="cd-info-lbl">Régimen</div><div class="cd-info-val">${rentasCentroEsc(f['Régimen fiscal'])}</div></div>`:''}
+      ${f['Dirección fiscal']?`<div class="cd-info-row" style="grid-column:1/-1"><div class="cd-info-lbl">Dirección</div><div class="cd-info-val">${rentasCentroEsc(f['Dirección fiscal'])}</div></div>`:''}
     </div>` : '';
 
   document.getElementById('cd-content').innerHTML = `
@@ -5253,7 +5336,7 @@ async function crmAbrirDetalle(clienteId) {
 
     ${f['Notas'] ? `
     <div class="cd-section">Notas</div>
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--white-dim);line-height:1.7;white-space:pre-wrap;">${f['Notas']}</div>` : ''}
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--white-dim);line-height:1.7;white-space:pre-wrap;">${rentasCentroEsc(f['Notas'])}</div>` : ''}
 
     <div class="cd-section">Historial de rentas</div>
     ${rentasHtml}`;
@@ -5340,8 +5423,8 @@ async function invVerificar() {
     item.innerHTML = `
       <div class="prop-check done">✓</div>
       <div class="prop-info">
-        <div class="prop-item-name">${nombre}</div>
-        <div class="prop-item-code">${codigo}</div>
+        <div class="prop-item-name">${rentasCentroEsc(nombre)}</div>
+        <div class="prop-item-code">${rentasCentroEsc(codigo)}</div>
       </div>
       <div class="prop-item-status ok">VERIFICADO</div>`;
     document.getElementById('inv-lista').prepend(item);
@@ -5387,7 +5470,7 @@ async function showDanosView() {
 
   // Cargar rentas para el selector
   try {
-    const rentas = await db_getRentas({ soloActivas: true, maxRecords: 100 });
+    const rentas = await db_getRentas({ soloActivas: true });
     const clientes = await db_getClientes();
     const select = document.getElementById('danos-renta-select');
     const opts = rentas.map(r => {
@@ -5501,8 +5584,8 @@ async function danosGuardar() {
   // Contar daños existentes de esta renta para el consecutivo
   let consecutivo = 1;
   try {
-    const allDanos = await airtableGet('DAÑOS', '?maxRecords=500');
-    const mismos = (allDanos.records || []).filter(r =>
+    const allDanos = await airtableGetAll('DAÑOS');
+    const mismos = allDanos.filter(r =>
       (r.fields['ID daño'] || '').includes(rentaCode)
     );
     consecutivo = mismos.length + 1;
@@ -5600,13 +5683,13 @@ async function showPagosView() {
   pagosRentaActual = null;
 
   try {
-    const rentas = await db_getRentas({ maxRecords: 100 });
+    const rentas = await db_getRentas();
     const activas = rentas.filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
     if (activas.length === 0) {
       document.getElementById('pagos-rentas-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
       return;
     }
-    const pagos = await db_getPagos({ maxRecords: 500 });
+    const pagos = await db_getPagos({ maxRecords: 0 });
     const pagosPorRenta = new Map();
     pagos.forEach(p => {
       (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
@@ -5624,11 +5707,11 @@ async function showPagosView() {
         <div class="renta-card-with-thumb">
           ${thumb}
           <div>
-            <div class="renta-card-id">${f['ID de renta'] || '—'}</div>
+            <div class="renta-card-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
             <div class="renta-card-info">
               Total: <span>$${total.toLocaleString()} MXN</span> &nbsp;·&nbsp;
               Saldo: <span style="color:${estadoColor}">$${saldo.toLocaleString()} MXN</span><br>
-              Estado: <span style="color:${estadoColor}">${estado}</span>
+              Estado: <span style="color:${estadoColor}">${rentasCentroEsc(estado)}</span>
             </div>
           </div>
         </div>
@@ -5651,13 +5734,13 @@ async function pagosSeleccionarRenta(recordId) {
 
     // Mostrar info de la renta
     document.getElementById('pagos-renta-info').innerHTML = `
-      <div class="pago-title">${f['ID de renta'] || '—'}</div>
-      <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
-      <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
-      <div class="pago-row"><span class="label">Monto total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${pagado.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${saldo.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${pagoEstadoColor(f['Estado del pago'] || 'Pendiente')};font-weight:500;">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
+      <div class="pago-title">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
+      <div class="pago-row"><span class="label">Salida</span><span class="value">${rentasCentroEsc(f['Fecha de salida'] || '—')}</span></div>
+      <div class="pago-row"><span class="label">Regreso</span><span class="value">${rentasCentroEsc(f['Fecha de regreso'] || '—')}</span></div>
+      <div class="pago-row"><span class="label">Monto total</span><span class="value">$${Number(total || 0).toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${Number(pagado || 0).toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${Number(saldo || 0).toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${pagoEstadoColor(f['Estado del pago'] || 'Pendiente')};font-weight:500;">${rentasCentroEsc(f['Estado del pago'] || 'Pendiente')}</span></div>`;
 
     document.getElementById('pago-monto').value = '';
     document.getElementById('pago-tipo').value = saldo > 0 && pagado > 0 ? 'Liquidación' : 'Adelanto';
@@ -5940,7 +6023,7 @@ async function finCargarDatos() {
 
   try {
     // Ingresos: rentas del mes
-    const rentas = await db_getRentas({ maxRecords: 500 });
+    const rentas = await db_getRentas();
     const rentasMes = rentas.filter(r => {
       const salida = r.fields['Fecha de salida'] || '';
       return salida >= inicioMes && salida <= finMes;
@@ -5948,8 +6031,8 @@ async function finCargarDatos() {
     const ingresos = rentasMes.reduce((sum, r) => sum + (r.fields['Monto total'] || 0), 0);
 
     // Gastos del mes
-    const gastosData = await airtableGet('GASTOS', `?maxRecords=500`);
-    const gastosMes = (gastosData.records || []).filter(r => {
+    const gastos = await airtableGetAll('GASTOS');
+    const gastosMes = gastos.filter(r => {
       const mes = r.fields['Mes'] || '';
       return mes === finMesActual;
     });
@@ -6094,7 +6177,7 @@ async function orAbrirDesdeRenta() {
     orClientesCache = await db_getClientes();
     const select = document.getElementById('or-cliente-select');
     const opts = orClientesCache.map(c =>
-      `<option value="${c.id}">${c.fields['Nombre o empresa'] || 'Sin nombre'}</option>`
+      `<option value="${c.id}">${rentasCentroEsc(c.fields['Nombre o empresa'] || 'Sin nombre')}</option>`
     ).join('');
     select.innerHTML = '<option value="">— Seleccionar cliente —</option>' + opts + '<option value="__nuevo__">+ Nuevo cliente</option>';
 
@@ -6188,9 +6271,10 @@ function galeríaRenderizar() {
     let imgHtml;
     if (fotos && fotos.length > 0) {
       // Usar thumbnail si existe (más rápido), si no la URL original
-      const thumb = fotos[0].thumbnails?.large?.url || fotos[0].url;
-      imgHtml = `<img class="prop-galeria-img" src="${thumb}" alt="${nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-                 <div class="prop-galeria-noimg" style="display:none">📷</div>`;
+      const thumb = safeUrl(fotos[0].thumbnails?.large?.url || fotos[0].url);
+      imgHtml = thumb ? `<img class="prop-galeria-img" src="${thumb}" alt="${rentasCentroEsc(nombre)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                 <div class="prop-galeria-noimg" style="display:none">📷</div>`
+        : `<div class="prop-galeria-noimg">📷</div>`;
     } else {
       imgHtml = `<div class="prop-galeria-noimg">📷</div>`;
     }
@@ -6209,9 +6293,9 @@ function galeríaRenderizar() {
     return `<div class="prop-galeria-card" onclick="galeríaAbrirDetalle('${p.id}')">
       ${imgHtml}
       <div class="prop-galeria-body">
-        <div class="prop-galeria-code">${codigo}</div>
-        <div class="prop-galeria-name" title="${nombre}">${nombre}</div>
-        <span class="prop-galeria-status ${statusClass}">${statusLabel}</span>
+        <div class="prop-galeria-code">${rentasCentroEsc(codigo)}</div>
+        <div class="prop-galeria-name" title="${rentasCentroEsc(nombre)}">${rentasCentroEsc(nombre)}</div>
+        <span class="prop-galeria-status ${statusClass}">${rentasCentroEsc(statusLabel)}</span>
       </div>
     </div>`;
   }).join('');
