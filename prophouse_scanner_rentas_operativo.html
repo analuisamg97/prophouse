@@ -160,6 +160,107 @@
   .section-title:first-of-type { margin-top:0; }
 
   /* DASHBOARD STATS (desktop) */
+  /* ── ACTION BAR CENTRALIZADA — aplica en dashboard, rentas, inventario, galería ── */
+  .action-bar-universal { display:flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; }
+  .abu-btn { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 0; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; flex:1; position:relative; transition:background 0.15s; color:var(--white-dim); }
+  .abu-btn:last-child { border-right:none; }
+  .abu-btn:hover { background:var(--bg-card); }
+  .abu-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
+  .abu-btn:hover::after { opacity:0.6; }
+  .abu-btn i { font-size:22px; color:#888070; transition:color 0.15s; }
+  .abu-btn:hover i { color:var(--white-dim); }
+  .abu-btn.gold i { color:var(--gold); }
+  .abu-btn.gold span { color:var(--gold); }
+  .abu-btn:hover.gold i { color:var(--gold); }
+  .abu-btn span { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; color:#555048; white-space:nowrap; transition:color 0.15s; font-family:'Inter',-apple-system,sans-serif; }
+  .abu-btn:hover span { color:var(--white-dim); }
+  .abu-btn:hover.gold span { color:var(--gold); }
+
+  /* ── DASHBOARD REDISEÑADO ── */
+  .dash-welcome { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:16px; }
+  .dash-greet { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); }
+  .dash-date { font-size:11px; color:var(--text-muted); letter-spacing:1px; }
+  .dash-kpis-bar { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); background:#252320; border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+  .dash-kpi { padding:16px 18px; border-right:1px solid var(--border); }
+  .dash-kpi:last-child { border-right:none; }
+  .dash-kpi-lbl { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
+  .dash-kpi-val { font-family:'Playfair Display',serif; font-size:26px; line-height:1; margin-bottom:4px; }
+  .dash-kpi-val.gold { color:var(--gold); }
+  .dash-kpi-val.white { color:var(--white); }
+  .dash-kpi-sub { font-size:10px; color:#555048; }
+  .dash-mid-grid { display:grid; grid-template-columns:1fr 280px; gap:12px; margin-bottom:16px; }
+  .dash-bot-grid { display:grid; grid-template-columns:1.2fr 1fr; gap:12px; }
+  .dash-new-panel { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .dnp-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-bottom:1px solid var(--border); }
+  .dnp-title { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
+  .dnp-link { font-size:10px; color:#555048; cursor:pointer; transition:color 0.15s; }
+  .dnp-link:hover { color:var(--gold); }
+  .dnp-link.static { cursor:default; }
+  .dnp-link.static:hover { color:#555048; }
+
+  /* TIMELINE */
+  .tl-row { display:grid; grid-template-columns:52px 56px 1fr auto; align-items:center; gap:12px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; }
+  .tl-row:last-child { border-bottom:none; }
+  .tl-row:hover { background:#343230; }
+  .tl-row:hover .tl-client { color:var(--gold); }
+  .tl-foto { width:48px; height:48px; border-radius:6px; object-fit:cover; background:var(--bg-deep); border:1px solid var(--border); display:block; }
+  .tl-foto-ph { width:48px; height:48px; border-radius:6px; background:var(--bg-deep); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:#444038; font-size:18px; }
+  .tl-day { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); text-align:center; }
+  .tl-num { font-family:'Playfair Display',serif; font-size:20px; color:var(--white); line-height:1; text-align:center; }
+  .tl-id { font-size:10px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:2px; }
+  .tl-client { font-size:13px; color:var(--white); font-weight:500; transition:color 0.15s; }
+  .tl-sub { font-size:10px; color:var(--text-muted); margin-top:2px; display:flex; align-items:center; gap:5px; }
+  .tl-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .tl-dot.out { background:var(--red); }
+  .tl-dot.in { background:var(--green); }
+  .tl-empty { padding:20px 14px; text-align:center; font-size:11px; color:#444038; }
+  .tl-arr { font-size:14px; color:#444038; }
+
+  /* ALERTAS */
+  .al-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); gap:10px; }
+  .al-row:last-child { border-bottom:none; }
+  .al-row.clickable { cursor:pointer; transition:background 0.15s; }
+  .al-row.clickable:hover { background:#343230; }
+  .al-ico { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:16px; }
+  .al-ico.red { background:rgba(231,76,60,0.15); } .al-ico.red i { color:var(--red); }
+  .al-ico.gold { background:rgba(212,168,83,0.12); } .al-ico.gold i { color:var(--gold); }
+  .al-ico.dim { background:rgba(255,255,255,0.03); } .al-ico.dim i { color:#333028; }
+  .al-body { flex:1; }
+  .al-text { font-size:12px; color:var(--white-dim); font-weight:500; }
+  .al-text.dim { color:#444038; }
+  .al-sub-text { font-size:10px; color:#555048; margin-top:1px; }
+  .al-sub-text.dim { color:#333028; }
+  .al-num { font-family:'Playfair Display',serif; font-size:22px; line-height:1; }
+  .al-num.red { color:var(--red); }
+  .al-num.gold { color:var(--gold); }
+  .al-num.dim { color:#333028; }
+  .al-arr { font-size:14px; color:#444038; }
+  .al-arr.hidden { visibility:hidden; }
+
+  /* BARRAS INVENTARIO — hover porque llevan a inventario filtrado */
+  .dash-inv-bars { padding:14px; display:grid; gap:12px; }
+  .dash-inv-row { display:grid; grid-template-columns:90px 1fr 36px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); cursor:pointer; border-radius:6px; padding:5px 7px; transition:background 0.15s; margin:-5px -7px; }
+  .dash-inv-row:hover { background:#343230; }
+  .dash-inv-track { height:7px; border-radius:4px; background:var(--border); overflow:hidden; }
+  .dash-inv-fill { height:100%; border-radius:4px; }
+  .dash-inv-fill.green { background:var(--green); }
+  .dash-inv-fill.gold { background:var(--gold); }
+  .dash-inv-fill.red { background:var(--red); }
+
+  /* ACTIVIDAD — hover porque llevan al evento */
+  .dash-act-row { display:flex; align-items:flex-start; gap:10px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; }
+  .dash-act-row:last-child { border-bottom:none; }
+  .dash-act-row:hover { background:#343230; }
+  .dash-act-ico { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+  .dash-act-ico.green { background:rgba(76,175,80,0.15); } .dash-act-ico.green i { color:var(--green); }
+  .dash-act-ico.gold { background:rgba(212,168,83,0.12); } .dash-act-ico.gold i { color:var(--gold); }
+  .dash-act-ico.red { background:rgba(231,76,60,0.15); } .dash-act-ico.red i { color:var(--red); }
+  .dash-act-ico.blue { background:rgba(52,152,219,0.12); } .dash-act-ico.blue i { color:var(--blue); }
+  .dash-act-date { font-size:9px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:2px; }
+  .dash-act-text { font-size:12px; color:var(--white-dim); font-weight:500; }
+  .dash-act-sub { font-size:10px; color:#555048; margin-top:1px; }
+
+  /* ── DASH OLD (mantener para backward compat) ── */
   .dash-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:16px; }
   .dash-stat { background:#2c2a28 !important; border:1px solid #3d3b38; border-radius:8px; padding:14px; color:#f0ece4 !important; }
   .dash-stat-label { font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim); margin-bottom:6px; }
@@ -178,21 +279,23 @@
   .dash-row-id { font-size:11px; color:var(--gold); font-family:'DM Mono',monospace; }
   .dash-row-name { font-size:12px; color:var(--white); margin-top:2px; }
   .dash-row-sub { font-size:10px; color:var(--text-dim); margin-top:1px; }
-  .dash-subtitle { font-size:11px; color:var(--text-muted); margin-top:3px; font-family:'Inter',-apple-system,sans-serif; }
+  .dash-subtitle { font-size:11px; color:var(--text-muted); margin-top:3px; }
   .dash-control { display:flex; flex-direction:column; gap:14px; }
   .dash-feature-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .dash-feature-grid.compact { grid-template-columns:0.95fr 1.05fr; }
   .dash-split { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px; }
   .dash-mini-panel { background:#252320; border:1px solid var(--border); border-radius:8px; overflow:hidden; }
   .dash-mini-title { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; padding:10px 12px 0; }
-  .dash-move-row { display:grid; grid-template-columns:72px minmax(0,1fr) auto; align-items:center; gap:10px; padding:11px 12px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; }
+  .dash-move-row { display:grid; grid-template-columns:72px minmax(0,1fr) auto; align-items:center; gap:10px; padding:11px 12px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; }
+  .dash-move-row:hover { background:#343230; }
   .dash-move-row:last-child { border-bottom:none; }
   .dash-day { font-family:'DM Mono',monospace; color:var(--gold); font-size:10px; letter-spacing:1px; text-transform:uppercase; }
   .dash-alert-value { font-family:'Playfair Display',serif; font-size:22px; line-height:1; }
   .dash-alert-value.red { color:var(--red); }
   .dash-alert-value.gold { color:var(--gold); }
   .dash-inventory-bars { padding:14px; display:grid; gap:10px; }
-  .dash-bar-row { display:grid; grid-template-columns:92px 1fr 38px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); }
+  .dash-bar-row { display:grid; grid-template-columns:92px 1fr 38px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); cursor:pointer; border-radius:6px; padding:4px 6px; transition:background 0.15s; margin:-4px -6px; }
+  .dash-bar-row:hover { background:#343230; }
   .dash-bar-track { height:7px; border-radius:4px; background:var(--border); overflow:hidden; }
   .dash-bar-fill { height:100%; border-radius:4px; }
   .dash-bar-fill.green { background:var(--green); }
@@ -200,9 +303,11 @@
   .dash-bar-fill.red { background:var(--red); }
   .dash-actions { display:flex; gap:0; }
   .dash-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
-  .dash-action-btn { display:flex; flex-direction:column; align-items:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); }
+  .dash-action-btn { display:flex; flex-direction:column; align-items:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); position:relative; }
   .dash-action-btn:last-child { border-right:none; }
   .dash-action-btn:hover { background:var(--bg-card); }
+  .dash-action-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
+  .dash-action-btn:hover::after { opacity:0.6; }
   .dash-action-btn.gold { color:var(--gold); }
   .dash-action-btn i { font-size:24px; }
   .dash-action-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
@@ -210,6 +315,8 @@
     .dash-feature-grid, .dash-feature-grid.compact, .dash-split { grid-template-columns:1fr; }
     .dash-actions { overflow-x:auto; padding-bottom:2px; }
     .dash-action-bar { min-width:max-content; }
+    .dash-mid-grid, .dash-bot-grid { grid-template-columns:1fr; }
+    .dash-kpis-bar { grid-template-columns:1fr 1fr; }
   }
 
   /* HOME ACTION GRID */
@@ -781,68 +888,69 @@
       <div class="desktop-topbar">
         <div>
           <div class="desktop-topbar-title" id="desk-topbar-title">Dashboard</div>
-          <div class="dash-subtitle">Resumen operativo de rentas, inventario, pagos y alertas.</div>
-        </div>
-        <div class="desktop-topbar-actions">
-          <button class="btn-desk-ghost" onclick="startFlow('buscar')"><i class="ti ti-search" aria-hidden="true"></i>Buscar prop</button>
-          <button class="btn-desk-primary" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i>Nueva renta</button>
         </div>
       </div>
-      <div style="padding:20px 28px;">
-        <div class="dash-control">
-          <div class="dash-panel">
-            <div class="dash-panel-header"><div class="dash-panel-title">Rentas próximas</div><div class="dash-panel-link">Esta semana</div></div>
-            <div class="dash-split">
-              <div class="dash-mini-panel">
-                <div class="dash-mini-title">Próximas salidas</div>
-                <div id="ds-salidas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-              </div>
-              <div class="dash-mini-panel">
-                <div class="dash-mini-title">Próximos regresos</div>
-                <div id="ds-regresos-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-              </div>
-            </div>
-          </div>
+      <div style="padding:20px 28px 28px;">
 
-          <div class="dash-stats" style="margin-bottom:0;">
-            <div class="dash-stat"><div class="dash-stat-label">Rentas activas</div><div class="dash-stat-value gold" id="ds-rentas">—</div><div class="dash-stat-sub" id="ds-rentas-sub">Cargando...</div></div>
-            <div class="dash-stat"><div class="dash-stat-label">Por cobrar</div><div class="dash-stat-value red" id="ds-cobrar">—</div><div class="dash-stat-sub" id="ds-cobrar-sub">pendientes</div></div>
-            <div class="dash-stat"><div class="dash-stat-label">Ingresos del mes</div><div class="dash-stat-value green" id="ds-ingresos">—</div><div class="dash-stat-sub" id="ds-mes">este mes</div></div>
-            <div class="dash-stat"><div class="dash-stat-label">Props disponibles</div><div class="dash-stat-value" id="ds-props">—</div><div class="dash-stat-sub" id="ds-props-sub">en inventario</div></div>
-          </div>
+        <!-- Saludo -->
+        <div class="dash-welcome">
+          <div class="dash-greet">Bienvenida, Ana Luisa</div>
+          <div class="dash-date" id="dash-fecha-hoy">—</div>
+        </div>
 
-          <div class="dash-feature-grid compact">
-            <div class="dash-panel">
-              <div class="dash-panel-header"><div class="dash-panel-title">Alertas</div><div class="dash-panel-link">Hoy</div></div>
-              <div id="ds-alertas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-            </div>
-            <div class="dash-panel">
-              <div class="dash-panel-header"><div class="dash-panel-title">Estado del inventario</div><div class="dash-panel-link" onclick="navGo('inventario')">Ver inventario →</div></div>
-              <div id="ds-inventario-status"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
-            </div>
-          </div>
+        <!-- Acciones rápidas — action-bar-universal centralizada -->
+        <div class="action-bar-universal" style="margin-bottom:16px;">
+          <button class="abu-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
+          <button class="abu-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
+          <button class="abu-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
+          <button class="abu-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
+          <button class="abu-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
+        </div>
 
-          <div class="dash-feature-grid">
-            <div class="dash-panel">
-              <div class="dash-panel-header"><div class="dash-panel-title">Actividad reciente</div><div class="dash-panel-link">Últimos movimientos</div></div>
-              <div id="ds-activity-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+        <!-- KPIs — sin hover, solo info -->
+        <div class="dash-kpis-bar">
+          <div class="dash-kpi"><div class="dash-kpi-lbl">Rentas activas</div><div class="dash-kpi-val gold" id="ds-rentas">—</div><div class="dash-kpi-sub" id="ds-rentas-sub">Cargando...</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-lbl">Por cobrar</div><div class="dash-kpi-val gold" id="ds-cobrar">—</div><div class="dash-kpi-sub" id="ds-cobrar-sub">pendientes</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-lbl">Ingresos del mes</div><div class="dash-kpi-val gold" id="ds-ingresos">—</div><div class="dash-kpi-sub" id="ds-mes">este mes</div></div>
+          <div class="dash-kpi"><div class="dash-kpi-lbl">Props disponibles</div><div class="dash-kpi-val white" id="ds-props">—</div><div class="dash-kpi-sub" id="ds-props-sub">en inventario</div></div>
+        </div>
+
+        <!-- Movimientos + Alertas -->
+        <div class="dash-mid-grid">
+          <div class="dash-new-panel">
+            <div class="dnp-header">
+              <div class="dnp-title">Movimientos próximos</div>
+              <div class="dnp-link" onclick="navGo('rentas')">Ver todas las rentas →</div>
             </div>
-            <div class="dash-panel">
-              <div class="dash-panel-header"><div class="dash-panel-title">Acciones rápidas</div><div class="dash-panel-link">Operación</div></div>
-              <div style="padding:14px;">
-                <div class="dash-actions">
-                  <div class="dash-action-bar">
-                    <button class="dash-action-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
-                    <button class="dash-action-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
-                    <button class="dash-action-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
-                    <button class="dash-action-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
-                    <button class="dash-action-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
-                  </div>
-                </div>
-              </div>
+            <div id="ds-timeline-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+          </div>
+          <div class="dash-new-panel">
+            <div class="dnp-header">
+              <div class="dnp-title">Alertas</div>
+              <div class="dnp-link static">Hoy</div>
             </div>
+            <div id="ds-alertas-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
           </div>
         </div>
+
+        <!-- Inventario + Actividad -->
+        <div class="dash-bot-grid">
+          <div class="dash-new-panel">
+            <div class="dnp-header">
+              <div class="dnp-title">Estado del inventario</div>
+              <div class="dnp-link" onclick="navGo('inventario')">Ver inventario →</div>
+            </div>
+            <div id="ds-inventario-status"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+          </div>
+          <div class="dash-new-panel">
+            <div class="dnp-header">
+              <div class="dnp-title">Actividad reciente</div>
+              <div class="dnp-link static">Últimos movimientos</div>
+            </div>
+            <div id="ds-activity-list"><div class="loading"><div class="spinner"></div>Cargando...</div></div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -894,17 +1002,17 @@
     </div>
     <!-- Acciones rápidas -->
     <div class="galeria-acciones">
-      <div class="galeria-action-bar">
-        <button class="galeria-btn gold" onclick="showAltaProp()">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="action-bar-universal">
+        <button class="abu-btn gold" onclick="showAltaProp()">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Alta de prop</span>
         </button>
-        <button class="galeria-btn white" onclick="showInventarioView()">
-          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <button class="abu-btn" onclick="showInventarioView()">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           <span>Inventario físico</span>
         </button>
-        <button class="galeria-btn white" onclick="startFlow('buscar')">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <button class="abu-btn" onclick="startFlow('buscar')">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Buscar código</span>
         </button>
       </div>
@@ -934,24 +1042,24 @@
     </div>
     <div class="rentas-centro">
       <div class="rentas-acciones">
-        <div class="rentas-action-bar">
-          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()">
+        <div class="action-bar-universal">
+          <button class="abu-btn gold" onclick="quickNuevaRenta()">
             <i class="ti ti-plus" aria-hidden="true"></i>
             <span>Nueva renta</span>
           </button>
-          <button class="rentas-action-btn" onclick="showCotizacionView()">
+          <button class="abu-btn" onclick="showCotizacionView()">
             <i class="ti ti-file-dollar" aria-hidden="true"></i>
             <span>Nueva cotización</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('salida')">
+          <button class="abu-btn" onclick="startFlow('salida')">
             <i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
             <span>Registrar salida</span>
           </button>
-          <button class="rentas-action-btn" onclick="startFlow('entrada')">
+          <button class="abu-btn" onclick="startFlow('entrada')">
             <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
             <span>Registrar regreso</span>
           </button>
-          <button class="rentas-action-btn" onclick="showPagosView()">
+          <button class="abu-btn" onclick="showPagosView()">
             <i class="ti ti-credit-card" aria-hidden="true"></i>
             <span>Registrar pago</span>
           </button>
@@ -2399,6 +2507,12 @@ async function cargarDashboard() {
       return d && d < hoy;
     });
 
+    // Fecha en el saludo
+    const dias = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+    const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const fechaEl = document.getElementById('dash-fecha-hoy');
+    if (fechaEl) fechaEl.textContent = `${dias[ahora.getDay()]} ${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}`;
+
     document.getElementById('ds-rentas').textContent = rentasActivas.length;
     document.getElementById('ds-rentas-sub').textContent = `${rentasActivas.length === 1 ? '1 renta activa' : rentasActivas.length + ' rentas activas'}`;
     document.getElementById('ds-ingresos').textContent = fmtM(ingresosMes);
@@ -2408,99 +2522,158 @@ async function cargarDashboard() {
     document.getElementById('ds-cobrar').textContent = fmtM(porCobrar);
     document.getElementById('ds-cobrar-sub').textContent = `${pagosPendientes.length} rentas`;
 
-    const renderMovimiento = (items, tipo) => {
-      if (items.length === 0) return '<div class="empty-state" style="padding:24px 12px;">Sin movimientos próximos</div>';
-      return items.slice(0, 4).map(r => {
-        const f = r.fields;
-        const fecha = tipo === 'salida' ? f['Fecha de salida'] : f['Fecha de regreso'];
-        const hora = tipo === 'salida' ? f['Hora de salida'] : f['Hora de regreso'];
-        const propsCount = (f['Props rentados'] || []).length;
-        return `<div class="dash-move-row" onclick="rentasVerDetalle('${r.id}')">
-          <div class="dash-day">${dayLabel(fecha)}</div>
-          <div>
-            <div class="dash-row-id">${f['ID de renta'] || '—'}</div>
-            <div class="dash-row-name">${clientName(f)}</div>
-            <div class="dash-row-sub">${tipo === 'salida' ? 'Salida' : 'Regreso'} · ${hora || 'Hora pendiente'} · ${propsCount} prop${propsCount === 1 ? '' : 's'}</div>
-          </div>
-          ${statusBadge(f)}
-        </div>`;
-      }).join('');
-    };
+    // ── TIMELINE UNIFICADA (salidas + regresos ordenadas por fecha) ──────────
+    const movimientos = [];
+    rentasActivas.forEach(r => {
+      const f = r.fields;
+      const propsIds = f['Props rentados'] || [];
+      // Foto del primer prop
+      const primerPropId = propsIds[0];
+      const primerProp = primerPropId ? props.find(p => p.id === primerPropId) : null;
+      const fotos = primerProp?.fields?.['Foto principal'];
+      const fotoUrl = fotos?.length ? (fotos[0].thumbnails?.large?.url || fotos[0].url) : null;
+      const fotoHtml = fotoUrl
+        ? `<img class="tl-foto" src="${fotoUrl}" alt="prop" loading="lazy" onerror="this.style.display='none'">`
+        : `<div class="tl-foto-ph"><i class="ti ti-camera-off" aria-hidden="true"></i></div>`;
 
-    const salidas = rentasActivas
-      .filter(r => inRange(parseDate(r.fields['Fecha de salida'])))
-      .sort((a, b) => String(a.fields['Fecha de salida'] || '').localeCompare(String(b.fields['Fecha de salida'] || '')));
-    const regresos = rentasActivas
-      .filter(r => inRange(parseDate(r.fields['Fecha de regreso'])))
-      .sort((a, b) => String(a.fields['Fecha de regreso'] || '').localeCompare(String(b.fields['Fecha de regreso'] || '')));
-    document.getElementById('ds-salidas-list').innerHTML = renderMovimiento(salidas, 'salida');
-    document.getElementById('ds-regresos-list').innerHTML = renderMovimiento(regresos, 'regreso');
+      const saldo = Number(f['Monto a liquidar'] || 0);
+      const estadoPago = f['Estado del pago'] || 'Pendiente';
+      const badgeHtml = saldo > 0
+        ? `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid #e74c3c44;">Saldo</span>`
+        : estadoPago === 'Pagado'
+          ? `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(76,175,80,0.15);color:#4caf50;border:1px solid #4caf5044;">Pagado</span>`
+          : `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;background:rgba(230,168,23,0.15);color:#e6a817;border:1px solid #e6a81744;">Parcial</span>`;
 
-    const alertaRows = [
-      { label:'Pagos pendientes', sub:`${pagosPendientes.length} rentas con saldo abierto`, value:pagosPendientes.length, cls:'red' },
-      { label:'Rentas por vencer', sub:`${rentasPorVencer.length} regresos en próximas 72 h`, value:rentasPorVencer.length, cls:'gold' },
-      { label:'Props en reparación', sub:'Piezas fuera de rotación', value:propsRep, cls:'gold' },
-      { label:'Rentas sin cerrar', sub:'Regresos atrasados por confirmar', value:rentasSinCerrar.length, cls:'red' }
+      if (f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']))) {
+        const fechaD = parseDate(f['Fecha de salida']);
+        movimientos.push({
+          fecha: f['Fecha de salida'], fechaD,
+          html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
+            ${fotoHtml}
+            <div style="text-align:center"><div class="tl-day">${dayLabel(f['Fecha de salida'])}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+            <div><div class="tl-id">${f['ID de renta'] || '—'}</div><div class="tl-client">${clientName(f)}</div>
+              <div class="tl-sub"><span class="tl-dot out"></span>Salida · ${f['Hora de salida'] || 'Hora pendiente'} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
+          </div>`
+        });
+      }
+      if (f['Fecha de regreso'] && inRange(parseDate(f['Fecha de regreso']))) {
+        const fechaD = parseDate(f['Fecha de regreso']);
+        movimientos.push({
+          fecha: f['Fecha de regreso'], fechaD,
+          html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
+            ${fotoHtml}
+            <div style="text-align:center"><div class="tl-day">${dayLabel(f['Fecha de regreso'])}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+            <div><div class="tl-id">${f['ID de renta'] || '—'}</div><div class="tl-client">${clientName(f)}</div>
+              <div class="tl-sub"><span class="tl-dot in"></span>Regreso · ${f['Hora de regreso'] || 'Hora pendiente'} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
+          </div>`
+        });
+      }
+    });
+    movimientos.sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
+    const timelineEl = document.getElementById('ds-timeline-list');
+    if (timelineEl) timelineEl.innerHTML = movimientos.length
+      ? movimientos.slice(0, 5).map(m => m.html).join('') + (movimientos.length === 0 ? '' : '')
+      : '<div class="tl-empty">Sin movimientos esta semana</div>';
+
+    // ── ALERTAS con íconos y hover selectivo ─────────────────────────────────
+    const alertaDefs = [
+      { label:'Pagos pendientes', sub:`${pagosPendientes.length} renta${pagosPendientes.length !== 1 ? 's' : ''} con saldo abierto`, value:pagosPendientes.length, icoClass:'red', ico:'ti-credit-card', onclick:`navGo('rentas')` },
+      { label:'Rentas por vencer', sub:`Regresos en próximas 72 h`, value:rentasPorVencer.length, icoClass:'gold', ico:'ti-clock', onclick:`navGo('rentas')` },
+      { label:'Props en reparación', sub:'Piezas fuera de rotación', value:propsRep, icoClass:'gold', ico:'ti-tool', onclick:`navGo('inventario')` },
+      { label:'Rentas sin cerrar', sub:'Regresos atrasados por confirmar', value:rentasSinCerrar.length, icoClass:'red', ico:'ti-alert-circle', onclick:`navGo('rentas')` },
     ];
-    document.getElementById('ds-alertas-list').innerHTML = alertaRows.map(a => `
-      <div class="dash-panel-row">
-        <div>
-          <div class="dash-row-name">${a.label}</div>
-          <div class="dash-row-sub">${a.sub}</div>
+    document.getElementById('ds-alertas-list').innerHTML = alertaDefs.map(a => {
+      const clickable = a.value > 0;
+      return `<div class="al-row ${clickable ? 'clickable' : ''}" ${clickable ? `onclick="${a.onclick}"` : ''}>
+        <div class="al-ico ${clickable ? a.icoClass : 'dim'}"><i class="ti ${a.ico}" aria-hidden="true"></i></div>
+        <div class="al-body">
+          <div class="al-text ${clickable ? '' : 'dim'}">${a.label}</div>
+          <div class="al-sub-text ${clickable ? '' : 'dim'}">${a.sub}</div>
         </div>
-        <div class="dash-alert-value ${a.cls === 'red' ? 'red' : 'gold'}">${a.value}</div>
-      </div>`).join('');
+        <div class="al-num ${clickable ? a.icoClass : 'dim'}">${a.value}</div>
+        <div class="al-arr ${clickable ? '' : 'hidden'}">›</div>
+      </div>`;
+    }).join('');
 
+    // ── INVENTARIO con hover (llevan a inventario filtrado) ───────────────────
     const totalProps = Math.max(props.length, 1);
     document.getElementById('ds-inventario-status').innerHTML = `
-      <div class="dash-inventory-bars">
-        <div class="dash-bar-row"><span>Disponibles</span><div class="dash-bar-track"><div class="dash-bar-fill green" style="width:${Math.round((propsDisp/totalProps)*100)}%"></div></div><strong>${propsDisp}</strong></div>
-        <div class="dash-bar-row"><span>Rentados</span><div class="dash-bar-track"><div class="dash-bar-fill gold" style="width:${Math.round((propsRentados/totalProps)*100)}%"></div></div><strong>${propsRentados}</strong></div>
-        <div class="dash-bar-row"><span>Reparación</span><div class="dash-bar-track"><div class="dash-bar-fill red" style="width:${Math.round((propsRep/totalProps)*100)}%"></div></div><strong>${propsRep}</strong></div>
+      <div class="dash-inv-bars">
+        <div class="dash-inv-row" onclick="navGo('inventario')">
+          <span>Disponibles</span>
+          <div class="dash-inv-track"><div class="dash-inv-fill green" style="width:${Math.round((propsDisp/totalProps)*100)}%"></div></div>
+          <strong style="color:#4caf50;text-align:right">${propsDisp}</strong>
+        </div>
+        <div class="dash-inv-row" onclick="navGo('inventario')">
+          <span>Rentados</span>
+          <div class="dash-inv-track"><div class="dash-inv-fill gold" style="width:${Math.max(Math.round((propsRentados/totalProps)*100),2)}%"></div></div>
+          <strong style="color:#d4a853;text-align:right">${propsRentados}</strong>
+        </div>
+        <div class="dash-inv-row" onclick="navGo('inventario')">
+          <span>Reparación</span>
+          <div class="dash-inv-track"><div class="dash-inv-fill red" style="width:${Math.max(Math.round((propsRep/totalProps)*100),2)}%"></div></div>
+          <strong style="color:#e74c3c;text-align:right">${propsRep}</strong>
+        </div>
       </div>`;
 
+    // ── ACTIVIDAD con íconos por tipo y hover ─────────────────────────────────
+    const actIcoMap = {
+      pago:    { cls:'green', ico:'ti-check',          label:'Pago',       onclick:'' },
+      renta:   { cls:'gold',  ico:'ti-clock',          label:'Renta',      onclick:'' },
+      dano:    { cls:'red',   ico:'ti-alert-triangle', label:'Daño',       onclick:'' },
+      rep:     { cls:'blue',  ico:'ti-tool',           label:'Reparación', onclick:'' },
+    };
     const activity = [];
     pagos.forEach(p => {
       const f = p.fields;
-      activity.push({
-        date: f['Fecha de pago'] || '',
-        html: `<div class="dash-panel-row">
-          <div><div class="dash-row-id">${formatFecha(f['Fecha de pago'])}</div><div class="dash-row-name">Pago registrado</div><div class="dash-row-sub">${f['ID pago'] || 'Pago'} · ${fmtM(f['Monto'] || 0)} · ${f['Tipo de pago'] || 'Pago'}</div></div>
-          ${mkBadge('ok', SVG.check, 'Pago')}
-        </div>`
-      });
+      const m = actIcoMap.pago;
+      activity.push({ date: f['Fecha de pago'] || '', tipo:'pago', html:`
+        <div class="dash-act-row">
+          <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de pago'])}</div>
+            <div class="dash-act-text">Pago registrado</div>
+            <div class="dash-act-sub">${f['ID pago'] || 'Pago'} · ${fmtM(f['Monto'] || 0)} · ${f['Tipo de pago'] || 'Pago'}</div></div>
+          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
+        </div>` });
     });
     rentas.forEach(r => {
       const f = r.fields;
-      activity.push({
-        date: f['Fecha de registro'] || f['Fecha de salida'] || '',
-        html: `<div class="dash-panel-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
-          <div><div class="dash-row-id">${formatFecha(f['Fecha de registro'] || f['Fecha de salida'])}</div><div class="dash-row-name">Nueva renta creada</div><div class="dash-row-sub">${f['ID de renta'] || '—'} · ${clientName(f)}</div></div>
-          ${mkBadge('adel', SVG.clock, 'Renta')}
-        </div>`
-      });
+      const m = actIcoMap.renta;
+      activity.push({ date: f['Fecha de registro'] || f['Fecha de salida'] || '', tipo:'renta', html:`
+        <div class="dash-act-row" onclick="rentasVerDetalle('${r.id}')">
+          <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de registro'] || f['Fecha de salida'])}</div>
+            <div class="dash-act-text">Nueva renta creada</div>
+            <div class="dash-act-sub">${f['ID de renta'] || '—'} · ${clientName(f)}</div></div>
+          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
+        </div>` });
     });
     danos.forEach(d => {
       const f = d.fields;
-      activity.push({
-        date: f['Fecha del reporte'] || '',
-        html: `<div class="dash-panel-row">
-          <div><div class="dash-row-id">${formatFecha(f['Fecha del reporte'])}</div><div class="dash-row-name">Daño registrado</div><div class="dash-row-sub">${f['ID daño'] || 'Daño'} · ${f['Descripción del daño'] || 'Sin descripción'}</div></div>
-          ${mkBadge('pend', SVG.alertTriangle, 'Daño')}
-        </div>`
-      });
+      const m = actIcoMap.dano;
+      activity.push({ date: f['Fecha del reporte'] || '', tipo:'dano', html:`
+        <div class="dash-act-row">
+          <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha del reporte'])}</div>
+            <div class="dash-act-text">Daño registrado</div>
+            <div class="dash-act-sub">${f['ID daño'] || 'Daño'} · ${(f['Descripción del daño'] || 'Sin descripción').slice(0,40)}</div></div>
+          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
+        </div>` });
     });
-    props.filter(p => p.fields['Estado'] === 'En reparación').slice(0, 4).forEach(p => {
+    props.filter(p => p.fields['Estado'] === 'En reparación').slice(0, 3).forEach(p => {
       const f = p.fields;
-      activity.push({
-        date: f['Última verificación física'] || '',
-        html: `<div class="dash-panel-row">
-          <div><div class="dash-row-id">${formatFecha(f['Última verificación física'])}</div><div class="dash-row-name">Prop marcado en reparación</div><div class="dash-row-sub">${f['Código único'] || '—'} · ${f['Nombre del prop'] || '—'}</div></div>
-          ${mkBadge('rep', SVG.tool, 'Reparación')}
-        </div>`
-      });
+      const m = actIcoMap.rep;
+      activity.push({ date: f['Última verificación física'] || '', tipo:'rep', html:`
+        <div class="dash-act-row" onclick="galeríaAbrirDetalle('${p.id}')">
+          <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
+          <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Última verificación física'])}</div>
+            <div class="dash-act-text">Prop en reparación</div>
+            <div class="dash-act-sub">${f['Código único'] || '—'} · ${f['Nombre del prop'] || '—'}</div></div>
+          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
+        </div>` });
     });
-
     activity.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
     document.getElementById('ds-activity-list').innerHTML = activity.slice(0, 6).map(a => a.html).join('') || '<div class="empty-state">Sin actividad reciente</div>';
 
