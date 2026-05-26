@@ -237,20 +237,17 @@
   .al-arr { font-size:14px; color:#444038; }
   .al-arr.hidden { visibility:hidden; }
 
-  /* BARRAS INVENTARIO — hover porque llevan a inventario filtrado */
+  /* BARRAS INVENTARIO — sin hover, solo informativas */
   .dash-inv-bars { padding:14px; display:grid; gap:12px; }
-  .dash-inv-row { display:grid; grid-template-columns:90px 1fr 36px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); cursor:pointer; border-radius:6px; padding:5px 7px; transition:background 0.15s; margin:-5px -7px; }
-  .dash-inv-row:hover { background:#343230; }
+  .dash-inv-row { display:grid; grid-template-columns:90px 1fr 36px; align-items:center; gap:10px; font-size:11px; color:var(--white-dim); }
   .dash-inv-track { height:7px; border-radius:4px; background:var(--border); overflow:hidden; }
   .dash-inv-fill { height:100%; border-radius:4px; }
   .dash-inv-fill.green { background:var(--green); }
   .dash-inv-fill.gold { background:var(--gold); }
   .dash-inv-fill.red { background:var(--red); }
 
-  /* ACTIVIDAD — hover porque llevan al evento */
-  .dash-act-row { display:flex; align-items:flex-start; gap:10px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.15s; }
-  .dash-act-row:last-child { border-bottom:none; }
-  .dash-act-row:hover { background:#343230; }
+  /* ACTIVIDAD — sin hover, solo informativa */
+  .dash-act-row { display:flex; align-items:flex-start; gap:10px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.04); }
   .dash-act-ico { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
   .dash-act-ico.green { background:rgba(76,175,80,0.15); } .dash-act-ico.green i { color:var(--green); }
   .dash-act-ico.gold { background:rgba(212,168,83,0.12); } .dash-act-ico.gold i { color:var(--gold); }
@@ -722,9 +719,11 @@
   /* ── BOTONES INVENTARIO — estilo B4 ─────────────────── */
   .galeria-acciones { display:flex; gap:0; margin-bottom:20px; }
   .galeria-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
-  .galeria-btn { display:flex; flex-direction:column; align-items:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; }
+  .galeria-btn { display:flex; flex-direction:column; align-items:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; position:relative; }
   .galeria-btn:last-child { border-right:none; }
   .galeria-btn:hover { background:var(--bg-card); }
+  .galeria-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
+  .galeria-btn:hover::after { opacity:0.6; }
   .galeria-btn:active { background:var(--bg-hover); }
   .galeria-btn svg { width:24px; height:24px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; flex-shrink:0; }
   .galeria-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
@@ -737,9 +736,11 @@
   .rentas-centro { display:flex; flex-direction:column; gap:18px; }
   .rentas-acciones { display:flex; gap:0; margin-bottom:14px; }
   .rentas-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
-  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); }
+  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:100px; color:var(--white-dim); position:relative; }
   .rentas-action-btn:last-child { border-right:none; }
   .rentas-action-btn:hover { background:var(--bg-card); }
+  .rentas-action-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
+  .rentas-action-btn:hover::after { opacity:0.6; }
   .rentas-action-btn:active { background:var(--bg-hover); }
   .rentas-action-btn i { font-size:24px; line-height:1; color:currentColor; }
   .rentas-action-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
@@ -747,10 +748,11 @@
   .rentas-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
   .rentas-kpi { background:transparent; border:1px solid rgba(61,59,56,0.75); border-radius:8px; padding:11px 13px; min-height:74px; }
   .rentas-kpi-label { font-size:8px; letter-spacing:1.7px; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
-  .rentas-kpi-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); line-height:1; }
+  .rentas-kpi-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--gold); line-height:1; }
   .rentas-kpi-value.gold { color:var(--gold); }
-  .rentas-kpi-value.green { color:var(--green); }
-  .rentas-kpi-value.red { color:var(--red); }
+  .rentas-kpi-value.green { color:var(--gold); }
+  .rentas-kpi-value.red { color:var(--gold); }
+  .rentas-kpi-value.white { color:var(--white); }
   .rentas-kpi-sub { font-size:9px; color:var(--text-muted); margin-top:6px; }
   .rentas-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .rentas-search { flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:12px 14px; outline:none; }
@@ -803,9 +805,20 @@
   .rentas-alerts, .rentas-quick-panel { display:flex; flex-direction:column; gap:9px; }
   .rentas-alert-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.05); }
   .rentas-alert-row:last-child { border-bottom:none; }
+  .rentas-alert-row.clickable { cursor:pointer; border-radius:6px; padding:10px 8px; margin:0 -8px; transition:background 0.15s; }
+  .rentas-alert-row.clickable:hover { background:#343230; }
+  .rentas-alert-ico { width:30px; height:30px; border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:14px; }
+  .rentas-alert-ico.red { background:rgba(231,76,60,0.15); } .rentas-alert-ico.red i { color:var(--red); }
+  .rentas-alert-ico.gold { background:rgba(212,168,83,0.12); } .rentas-alert-ico.gold i { color:var(--gold); }
+  .rentas-alert-ico.dim { background:rgba(255,255,255,0.03); } .rentas-alert-ico.dim i { color:#333028; }
+  .rentas-alert-body { flex:1; }
   .rentas-alert-label { font-size:11px; color:var(--white-dim); }
-  .rentas-alert-value { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); }
+  .rentas-alert-label.dim { color:#444038; }
+  .rentas-alert-value { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); flex-shrink:0; }
   .rentas-alert-value.red { color:var(--red); }
+  .rentas-alert-value.dim { color:#333028; }
+  .rentas-alert-arr { font-size:13px; color:#444038; flex-shrink:0; }
+  .rentas-alert-arr.hidden { visibility:hidden; }
   .rentas-quick-panel { margin-top:14px; padding-top:14px; border-top:1px solid var(--border); }
   .rentas-mini-btn { width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; background:transparent; border:1px solid var(--border); color:var(--white-dim); border-radius:6px; padding:10px 11px; cursor:pointer; font-size:11px; font-weight:600; text-align:left; transition:all 0.15s; }
   .rentas-mini-btn:hover { border-color:var(--gold); color:var(--gold); }
@@ -1002,17 +1015,17 @@
     </div>
     <!-- Acciones rápidas -->
     <div class="galeria-acciones">
-      <div class="action-bar-universal">
-        <button class="abu-btn gold" onclick="showAltaProp()">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="galeria-action-bar">
+        <button class="galeria-btn gold" onclick="showAltaProp()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           <span>Alta de prop</span>
         </button>
-        <button class="abu-btn" onclick="showInventarioView()">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <button class="galeria-btn white" onclick="showInventarioView()">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
           <span>Inventario físico</span>
         </button>
-        <button class="abu-btn" onclick="startFlow('buscar')">
-          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <button class="galeria-btn white" onclick="startFlow('buscar')">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <span>Buscar código</span>
         </button>
       </div>
@@ -1042,24 +1055,24 @@
     </div>
     <div class="rentas-centro">
       <div class="rentas-acciones">
-        <div class="action-bar-universal">
-          <button class="abu-btn gold" onclick="quickNuevaRenta()">
+        <div class="rentas-action-bar">
+          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()">
             <i class="ti ti-plus" aria-hidden="true"></i>
             <span>Nueva renta</span>
           </button>
-          <button class="abu-btn" onclick="showCotizacionView()">
+          <button class="rentas-action-btn" onclick="showCotizacionView()">
             <i class="ti ti-file-dollar" aria-hidden="true"></i>
             <span>Nueva cotización</span>
           </button>
-          <button class="abu-btn" onclick="startFlow('salida')">
+          <button class="rentas-action-btn" onclick="startFlow('salida')">
             <i class="ti ti-arrow-bar-up" aria-hidden="true"></i>
             <span>Registrar salida</span>
           </button>
-          <button class="abu-btn" onclick="startFlow('entrada')">
+          <button class="rentas-action-btn" onclick="startFlow('entrada')">
             <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
             <span>Registrar regreso</span>
           </button>
-          <button class="abu-btn" onclick="showPagosView()">
+          <button class="rentas-action-btn" onclick="showPagosView()">
             <i class="ti ti-credit-card" aria-hidden="true"></i>
             <span>Registrar pago</span>
           </button>
@@ -1117,18 +1130,24 @@
 
         <div class="rentas-side-card">
           <div class="rentas-panel-title" style="margin-bottom:10px;">Alertas de rentas</div>
-          <div class="rentas-alerts">
+          <div class="rentas-alerts" id="rc-alertas-panel">
             <div class="rentas-alert-row">
-              <span class="rentas-alert-label">Rentas por vencer</span>
-              <span class="rentas-alert-value gold" id="rc-alert-vencer">—</span>
+              <div class="rentas-alert-ico dim"><i class="ti ti-clock" aria-hidden="true"></i></div>
+              <div class="rentas-alert-body"><span class="rentas-alert-label dim">Rentas por vencer</span></div>
+              <span class="rentas-alert-value dim" id="rc-alert-vencer">—</span>
+              <span class="rentas-alert-arr hidden">›</span>
             </div>
             <div class="rentas-alert-row">
-              <span class="rentas-alert-label">Pagos pendientes</span>
-              <span class="rentas-alert-value red" id="rc-alert-pagos">—</span>
+              <div class="rentas-alert-ico dim"><i class="ti ti-credit-card" aria-hidden="true"></i></div>
+              <div class="rentas-alert-body"><span class="rentas-alert-label dim">Pagos pendientes</span></div>
+              <span class="rentas-alert-value dim" id="rc-alert-pagos">—</span>
+              <span class="rentas-alert-arr hidden">›</span>
             </div>
             <div class="rentas-alert-row">
-              <span class="rentas-alert-label">Rentas sin cerrar</span>
-              <span class="rentas-alert-value red" id="rc-alert-cerrar">—</span>
+              <div class="rentas-alert-ico dim"><i class="ti ti-alert-circle" aria-hidden="true"></i></div>
+              <div class="rentas-alert-body"><span class="rentas-alert-label dim">Rentas sin cerrar</span></div>
+              <span class="rentas-alert-value dim" id="rc-alert-cerrar">—</span>
+              <span class="rentas-alert-arr hidden">›</span>
             </div>
           </div>
         </div>
@@ -2601,17 +2620,17 @@ async function cargarDashboard() {
     const totalProps = Math.max(props.length, 1);
     document.getElementById('ds-inventario-status').innerHTML = `
       <div class="dash-inv-bars">
-        <div class="dash-inv-row" onclick="navGo('inventario')">
+        <div class="dash-inv-row">
           <span>Disponibles</span>
           <div class="dash-inv-track"><div class="dash-inv-fill green" style="width:${Math.round((propsDisp/totalProps)*100)}%"></div></div>
           <strong style="color:#4caf50;text-align:right">${propsDisp}</strong>
         </div>
-        <div class="dash-inv-row" onclick="navGo('inventario')">
+        <div class="dash-inv-row">
           <span>Rentados</span>
           <div class="dash-inv-track"><div class="dash-inv-fill gold" style="width:${Math.max(Math.round((propsRentados/totalProps)*100),2)}%"></div></div>
           <strong style="color:#d4a853;text-align:right">${propsRentados}</strong>
         </div>
-        <div class="dash-inv-row" onclick="navGo('inventario')">
+        <div class="dash-inv-row">
           <span>Reparación</span>
           <div class="dash-inv-track"><div class="dash-inv-fill red" style="width:${Math.max(Math.round((propsRep/totalProps)*100),2)}%"></div></div>
           <strong style="color:#e74c3c;text-align:right">${propsRep}</strong>
@@ -2635,19 +2654,17 @@ async function cargarDashboard() {
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de pago'])}</div>
             <div class="dash-act-text">Pago registrado</div>
             <div class="dash-act-sub">${f['ID pago'] || 'Pago'} · ${fmtM(f['Monto'] || 0)} · ${f['Tipo de pago'] || 'Pago'}</div></div>
-          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
         </div>` });
     });
     rentas.forEach(r => {
       const f = r.fields;
       const m = actIcoMap.renta;
       activity.push({ date: f['Fecha de registro'] || f['Fecha de salida'] || '', tipo:'renta', html:`
-        <div class="dash-act-row" onclick="rentasVerDetalle('${r.id}')">
+        <div class="dash-act-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha de registro'] || f['Fecha de salida'])}</div>
             <div class="dash-act-text">Nueva renta creada</div>
             <div class="dash-act-sub">${f['ID de renta'] || '—'} · ${clientName(f)}</div></div>
-          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
         </div>` });
     });
     danos.forEach(d => {
@@ -2659,19 +2676,17 @@ async function cargarDashboard() {
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Fecha del reporte'])}</div>
             <div class="dash-act-text">Daño registrado</div>
             <div class="dash-act-sub">${f['ID daño'] || 'Daño'} · ${(f['Descripción del daño'] || 'Sin descripción').slice(0,40)}</div></div>
-          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
         </div>` });
     });
     props.filter(p => p.fields['Estado'] === 'En reparación').slice(0, 3).forEach(p => {
       const f = p.fields;
       const m = actIcoMap.rep;
       activity.push({ date: f['Última verificación física'] || '', tipo:'rep', html:`
-        <div class="dash-act-row" onclick="galeríaAbrirDetalle('${p.id}')">
+        <div class="dash-act-row">
           <div class="dash-act-ico ${m.cls}"><i class="ti ${m.ico}" aria-hidden="true"></i></div>
           <div style="flex:1"><div class="dash-act-date">${formatFecha(f['Última verificación física'])}</div>
             <div class="dash-act-text">Prop en reparación</div>
             <div class="dash-act-sub">${f['Código único'] || '—'} · ${f['Nombre del prop'] || '—'}</div></div>
-          <span style="font-size:14px;color:#444038;padding-top:2px">›</span>
         </div>` });
     });
     activity.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
@@ -3143,9 +3158,44 @@ function rentasCentroActualizarResumen() {
   setText('rc-kpi-cobrar-sub', `${porCobrar.length} pendientes`);
   setText('rc-kpi-ingresos', rentasCentroMoney(ingresosMes));
   setText('rc-kpi-ingresos-sub', 'Rentas con salida este mes');
-  setText('rc-alert-vencer', porRegresar.length);
-  setText('rc-alert-pagos', porCobrar.length);
-  setText('rc-alert-cerrar', sinCerrar.length);
+
+  // Alertas con hover selectivo — solo si número > 0
+  const alertaDefs = [
+    { numId:'rc-alert-vencer', value:porRegresar.length,    icoClass:'gold', ico:'ti-clock',        filtro:'activas',   colorCls:'gold' },
+    { numId:'rc-alert-pagos',  value:porCobrar.length,      icoClass:'red',  ico:'ti-credit-card',  filtro:'por-cobrar', colorCls:'red'  },
+    { numId:'rc-alert-cerrar', value:sinCerrar.length,      icoClass:'red',  ico:'ti-alert-circle', filtro:'activas',   colorCls:'red'  },
+  ];
+  const panel = document.getElementById('rc-alertas-panel');
+  if (panel) {
+    const rows = panel.querySelectorAll('.rentas-alert-row');
+    alertaDefs.forEach((def, i) => {
+      const row = rows[i];
+      if (!row) return;
+      const clickable = def.value > 0;
+      const numEl = document.getElementById(def.numId);
+      const icoEl = row.querySelector('.rentas-alert-ico');
+      const lblEl = row.querySelector('.rentas-alert-label');
+      const arrEl = row.querySelector('.rentas-alert-arr');
+
+      // Número
+      if (numEl) {
+        numEl.textContent = def.value;
+        numEl.className = 'rentas-alert-value ' + (clickable ? def.colorCls : 'dim');
+      }
+      // Ícono
+      if (icoEl) icoEl.className = 'rentas-alert-ico ' + (clickable ? def.icoClass : 'dim');
+      // Label
+      if (lblEl) lblEl.className = 'rentas-alert-label' + (clickable ? '' : ' dim');
+      // Flecha
+      if (arrEl) arrEl.className = 'rentas-alert-arr' + (clickable ? '' : ' hidden');
+      // Hover y click
+      row.className = 'rentas-alert-row' + (clickable ? ' clickable' : '');
+      row.onclick = clickable ? () => {
+        const pill = document.querySelector(`#rentas-menu-view .rentas-pill[data-filtro="${def.filtro}"]`);
+        if (pill) { rentasCentroSetFiltro(pill); }
+      } : null;
+    });
+  }
 }
 
 function rentasCentroSetFiltro(btn) {
@@ -3227,7 +3277,6 @@ function rentasCentroRenderTabla(rows) {
             <span class="rentas-badge ${estado.cls}">${rentasCentroEsc(estado.label)}</span>
             <span class="rentas-badge ${pago.cls}">${rentasCentroEsc(pago.label)}</span>
           </div>
-          <button class="rentas-row-action" onclick="event.stopPropagation();rentasVerDetalle('${r.id}')">Ver</button>
         </div>
       </div>`;
     }).join('')}
