@@ -1184,7 +1184,13 @@
       <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
         <span style="color:var(--text-muted);">Días cobrados</span><span id="nr-dias-cobrados">—</span>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--text-muted);">Subtotal</span><span id="nr-subtotal-calc">$0 MXN</span>
+      </div>
+      <div id="nr-iva-row" style="display:none;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--text-muted);">IVA 16%</span><span id="nr-iva-calc">$0 MXN</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0 4px;">
         <span style="color:var(--gold);">Monto total</span><span style="color:var(--gold);font-weight:500;" id="nr-monto-calc">$0 MXN</span>
       </div>
     </div>
@@ -1194,8 +1200,16 @@
       <label for="nr-iva" style="font-size:11px;color:var(--white);letter-spacing:1px;">Aplicar IVA 16%</label>
     </div>
 
-    <div class="setup-label">Monto Adelanto (MXN)</div>
+    <div class="setup-label">Pago inicial recibido (MXN)</div>
     <input type="number" class="setup-input" id="nr-deposito" placeholder="0">
+
+    <div class="setup-label">Método del pago inicial</div>
+    <select class="setup-input" id="nr-metodo-pago">
+      <option value="Transferencia">Transferencia</option>
+      <option value="Efectivo">Efectivo</option>
+      <option value="Tarjeta">Tarjeta</option>
+      <option value="Otro">Otro</option>
+    </select>
 
 
     <div class="setup-label">Notas</div>
@@ -1320,16 +1334,35 @@
   <div id="pagos-form" style="display:none;">
     <div class="pago-section" id="pagos-renta-info"></div>
 
-    <div class="section-title">Registrar adelanto</div>
+    <div class="section-title">Nuevo pago recibido</div>
     <div class="alta-field">
-      <div class="alta-label">Monto Adelanto (MXN)</div>
-      <input type="number" class="alta-input" id="pago-monto-adelanto" placeholder="0" oninput="pagosCalcEstado()">
+      <div class="alta-label">Monto recibido (MXN)</div>
+      <input type="number" class="alta-input" id="pago-monto" placeholder="0" oninput="pagosCalcEstado()">
     </div>
 
-    <div class="section-title">Registrar liquidación</div>
     <div class="alta-field">
-      <div class="alta-label">Monto liquidación (MXN)</div>
-      <input type="number" class="alta-input" id="pago-monto-liq" placeholder="0" oninput="pagosCalcEstado()">
+      <div class="alta-label">Tipo de pago</div>
+      <select class="alta-select" id="pago-tipo" onchange="pagosCalcEstado()">
+        <option value="Adelanto">Adelanto</option>
+        <option value="Pago parcial">Pago parcial</option>
+        <option value="Liquidación">Liquidación</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="alta-field">
+      <div class="alta-label">Método de pago</div>
+      <select class="alta-select" id="pago-metodo">
+        <option value="Transferencia">Transferencia</option>
+        <option value="Efectivo">Efectivo</option>
+        <option value="Tarjeta">Tarjeta</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </div>
+
+    <div class="alta-field">
+      <div class="alta-label">Notas</div>
+      <input type="text" class="alta-input" id="pago-notas" placeholder="Referencia, comentario o detalle...">
     </div>
 
     <!-- Preview de estado -->
@@ -1339,10 +1372,10 @@
         <span style="color:var(--text-muted);">Monto total</span><span id="pagos-total">$0 MXN</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Monto Adelanto</span><span id="pagos-adelanto-preview">$0 MXN</span>
+        <span style="color:var(--text-muted);">Total pagado actual</span><span id="pagos-pagado-actual">$0 MXN</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Liquidación</span><span id="pagos-liq-preview">$0 MXN</span>
+        <span style="color:var(--text-muted);">Nuevo pago</span><span id="pagos-nuevo-preview">$0 MXN</span>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
         <span style="color:var(--text-muted);">Saldo pendiente</span><span id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
@@ -1579,9 +1612,9 @@
     <div class="section-title" style="margin-top:16px">Pago</div>
     <div class="orden-total-box">
       <div class="orden-total-row"><span class="lbl">Subtotal</span><span id="or-t-subtotal">$0.00 MXN</span></div>
-      <div class="orden-total-row"><span class="lbl">Monto Adelanto sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
+      <div class="orden-total-row"><span class="lbl">Pago sugerido (50%)</span><span id="or-t-dep-sug">$0.00 MXN</span></div>
       <div class="orden-total-row">
-        <span class="lbl">Monto Adelanto</span>
+        <span class="lbl">Pago recibido</span>
         <input type="number" class="orden-input" id="or-deposito" placeholder="0" style="width:100px;text-align:right;padding:4px 8px;" oninput="orCalcTotales()">
       </div>
       <div class="orden-total-row"><span class="lbl">Saldo pendiente</span><span id="or-t-saldo">$0.00 MXN</span></div>
@@ -2217,9 +2250,9 @@ async function cargarDashboard() {
       const nombre = c ? (c.fields['Nombre o empresa'] || '—') : '—';
       const saldo = f['Monto a liquidar'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
-      const badgeClass = estado === 'Pagado' ? 'ok' : estado === 'Adelanto depositado' ? 'adel' : 'pend';
-      const badgeIconSVG = estado === 'Pagado' ? SVG.check : estado === 'Adelanto depositado' ? SVG.clock : SVG.alertCircle;
-      const badgeLabel = estado === 'Pagado' ? 'Pagado' : estado === 'Adelanto depositado' ? 'Adelanto' : 'Pendiente';
+      const badgeClass = estado === 'Pagado' ? 'ok' : estado === 'Pago parcial' ? 'adel' : 'pend';
+      const badgeIconSVG = estado === 'Pagado' ? SVG.check : estado === 'Pago parcial' ? SVG.clock : SVG.alertCircle;
+      const badgeLabel = estado === 'Pagado' ? 'Pagado' : estado === 'Pago parcial' ? 'Parcial' : 'Pendiente';
       const thumb = await rentaFirstPropThumbHtml(f);
       return `<div class="dash-panel-row" onclick="rentasVerDetalle('${r.id}')" style="cursor:pointer;">
         <div class="renta-card-with-thumb">
@@ -2304,17 +2337,23 @@ const F = {
   ID_RENTA:        'ID de renta',
   FECHA_SALIDA:    'Fecha de salida',
   FECHA_REGRESO:   'Fecha de regreso',
+  SUBTOTAL:         'Subtotal',
   MONTO_TOTAL:     'Monto total',
-  MONTO_ADELANTO:  'Monto Adelanto',
-  FECHA_ADELANTO:  'Fecha de adelanto',
-  MONTO_LIQ:       'Monto liquidación',
-  FECHA_LIQ:       'Fecha de liquidación',
+  TOTAL_PAGADO:    'Total pagado',
   MONTO_A_LIQ:     'Monto a liquidar',
   ESTADO_PAGO:     'Estado del pago',
   ESTADO_RENTA:    'Estado de la renta',
   FECHA_CANCEL:    'Fecha de cancelación',
   IVA_APLICADO:    'IVA aplicado',
   MONTO_IVA:       'Monto IVA',
+  // PAGOS
+  ID_PAGO:          'ID pago',
+  PAGO_RENTA:       'Renta',
+  PAGO_FECHA:       'Fecha de pago',
+  PAGO_MONTO:       'Monto',
+  PAGO_TIPO:        'Tipo de pago',
+  PAGO_METODO:      'Método de pago',
+  PAGO_NOTAS:       'Notas',
   // CLIENTES
   NOMBRE_CLIENTE:  'Nombre o empresa',
   TELEFONO:        'Teléfono',
@@ -2534,9 +2573,8 @@ function rentasCentroSaldo(f) {
   const saldo = Number(f[F.MONTO_A_LIQ] ?? 0);
   if (saldo > 0) return saldo;
   const total = Number(f[F.MONTO_TOTAL] || 0);
-  const adelanto = Number(f[F.MONTO_ADELANTO] || 0);
-  const liquidacion = Number(f[F.MONTO_LIQ] || 0);
-  return Math.max(0, total - adelanto - liquidacion);
+  const pagado = Number(f[F.TOTAL_PAGADO] || 0);
+  return Math.max(0, total - pagado);
 }
 
 function rentasCentroIsPorCobrar(f) {
@@ -2559,7 +2597,7 @@ function rentasCentroPagoBadge(f) {
   const low = String(pago).toLowerCase();
   let cls = 'cobrar';
   if (low.includes('pagado') || low.includes('saldado')) cls = 'activa';
-  else if (low.includes('adelanto')) cls = 'regresar';
+  else if (low.includes('parcial') || low.includes('adelanto')) cls = 'regresar';
   return { label:pago, cls };
 }
 
@@ -2753,23 +2791,47 @@ async function db_generarRentaId() {
   return `RNT-${year}-${String(next).padStart(3, '0')}`;
 }
 
-async function db_crearRenta({ rentaId, salida, regreso, monto, deposito, fechaAdelanto, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
-  const totalConIva = ivaAplicado ? monto + montoIva : monto;
+async function db_getPagos({ maxRecords = 500 } = {}) {
+  const data = await airtableGet('PAGOS', `?maxRecords=${maxRecords}`);
+  return data.records || [];
+}
+
+async function db_generarPagoId() {
+  const pagos = await db_getPagos({ maxRecords: 500 });
+  const nums = pagos
+    .map(p => p.fields[F.ID_PAGO] || '')
+    .map(id => parseInt(String(id).split('-').pop()) || 0)
+    .filter(n => n > 0);
+  const next = nums.length > 0 ? Math.max(...nums) + 1 : 1;
+  return `PAG-${String(next).padStart(4, '0')}`;
+}
+
+async function db_crearPago({ rentaRecordId, monto, tipo = 'Pago parcial', metodo = 'Transferencia', notas = '', fechaPago = '' }) {
+  const pagoId = await db_generarPagoId();
+  const fields = {
+    [F.ID_PAGO]: pagoId,
+    [F.PAGO_RENTA]: [rentaRecordId],
+    [F.PAGO_FECHA]: fechaPago || new Date().toISOString().split('T')[0],
+    [F.PAGO_MONTO]: parseFloat(monto) || 0,
+    [F.PAGO_TIPO]: tipo,
+    [F.PAGO_METODO]: metodo
+  };
+  if (notas) fields[F.PAGO_NOTAS] = notas;
+  return airtablePost('PAGOS', fields);
+}
+
+async function db_crearRenta({ rentaId, salida, regreso, subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
   const fields = {
     'ID de renta': rentaId,
     'Fecha de salida': salida,
     'Fecha de regreso': regreso || salida,
-    'Monto total': monto,
+    [F.SUBTOTAL]: subtotal,
+    [F.MONTO_TOTAL]: total,
     'IVA aplicado': ivaAplicado,
     'Monto IVA': montoIva,
     'Estado de la renta': 'Activa',
-    'Fecha de registro': new Date().toISOString().split('T')[0],
-    'Estado del pago': db_calcEstadoPago(totalConIva, deposito, 0)
+    'Fecha de registro': new Date().toISOString().split('T')[0]
   };
-  if (deposito > 0) {
-    fields['Monto Adelanto'] = deposito;
-    fields['Fecha de adelanto'] = fechaAdelanto || new Date().toISOString().split('T')[0];
-  }
   if (notas) fields['Notas'] = notas;
   if (clienteId) fields['Cliente'] = [clienteId];
   if (propsIds.length > 0) fields['Props rentados'] = propsIds;
@@ -2777,34 +2839,13 @@ async function db_crearRenta({ rentaId, salida, regreso, monto, deposito, fechaA
 }
 
 // Lógica central de estado del pago
-function db_calcEstadoPago(montoTotal, adelanto, liquidacion) {
+function db_calcEstadoPago(montoTotal, pagado) {
   const total = parseFloat(montoTotal) || 0;
-  const adel = parseFloat(adelanto) || 0;
-  const liq = parseFloat(liquidacion) || 0;
-  const pagado = adel + liq;
+  const pagadoNum = parseFloat(pagado) || 0;
   if (total <= 0) return 'Pendiente';
-  if (pagado >= total) return 'Pagado';
-  if (adel > 0) return 'Adelanto depositado';
+  if (pagadoNum >= total) return 'Pagado';
+  if (pagadoNum > 0) return 'Pago parcial';
   return 'Pendiente';
-}
-
-// Actualizar pagos de una renta existente en Airtable
-async function db_registrarPago({ rentaRecordId, montoTotal, adelanto, fechaAdelanto, liquidacion, fechaLiquidacion }) {
-  const fields = {
-    'Estado del pago': db_calcEstadoPago(montoTotal, adelanto, liquidacion)
-  };
-  // Siempre mandar los montos aunque sean 0 si el otro tiene valor
-  if (adelanto > 0) {
-    fields['Monto Adelanto'] = parseFloat(adelanto);
-    if (fechaAdelanto) fields['Fecha de adelanto'] = fechaAdelanto;
-  }
-  if (liquidacion > 0) {
-    fields['Monto liquidación'] = parseFloat(liquidacion);
-    if (fechaLiquidacion) fields['Fecha de liquidación'] = fechaLiquidacion;
-  }
-  const res = await airtablePatch('RENTAS', rentaRecordId, fields);
-  if (res.error) throw new Error(res.error.message || 'Error al guardar pago');
-  return res;
 }
 
 // ── INVENTARIO ───────────────────────────────────────
@@ -2957,8 +2998,8 @@ async function renderRentaList(rentas) {
   const html = (await Promise.all(rentas.map(async r => {
     const f = r.fields;
     const total = f['Monto total'] || 0;
-    const deposito = f['Monto Adelanto'] || 0;
-    const deuda = total - deposito;
+    const pagado = f['Total pagado'] || 0;
+    const deuda = f['Monto a liquidar'] ?? Math.max(0, total - pagado);
     const propsCount = (f['Props rentados'] || []).length;
     const thumb = await rentaFirstPropThumbHtml(f);
     return `<div class="renta-card">
@@ -3038,8 +3079,8 @@ function renderPropsFlow() {
   // Pago info
   const f = currentRenta.fields;
   const totalPago = f['Monto total'] || 0;
-  const deposito = f['Monto Adelanto'] || 0;
-  const deuda = totalPago - deposito;
+  const pagado = f['Total pagado'] || 0;
+  const deuda = f['Monto a liquidar'] ?? Math.max(0, totalPago - pagado);
 
   const propsHtml = rentaProps.map(p => {
     const pf = p.fields;
@@ -3068,7 +3109,7 @@ function renderPropsFlow() {
     <div class="pago-section">
       <div class="pago-title">💳 Estado de pago</div>
       <div class="pago-row"><span class="label">Total</span><span class="value">$${totalPago.toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Monto Adelanto</span><span class="value">$${deposito.toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${pagado.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Saldo</span><span class="value ${deuda > 0 ? 'deuda' : 'saldado'}">${deuda > 0 ? '$' + deuda.toLocaleString() + ' pendiente' : 'SALDADO ✓'}</span></div>
     </div>
 
@@ -3428,7 +3469,7 @@ async function rentasVerDetalle(rentaRecordId) {
         <div class="pago-row"><span class="label">Estado</span><span class="value">${f['Estado de la renta'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo>0?'#e74c3c':'#2ecc71'}">${saldo>0?'$'+saldo.toLocaleString()+' MXN':'SALDADO ✓'}</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
       </div>
 
       ${propsHtml ? `<div class="section-title" style="margin-bottom:12px;">Props en esta renta</div>${propsHtml}` : '<div class="empty-state">Sin props vinculados</div>'}
@@ -3502,7 +3543,7 @@ async function showRentasActivas() {
         <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
-        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Adelanto depositado'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
+        <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${f['Estado del pago']==='Pagado'?'#2ecc71':f['Estado del pago']==='Pago parcial'?'#f1c40f':'#e74c3c'}">${f['Estado del pago'] || '—'}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + saldo.toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
       ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
@@ -3546,6 +3587,8 @@ async function showNuevaRenta() {
   document.getElementById('nr-fecha-salida').value = hoy;
   document.getElementById('nr-fecha-regreso').value = hoy;
   document.getElementById('nr-deposito').value = '';
+  const metodoPagoEl = document.getElementById('nr-metodo-pago');
+  if (metodoPagoEl) metodoPagoEl.value = 'Transferencia';
   document.getElementById('nr-notas').value = '';
   document.getElementById('nr-prop-status').textContent = '';
   const emailEl = document.getElementById('nr-cliente-email');
@@ -3676,6 +3719,7 @@ async function crearNuevaRenta() {
   const fechaSalida = document.getElementById('nr-fecha-salida').value;
   const fechaRegreso = document.getElementById('nr-fecha-regreso').value;
   const deposito = parseFloat(document.getElementById('nr-deposito').value) || 0;
+  const metodoPagoInicial = document.getElementById('nr-metodo-pago')?.value || 'Transferencia';
   const notas = document.getElementById('nr-notas').value;
 
   if (!fechaSalida) { showToast('Ingresa fecha de salida', true); return; }
@@ -3684,8 +3728,9 @@ async function crearNuevaRenta() {
   const diasCobrados = nrDiasCobrados();
   const calcResult = nrCalcMonto() || {};
   const { subtotal = 0, iva = 0, total = 0, ivaAplicado = false } = calcResult;
-  const monto = subtotal;
   const propsIds = nrProps.map(p => p.airtableId).filter(Boolean);
+
+  if (deposito > total) { showToast('El pago inicial supera el total de la renta', true); return; }
 
   let clienteId = null;
   if (clienteSelect === '__nuevo__') {
@@ -3713,9 +3758,19 @@ async function crearNuevaRenta() {
   try {
     const newRenta = await db_crearRenta({
       rentaId, salida: fechaSalida, regreso: fechaRegreso,
-      monto, deposito, clienteId, propsIds, notas,
+      subtotal, total, clienteId, propsIds, notas,
       ivaAplicado, montoIva: iva
     });
+
+    if (deposito > 0) {
+      await db_crearPago({
+        rentaRecordId: newRenta.id,
+        monto: deposito,
+        tipo: 'Adelanto',
+        metodo: metodoPagoInicial,
+        notas: 'Pago inicial al crear renta'
+      });
+    }
 
     showToast(`✓ Renta ${rentaId} registrada`);
 
@@ -3727,7 +3782,7 @@ async function crearNuevaRenta() {
     document.getElementById('nr-form').style.display = 'none';
     document.getElementById('nr-success').style.display = 'block';
     document.getElementById('nr-success-id').textContent = rentaId;
-    document.getElementById('nr-success-monto').textContent = monto > 0 ? '$' + monto.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN' : 'Sin monto calculado';
+    document.getElementById('nr-success-monto').textContent = total > 0 ? '$' + total.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN' : 'Sin monto calculado';
     document.getElementById('nr-success-detalle').textContent = `${diasCobrados} día${diasCobrados>1?'s':''} cobrados · ${propsIds.length} prop${propsIds.length!==1?'s':''}`;
 
   } catch(e) {
@@ -3926,7 +3981,7 @@ async function orGenerarOrden() {
   const recibe = document.getElementById('or-recibe').value || '—';
   const salida = f['Fecha de salida'] || document.getElementById('or-fecha-salida').value;
   const regreso = f['Fecha de regreso'] || document.getElementById('or-fecha-regreso').value;
-  const deposito = f['Monto Adelanto'] || parseFloat(document.getElementById('or-deposito').value) || 0;
+  const deposito = f['Total pagado'] || parseFloat(document.getElementById('or-deposito').value) || 0;
 
   // Resolver nombre del cliente desde cache
   let clienteNombre = '—';
@@ -4053,7 +4108,7 @@ async function orGenerarOrden() {
       </table>
       <div class="doc-totals">
         <div class="doc-total-row"><span class="doc-total-label">Subtotal</span><span>${fmtM(montoFinal)}</span></div>
-        <div class="doc-total-row"><span class="doc-total-label">Monto Adelanto</span><span>${fmtM(deposito)}</span></div>
+        <div class="doc-total-row"><span class="doc-total-label">Total pagado</span><span>${fmtM(deposito)}</span></div>
         <div class="doc-total-row"><span class="doc-total-label">Saldo pendiente</span><span>${fmtM(saldo)}</span></div>
         <div class="doc-total-row"><span>TOTAL</span><span>${fmtM(montoFinal)}</span></div>
       </div>
@@ -4128,7 +4183,7 @@ function orCompartirWhatsApp() {
   const saldo = Math.max(0, subtotal - deposito);
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
-  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(subtotal)}\n✅ Monto Adelanto: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
+  const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(subtotal)}\n✅ Total pagado: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
 
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
@@ -4505,7 +4560,7 @@ async function showPagosView() {
       const total = f['Monto total'] || 0;
       const saldo = f['Monto a liquidar'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
-      const estadoColor = estado === 'Pagado' ? '#2ecc71' : estado === 'Adelanto depositado' ? '#f1c40f' : '#e74c3c';
+      const estadoColor = estado === 'Pagado' ? '#2ecc71' : estado === 'Pago parcial' ? '#f1c40f' : '#e74c3c';
       const thumb = await rentaFirstPropThumbHtml(f);
       return `<div class="renta-card" onclick="pagosSeleccionarRenta('${r.id}')">
         <div class="renta-card-with-thumb">
@@ -4532,6 +4587,7 @@ async function pagosSeleccionarRenta(recordId) {
     const f = pagosRentaActual.fields;
     const total = f['Monto total'] || 0;
     const saldo = f['Monto a liquidar'] || 0;
+    const pagado = f['Total pagado'] || 0;
 
     // Mostrar info de la renta
     document.getElementById('pagos-renta-info').innerHTML = `
@@ -4539,14 +4595,14 @@ async function pagosSeleccionarRenta(recordId) {
       <div class="pago-row"><span class="label">Salida</span><span class="value">${f['Fecha de salida'] || '—'}</span></div>
       <div class="pago-row"><span class="label">Regreso</span><span class="value">${f['Fecha de regreso'] || '—'}</span></div>
       <div class="pago-row"><span class="label">Monto total</span><span class="value">$${total.toLocaleString()} MXN</span></div>
+      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${pagado.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${saldo.toLocaleString()} MXN</span></div>
       <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${f['Estado del pago'] || 'Pendiente'}</span></div>`;
 
-    // Pre-llenar con valores existentes
-    const adel = f['Monto Adelanto'] || 0;
-    const liq = f['Monto liquidación'] || 0;
-    document.getElementById('pago-monto-adelanto').value = adel || '';
-    document.getElementById('pago-monto-liq').value = liq || '';
+    document.getElementById('pago-monto').value = '';
+    document.getElementById('pago-tipo').value = saldo > 0 && pagado > 0 ? 'Liquidación' : 'Adelanto';
+    document.getElementById('pago-metodo').value = 'Transferencia';
+    document.getElementById('pago-notas').value = '';
     document.getElementById('pagos-total').textContent = '$' + total.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
 
     pagosCalcEstado();
@@ -4560,21 +4616,21 @@ async function pagosSeleccionarRenta(recordId) {
 
 function pagosCalcEstado() {
   const total = parseFloat(pagosRentaActual?.fields?.['Monto total']) || 0;
-  const adel = parseFloat(document.getElementById('pago-monto-adelanto').value) || 0;
-  const liq = parseFloat(document.getElementById('pago-monto-liq').value) || 0;
-  // Monto a liquidar viene de Airtable como fórmula; recalculamos en tiempo real
-  const saldo = Math.max(0, total - adel - liq);
-  const estado = db_calcEstadoPago(total, adel, liq);
+  const pagadoActual = parseFloat(pagosRentaActual?.fields?.['Total pagado']) || 0;
+  const nuevoPago = parseFloat(document.getElementById('pago-monto').value) || 0;
+  const pagadoNuevo = pagadoActual + nuevoPago;
+  const saldo = Math.max(0, total - pagadoNuevo);
+  const estado = db_calcEstadoPago(total, pagadoNuevo);
 
   const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
-  document.getElementById('pagos-adelanto-preview').textContent = fmtM(adel);
-  document.getElementById('pagos-liq-preview').textContent = fmtM(liq);
+  document.getElementById('pagos-pagado-actual').textContent = fmtM(pagadoActual);
+  document.getElementById('pagos-nuevo-preview').textContent = fmtM(nuevoPago);
   document.getElementById('pagos-saldo').textContent = fmtM(saldo);
   document.getElementById('pagos-saldo').style.color = saldo > 0 ? '#e74c3c' : '#2ecc71';
 
   const estadoEl = document.getElementById('pagos-estado-preview');
   estadoEl.textContent = estado;
-  estadoEl.style.color = estado === 'Pagado' ? '#2ecc71' : estado === 'Adelanto depositado' ? '#f1c40f' : '#e74c3c';
+  estadoEl.style.color = estado === 'Pagado' ? '#2ecc71' : estado === 'Pago parcial' ? '#f1c40f' : '#e74c3c';
 }
 
 async function pagosGuardar() {
@@ -4584,24 +4640,28 @@ async function pagosGuardar() {
   btn.textContent = '⏳ Guardando…';
 
   const total = parseFloat(pagosRentaActual.fields['Monto total']) || 0;
-  const adel = parseFloat(document.getElementById('pago-monto-adelanto').value) || 0;
-  const liq = parseFloat(document.getElementById('pago-monto-liq').value) || 0;
+  const pagadoActual = parseFloat(pagosRentaActual.fields['Total pagado']) || 0;
+  const monto = parseFloat(document.getElementById('pago-monto').value) || 0;
+  const tipo = document.getElementById('pago-tipo').value || 'Pago parcial';
+  const metodo = document.getElementById('pago-metodo').value || 'Transferencia';
+  const notas = document.getElementById('pago-notas').value.trim();
   const hoy = new Date().toISOString().split('T')[0];
 
   // Validación
-  if (adel + liq > total) { showToast('El total de pagos supera el monto de la renta', true); btn.disabled=false; btn.textContent='Guardar pago'; return; }
+  if (monto <= 0) { showToast('Ingresa un monto recibido', true); btn.disabled=false; btn.textContent='Guardar pago'; return; }
+  if (pagadoActual + monto > total) { showToast('El pago supera el saldo de la renta', true); btn.disabled=false; btn.textContent='Guardar pago'; return; }
 
   try {
-    await db_registrarPago({
+    await db_crearPago({
       rentaRecordId: pagosRentaActual.id,
-      montoTotal: total,
-      adelanto: adel,
-      fechaAdelanto: adel > 0 ? hoy : '',
-      liquidacion: liq,
-      fechaLiquidacion: liq > 0 ? hoy : ''
+      monto,
+      tipo,
+      metodo,
+      notas,
+      fechaPago: hoy
     });
 
-    const estado = db_calcEstadoPago(total, adel, liq);
+    const estado = db_calcEstadoPago(total, pagadoActual + monto);
     showToast(`✓ Pago guardado · ${estado}`);
     setTimeout(() => goHome(), 1500);
   } catch(e) {
@@ -4957,7 +5017,7 @@ async function orAbrirDesdeRenta() {
   // Fechas
   document.getElementById('or-fecha-salida').value = f['Fecha de salida'] || new Date().toISOString().split('T')[0];
   document.getElementById('or-fecha-regreso').value = f['Fecha de regreso'] || new Date().toISOString().split('T')[0];
-  document.getElementById('or-deposito').value = f['Monto Adelanto'] || 0;
+  document.getElementById('or-deposito').value = f['Total pagado'] || 0;
 
   // Pre-set ID de renta para que orGenerarId() no duplique
   window._orRentaIdFijo = rentaId;
