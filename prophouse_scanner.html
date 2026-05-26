@@ -693,7 +693,7 @@
   <!-- AGREGAR GASTO VIEW -->
   <div id="agregar-gasto-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="showFinanzas()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="btn-back" onclick="navBack(() => showView('finanzas-menu-view'))" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Registrar gasto</div>
     </div>
 
@@ -751,7 +751,7 @@
   <!-- STEP 1: SELECCIONAR RENTA -->
   <div id="renta-select-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Seleccionar renta</div>
       <div class="mode-badge" id="renta-mode-badge"></div>
     </div>
@@ -773,7 +773,7 @@
   <!-- CONSULTAR VIEW -->
   <div id="buscar-view" class="view">
     <div class="view-header">
-      <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
       <div class="view-title">Consultar prop</div>
       <div class="mode-badge mode-buscar">Consulta</div>
     </div>
@@ -810,7 +810,7 @@
 <!-- NUEVA RENTA VIEW -->
 <div id="nueva-renta-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Nueva renta</div>
   </div>
 
@@ -917,7 +917,7 @@
 <!-- CLIENTES VIEW -->
 <div id="clientes-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Clientes</div>
   </div>
   <div style="padding:0 28px 28px;" id="clientes-content">
@@ -928,7 +928,7 @@
 <!-- INVENTARIO RÁPIDO VIEW -->
 <div id="inventario-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Inventario físico</div>
     <div class="mode-badge mode-buscar">Verificando</div>
   </div>
@@ -955,7 +955,7 @@
 <!-- DAÑOS VIEW -->
 <div id="danos-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Registrar daño</div>
     <div class="mode-badge" style="background:rgba(192,57,43,0.2);color:#e74c3c;border:1px solid #c0392b;">Daño</div>
   </div>
@@ -1071,7 +1071,7 @@
 <!-- ALTA DE PROP VIEW -->
 <div id="alta-prop-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="showView('inventario-menu-view')" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Dar de alta prop</div>
     <div class="mode-badge mode-buscar">Nuevo</div>
   </div>
@@ -1196,7 +1196,7 @@
 <!-- ORDEN DE RENTA VIEW -->
 <div id="orden-view" class="view">
   <div class="view-header">
-    <button class="btn-back" onclick="goHome()" aria-label="Inicio"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
     <div class="view-title">Orden de renta</div>
     <div class="mode-badge mode-buscar">Nuevo</div>
   </div>
@@ -1302,12 +1302,12 @@
   <!-- PREVIEW DEL DOCUMENTO -->
   <div id="orden-preview">
     <div class="orden-preview-actions">
-      <button class="btn-preview-back" onclick="orVolverForm()">← Editar</button>
+      <button class="btn-preview-back" onclick="orVolverForm()">← Editar orden</button>
       <button class="btn-preview-print" onclick="window.print()">💾 Guardar PDF</button>
       <button class="btn-preview-wha" id="btn-wha" onclick="orCompartirWhatsApp()">💬 WhatsApp</button>
     </div>
     <div class="document" id="or-documento"></div>
-    <button class="btn-preview-home" onclick="goHome()">← Volver al inicio</button>
+    <button class="btn-preview-home" onclick="navBack(() => goHome())">← Volver atrás</button>
   </div>
 </div>
 
@@ -1387,22 +1387,92 @@ let currentMode = '';
 let currentRenta = null;
 let currentProp = null;
 let rentaProps = []; // props de la renta actual con su estado de escaneo
-let previousView = '';
+let previousView = ''; // kept for legacy compat
+let _navHistory = []; // stack de historial de navegación
 let html5QrCode = null;
 let scannerTarget = ''; // 'buscar' o 'flow'
 
-// ── SETUP ──────────────────────────────────────────────
-function saveSetup() {
+// Navegar a una vista y guardar la anterior en el stack
+function navPush(viewId, renderFn) {
+  const current = _getCurrentViewId();
+  if (current && current !== viewId) _navHistory.push(current);
+  if (renderFn) renderFn();
+  else showView(viewId);
+}
+
+// Volver a la vista anterior del stack
+function navBack(fallback) {
+  const prev = _navHistory.pop();
+  if (prev) {
+    // Re-renderizar la vista previa correctamente
+    _renderView(prev);
+  } else if (fallback) {
+    fallback();
+  } else {
+    goHome();
+  }
+}
+
+// Obtener el id de la vista actualmente visible
+function _getCurrentViewId() {
+  const views = ['home-view','inventario-menu-view','buscar-view','prop-detail-view',
+    'alta-prop-view','inventario-view','rentas-menu-view','rentas-view','props-flow-view',
+    'renta-select-view','nueva-renta-view','pagos-view','orden-view','danos-view',
+    'clientes-view','finanzas-menu-view','agregar-gasto-view'];
+  return views.find(id => {
+    const el = document.getElementById(id);
+    return el && el.style.display !== 'none';
+  }) || '';
+}
+
+// Re-renderizar una vista por su id (para el historial)
+function _renderView(viewId) {
+  switch(viewId) {
+    case 'home-view': goHome(); break;
+    case 'rentas-menu-view': showView('rentas-menu-view'); break;
+    case 'rentas-view': showRentasActivas(); break;
+    case 'inventario-menu-view': showView('inventario-menu-view'); break;
+    case 'buscar-view': showView('buscar-view'); startScanner('buscar'); break;
+    case 'props-flow-view': showView('props-flow-view'); break;
+    case 'pagos-view': showPagosView(); break;
+    case 'danos-view': showDanosView(); break;
+    case 'clientes-view': showClientesView(); break;
+    case 'finanzas-menu-view': showView('finanzas-menu-view'); break;
+    default: showView(viewId); break;
+  }
+}
+
+async function saveSetup() {
   const t = document.getElementById('token-input').value.trim();
   const b = document.getElementById('baseid-input').value.trim();
   if (!t) { showToast('Ingresa tu token', true); return; }
+
+  const btn = document.querySelector('#setup-screen .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Verificando…';
+
   TOKEN = t; BASE_ID = b;
-  localStorage.setItem('ph_token', t);
-  localStorage.setItem('ph_base', b);
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('app-screen').classList.add('visible');
-  goHome();
-  probarConexion();
+
+  try {
+    await airtableGet('INVENTARIO', '?maxRecords=1');
+    // Conexión OK — guardar y entrar
+    localStorage.setItem('ph_token', t);
+    localStorage.setItem('ph_base', b);
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('app-screen').classList.add('visible');
+    goHome();
+    showToast('✓ Airtable conectado');
+  } catch(e) {
+    // Fallo — limpiar credenciales, quedarse en setup con el error visible
+    TOKEN = ''; BASE_ID = '';
+    showToast('⚠ ' + e.message, true);
+    const tokenInput = document.getElementById('token-input');
+    tokenInput.style.borderColor = 'var(--red)';
+    setTimeout(() => { tokenInput.style.borderColor = ''; }, 3000);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Entrar al sistema';
+  }
 }
 
 function showSetup() {
@@ -1636,6 +1706,7 @@ function showView(id) {
 
 function goHome() {
   stopScanner();
+  _navHistory = []; // limpiar historial al ir al home
   currentMode = '';
   currentRenta = null;
   rentaProps = [];
@@ -1752,38 +1823,19 @@ async function cargarDashboard() {
 }
 
 function backToRentas() {
-  if (previousView === 'rentas-activas') {
-    previousView = '';
-    showRentasActivas();
-  } else {
-    showView('renta-select-view');
-  }
+  navBack(() => showView('renta-select-view'));
 }
 
 function backFromDetail() {
-  if (previousView === 'props-flow') {
-    showView('props-flow-view');
-  } else if (previousView === 'buscar') {
-    showView('buscar-view');
-    startScanner('buscar');
-  } else {
-    goHome();
-  }
+  navBack(() => goHome());
 }
 
 function backFromRentasView() {
-  // rentas-view siempre viene de rentas-menu-view (tab Rentas)
-  showView('rentas-menu-view');
+  navBack(() => showView('rentas-menu-view'));
 }
 
 function backFromPagosView() {
-  // Si venimos del detalle de una renta, volver a props-flow-view
-  if (previousView === 'rentas-activas' || previousView === 'renta-detail') {
-    showView('props-flow-view');
-  } else {
-    // Si venimos del menú de rentas o del home móvil
-    showView('rentas-menu-view');
-  }
+  navBack(() => showView('rentas-menu-view'));
 }
 
 // ── SVG ÍCONOS INLINE — sin dependencia de CDN ──────────
@@ -1878,11 +1930,15 @@ async function airtablePatch(table, recordId, fields) {
     headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ fields })
   });
+  const data = await res.json().catch(() => ({}));
   if (res.status === 401) throw new Error('Token inválido o expirado');
   if (res.status === 403) throw new Error('Sin permisos de escritura — revisa scopes del token');
   if (res.status === 404) throw new Error(`Registro ${recordId} no encontrado en ${table}`);
-  if (res.status === 422) throw new Error('Datos inválidos — revisa nombres de campos');
-  const data = await res.json();
+  if (res.status === 422) {
+    const detail = data?.error?.message || data?.error?.type || JSON.stringify(data?.error || data);
+    throw new Error('Datos inválidos en ' + table + ': ' + detail);
+  }
+  if (!res.ok) throw new Error(`Error HTTP ${res.status} en ${table}`);
   if (data.error) throw new Error(data.error.message || data.error.type || 'Error Airtable PATCH');
   return data;
 }
@@ -1890,15 +1946,13 @@ async function airtablePatch(table, recordId, fields) {
 // Llamada en cada escaneo: actualiza estado, ubicacion y timestamp
 async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
   if (!recordId) throw new Error('registrarVerificacion: recordId vacío');
-  // Airtable DateTime acepta ISO 8601 — usar formato sin milisegundos para mayor compatibilidad
-  const ahora = new Date();
-  const isoStr = ahora.toISOString().replace(/\.\d{3}Z$/, '.000Z');
+  const isoStr = new Date().toISOString();
   const fields = {
     [F.ULT_VERIF]: isoStr
   };
   if (nuevoEstado) fields[F.ESTADO] = nuevoEstado;
-  if (nuevaUbicacion) fields["Ubicación"] = nuevaUbicacion;
-  return airtablePatch("INVENTARIO", recordId, fields);
+  if (nuevaUbicacion) fields['Ubicación'] = nuevaUbicacion;
+  return airtablePatch('INVENTARIO', recordId, fields);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2097,6 +2151,7 @@ async function startFlow(mode) {
   currentMode = mode;
 
   if (mode === 'buscar') {
+    _navHistory.push(_getCurrentViewId());
     previousView = 'buscar';
     showView('buscar-view');
     setNavActive('buscar'); // buscar → inventario
@@ -2448,6 +2503,7 @@ async function buscarProp() {
 }
 
 async function loadPropDetail(code) {
+  _navHistory.push(_getCurrentViewId());
   previousView = 'buscar';
   showView('prop-detail-view');
   document.getElementById('detail-view-title').textContent = 'Detalle del prop';
@@ -2462,7 +2518,7 @@ async function loadPropDetail(code) {
   }
   currentProp = prop;
   // Timestamp al consultar — sin await para no bloquear la UI
-  registrarVerificacion(prop.id, null, null).catch(()=>{});
+  registrarVerificacion(prop.id, null, null).catch(e => console.warn('Timestamp consulta:', e.message));
   showPropDetail(prop, false);
 }
 
@@ -2581,6 +2637,7 @@ async function executeAction() {
 
 // ── VER DETALLE DE RENTA DESDE RENTAS ACTIVAS ──────────
 async function rentasVerDetalle(rentaRecordId) {
+  _navHistory.push(_getCurrentViewId());
   previousView = 'rentas-activas';
   showView('props-flow-view');
   document.getElementById('props-flow-content').innerHTML =
@@ -2640,7 +2697,7 @@ async function rentasVerDetalle(rentaRecordId) {
 
       <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
         <button class="btn-accion" onclick="orAbrirDesdeRentaId('${rentaRecordId}')" style="flex:1;background:var(--gold);color:var(--bg-deep);border:none;padding:12px;font-size:10px;">🌅 Generar orden</button>
-        <button class="btn-accion" onclick="previousView='renta-detail';pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
+        <button class="btn-accion" onclick="_navHistory.push(_getCurrentViewId());pagosSeleccionarRenta('${rentaRecordId}');showView('pagos-view');" style="flex:1;background:none;border:1px solid rgba(76,175,80,0.4);color:var(--green);padding:12px;font-size:10px;">💳 Registrar pago</button>
       </div>
       ${f['Estado de la renta']==='Activa' ? `<button onclick="rentasCancelarFlow('${rentaRecordId}','${f['Fecha de salida']||''}')" style="width:100%;background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:12px 0 4px 0;">✕ Cancelar renta</button>` : ''}
     `;
@@ -2673,7 +2730,8 @@ async function rentasCancelarFlow(rentaRecordId, fechaSalida) {
 
 // ── RENTAS ACTIVAS ──────────────────────────────────────
 async function showRentasActivas() {
-  previousView = 'rentas-menu'; // para que backFromRentasView tenga contexto si se necesita
+  _navHistory.push(_getCurrentViewId());
+  previousView = 'rentas-menu';
   showView('rentas-view');
   try {
     const rentas = await db_getRentas({ soloActivas: true, maxRecords: 50 });
@@ -2731,6 +2789,7 @@ let clientesCache = [];
 let nrProps = []; // { nombre, codigo, rentaDia, airtableId }
 
 async function showNuevaRenta() {
+  _navHistory.push(_getCurrentViewId());
   showView('nueva-renta-view');
   // Siempre mostrar form, ocultar éxito
   document.getElementById('nr-success').style.display = 'none';
@@ -2940,6 +2999,7 @@ let orClientesCache = [];
 let orRentaIdGenerado = '';
 
 async function showOrdenView() {
+  _navHistory.push(_getCurrentViewId());
   // Desde el Home: solo mostrar selector de renta existente
   showView('orden-view');
   document.getElementById('orden-form-section').style.display = 'none';
@@ -3324,6 +3384,7 @@ function orCompartirWhatsApp() {
 
 // ── CLIENTES VIEW ────────────────────────────────────────
 async function showClientesView() {
+  _navHistory.push(_getCurrentViewId());
   showView('clientes-view');
   setNavActive('clientes');
   document.getElementById('clientes-content').innerHTML =
@@ -3356,6 +3417,7 @@ let invVerificados = [];
 let invTotal = 0;
 
 async function showInventarioView() {
+  _navHistory.push(_getCurrentViewId());
   showView('inventario-view');
   invVerificados = [];
   document.getElementById('inv-codigo').value = '';
@@ -3454,6 +3516,7 @@ function invFinalizar() {
 let danosPropActual = null;
 
 async function showDanosView() {
+  _navHistory.push(_getCurrentViewId());
   showView('danos-view');
   setNavActive('danos');
   danosPropActual = null;
@@ -3523,8 +3586,11 @@ async function danosCambiarRenta() {
           document.getElementById('danos-prop-codigo-display').textContent = pf['Código único'] || '—';
           document.getElementById('danos-prop-codigo').value = pf['Código único'] || '';
           document.getElementById('danos-prop-info').style.display = 'block';
-          // Resaltar botón seleccionado
-          propsRentaEl.querySelectorAll('button').forEach(b => b.style.borderColor = 'var(--border)');
+          // Resetear TODOS los botones (borde y color) antes de resaltar el seleccionado
+          propsRentaEl.querySelectorAll('button').forEach(b => {
+            b.style.borderColor = 'var(--border)';
+            b.style.color = 'var(--white)';
+          });
           btn.style.borderColor = 'var(--gold)';
           btn.style.color = 'var(--gold)';
         };
@@ -3644,8 +3710,8 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
   const hoy = ahora.toISOString().split('T')[0];
 
   await airtablePatch('RENTAS', rentaRecordId, {
-    'Estado de la renta': nuevoEstado,
-    'Fecha de cancelación': hoy
+    [F.ESTADO_RENTA]: nuevoEstado,
+    [F.FECHA_CANCEL]: hoy
   });
 
   return { nuevoEstado, conCargo };
@@ -3658,7 +3724,8 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
 let pagosRentaActual = null;
 
 async function showPagosView() {
-  previousView = 'rentas-menu'; // vino del menú de rentas o home
+  _navHistory.push(_getCurrentViewId());
+  previousView = 'rentas-menu';
   showView('pagos-view');
   document.getElementById('pagos-selector').style.display = 'block';
   document.getElementById('pagos-form').style.display = 'none';
@@ -3803,6 +3870,7 @@ let altaNivelSeleccionado = '';
 let altaCodigoGenerado = '';
 
 function showAltaProp() {
+  _navHistory.push(_getCurrentViewId());
   showView('alta-prop-view');
   document.getElementById('alta-success-box').style.display = 'none';
   document.getElementById('alta-form').style.display = 'block';
@@ -4046,6 +4114,7 @@ async function finCargarDatos() {
 }
 
 function showAgregarGasto() {
+  _navHistory.push(_getCurrentViewId());
   showView('agregar-gasto-view');
   const hoy = new Date().toISOString().split('T')[0];
   document.getElementById('gasto-fecha').value = hoy;
