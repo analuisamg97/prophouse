@@ -925,7 +925,7 @@
       <div class="sidebar-item active" id="snav-inicio" onclick="navGo('inicio')"><i class="ti ti-home" aria-hidden="true"></i>Dashboard</div>
       <div class="sidebar-item" id="snav-rentas" onclick="navGo('rentas')"><i class="ti ti-file-text" aria-hidden="true"></i>Rentas</div>
       <div class="sidebar-item" id="snav-inventario" onclick="navGo('inventario')"><i class="ti ti-box" aria-hidden="true"></i>Inventario</div>
-      <div class="sidebar-item" id="snav-clientes" onclick="showClientesView()"><i class="ti ti-users" aria-hidden="true"></i>Clientes</div>
+      <div class="sidebar-item" id="snav-clientes" onclick="showClientesView({ fromSidebar: true })"><i class="ti ti-users" aria-hidden="true"></i>Clientes</div>
       <div class="sidebar-section">Operación</div>
       <div class="sidebar-item" id="snav-salida" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i>Salida</div>
       <div class="sidebar-item" id="snav-entrada" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i>Entrada</div>
@@ -1499,8 +1499,7 @@
 
 <!-- CLIENTES VIEW -->
 <div id="clientes-view" class="view">
-  <div class="view-header">
-    <button class="btn-back" onclick="navBack()" aria-label="Atrás"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+  <div class="main-view-header">
     <div class="view-title">Clientes</div>
   </div>
   <div style="padding:0 28px 28px;">
@@ -5136,8 +5135,13 @@ function orCompartirWhatsApp() {
 let _crmRegistros  = [];
 let _crmTipoFiltro = '';
 
-async function showClientesView() {
-  _navHistory.push(_getCurrentViewId());
+async function showClientesView({ fromSidebar = false } = {}) {
+  if (fromSidebar) {
+    _navHistory = [];
+  } else {
+    const current = _getCurrentViewId();
+    if (current && current !== 'clientes-view') _navHistory.push(current);
+  }
   showView('clientes-view');
   setNavActive('clientes');
   document.getElementById('crm-content').innerHTML =
