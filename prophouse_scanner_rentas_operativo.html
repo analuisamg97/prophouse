@@ -573,43 +573,48 @@
   .galeria-btn.white span { color:var(--white-dim); }
 
   /* ── CENTRO OPERATIVO DE RENTAS ─────────────────────── */
-  .rentas-centro { display:flex; flex-direction:column; gap:16px; }
-  .rentas-hero { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:2px; }
-  .rentas-title { font-family:'Playfair Display',serif; font-size:26px; line-height:1.1; color:var(--white); }
-  .rentas-subtitle { font-size:12px; color:var(--text-dim); margin-top:5px; line-height:1.5; }
-  .rentas-hero-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
-  .rentas-btn { border-radius:6px; padding:10px 14px; border:1px solid var(--border-light); background:transparent; color:var(--white-dim); cursor:pointer; font-size:11px; font-weight:600; display:inline-flex; align-items:center; gap:7px; font-family:'Inter',-apple-system,sans-serif; transition:all 0.15s; }
-  .rentas-btn:hover { border-color:var(--gold); color:var(--gold); }
-  .rentas-btn.primary { background:var(--gold); color:var(--bg-deep); border-color:var(--gold); }
-  .rentas-btn.primary:hover { opacity:0.9; color:var(--bg-deep); }
+  .rentas-centro { display:flex; flex-direction:column; gap:18px; }
+  .rentas-acciones { display:flex; gap:0; margin-bottom:14px; }
+  .rentas-action-bar { display:inline-flex; background:#252320; border:1px solid var(--border-light); border-radius:12px; overflow:hidden; }
+  .rentas-action-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:16px 24px; background:transparent; border:none; border-right:1px solid var(--border-light); cursor:pointer; transition:background 0.15s; min-width:124px; color:var(--white-dim); }
+  .rentas-action-btn:last-child { border-right:none; }
+  .rentas-action-btn:hover { background:var(--bg-card); }
+  .rentas-action-btn:active { background:var(--bg-hover); }
+  .rentas-action-btn i { font-size:26px; line-height:1; color:currentColor; }
+  .rentas-action-btn span { font-size:10px; letter-spacing:1.5px; text-transform:uppercase; font-weight:700; font-family:'Inter',-apple-system,sans-serif; white-space:nowrap; }
+  .rentas-action-btn.gold { color:var(--gold); }
   .rentas-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
-  .rentas-kpi { background:var(--bg-card); border:1px solid var(--border-light); border-radius:8px; padding:14px; min-height:88px; }
-  .rentas-kpi-label { font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
-  .rentas-kpi-value { font-family:'Playfair Display',serif; font-size:25px; color:var(--white); line-height:1; }
+  .rentas-kpi { background:transparent; border:1px solid rgba(61,59,56,0.75); border-radius:8px; padding:11px 13px; min-height:74px; }
+  .rentas-kpi-label { font-size:8px; letter-spacing:1.7px; text-transform:uppercase; color:var(--text-muted); margin-bottom:7px; }
+  .rentas-kpi-value { font-family:'Playfair Display',serif; font-size:22px; color:var(--white); line-height:1; }
   .rentas-kpi-value.gold { color:var(--gold); }
   .rentas-kpi-value.green { color:var(--green); }
   .rentas-kpi-value.red { color:var(--red); }
-  .rentas-kpi-sub { font-size:10px; color:var(--text-muted); margin-top:7px; }
-  .rentas-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#252320; border:1px solid var(--border); border-radius:8px; padding:10px; }
-  .rentas-search { flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:11px 13px; outline:none; }
+  .rentas-kpi-sub { font-size:9px; color:var(--text-muted); margin-top:6px; }
+  .rentas-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .rentas-search { flex:1; min-width:220px; background:var(--bg-card); border:1px solid var(--border); border-radius:4px; color:var(--white); font-family:'DM Mono',monospace; font-size:12px; padding:12px 14px; outline:none; }
   .rentas-search:focus { border-color:var(--gold); }
   .rentas-filtros { display:flex; gap:6px; flex-wrap:wrap; }
-  .rentas-pill { font-size:9px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; padding:7px 10px; border-radius:20px; border:1px solid var(--border-light); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
-  .rentas-pill.activo { background:rgba(212,168,83,0.14); color:var(--gold); border-color:rgba(212,168,83,0.55); }
+  .rentas-pill { font-size:9px; letter-spacing:1.3px; text-transform:uppercase; font-family:'DM Mono',monospace; padding:8px 13px; border-radius:20px; border:1px solid var(--border-light); background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .rentas-pill.activo { background:var(--gold); color:var(--bg-deep); border-color:var(--gold); }
   .rentas-main-grid { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:14px; align-items:start; }
   .rentas-table-card, .rentas-side-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:8px; overflow:hidden; }
   .rentas-table-head { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid var(--border); }
   .rentas-panel-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); font-family:'DM Mono',monospace; }
   .rentas-count { font-size:10px; color:var(--text-muted); }
-  .rentas-table-wrap { overflow-x:auto; }
-  .rentas-table { width:100%; border-collapse:collapse; min-width:760px; }
-  .rentas-table th { text-align:left; padding:10px 12px; font-size:8px; letter-spacing:1.4px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; border-bottom:1px solid rgba(255,255,255,0.04); white-space:nowrap; }
-  .rentas-table td { padding:12px; border-bottom:1px solid rgba(255,255,255,0.04); font-size:12px; color:var(--white-dim); vertical-align:middle; }
-  .rentas-table tr:last-child td { border-bottom:none; }
-  .rentas-table tbody tr { cursor:pointer; transition:background 0.12s; }
-  .rentas-table tbody tr:hover { background:rgba(255,255,255,0.025); }
+  .rentas-table-wrap { padding:12px; }
+  .rentas-card-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:10px; }
+  .rentas-op-card { background:#252320; border:1px solid var(--border); border-radius:8px; padding:14px; cursor:pointer; transition:border-color 0.15s, background 0.15s; min-height:168px; display:flex; flex-direction:column; gap:11px; }
+  .rentas-op-card:hover { border-color:var(--gold-dim); background:var(--bg-card); }
+  .rentas-op-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
   .rentas-folio { color:var(--gold); font-family:'DM Mono',monospace; font-size:11px; white-space:nowrap; }
-  .rentas-muted { color:var(--text-muted); font-size:11px; }
+  .rentas-client { color:var(--white); font-size:14px; font-weight:700; line-height:1.25; margin-top:5px; }
+  .rentas-muted { color:var(--text-muted); font-size:11px; line-height:1.45; }
+  .rentas-card-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .rentas-meta-label { font-size:8px; letter-spacing:1.2px; text-transform:uppercase; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:3px; }
+  .rentas-meta-value { color:var(--white-dim); font-family:'DM Mono',monospace; font-size:11px; }
+  .rentas-card-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:auto; }
+  .rentas-card-badges { display:flex; flex-wrap:wrap; gap:6px; }
   .rentas-money { color:var(--white); font-family:'DM Mono',monospace; font-size:11px; white-space:nowrap; }
   .rentas-badge { display:inline-flex; align-items:center; justify-content:center; border-radius:20px; padding:4px 8px; font-size:8px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; border:1px solid var(--border); white-space:nowrap; }
   .rentas-badge.activa { background:rgba(76,175,80,0.12); color:var(--green); border-color:rgba(76,175,80,0.45); }
@@ -633,10 +638,9 @@
     .rentas-main-grid { grid-template-columns:1fr; }
   }
   @media (max-width:767px) {
-    .rentas-hero { flex-direction:column; }
-    .rentas-title { font-size:23px; }
-    .rentas-hero-actions, .rentas-btn { width:100%; }
-    .rentas-btn { justify-content:center; }
+    .rentas-acciones { overflow-x:auto; padding-bottom:2px; }
+    .rentas-action-bar { min-width:max-content; }
+    .rentas-action-btn { min-width:104px; padding:14px 16px; }
     .rentas-kpis { grid-template-columns:1fr 1fr; }
     .rentas-toolbar { align-items:stretch; }
     .rentas-search { min-width:100%; }
@@ -816,18 +820,35 @@
     <div class="view-header">
       <div>
         <div class="view-title" style="font-size:18px;">Rentas</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:3px;">Centro operativo de rentas, cotizaciones, pagos y regresos.</div>
       </div>
     </div>
     <div class="rentas-centro">
-      <div class="rentas-hero">
-        <div>
-          <div class="rentas-title">Rentas</div>
-          <div class="rentas-subtitle">Centro operativo de rentas, cotizaciones, pagos y regresos.</div>
-        </div>
-        <div class="rentas-hero-actions">
-          <button class="rentas-btn primary" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i>Nueva renta</button>
-          <button class="rentas-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i>Nueva cotización</button>
+      <div class="rentas-acciones">
+        <div class="rentas-action-bar">
+          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()">
+            <i class="ti ti-plus" aria-hidden="true"></i>
+            <span>Nueva renta</span>
+          </button>
+          <button class="rentas-action-btn" onclick="showRentasActivas()">
+            <i class="ti ti-file-text" aria-hidden="true"></i>
+            <span>Rentas activas</span>
+          </button>
+          <button class="rentas-action-btn" onclick="showOrdenView()">
+            <i class="ti ti-file-invoice" aria-hidden="true"></i>
+            <span>Orden PDF</span>
+          </button>
+          <button class="rentas-action-btn" onclick="showPagosView()">
+            <i class="ti ti-credit-card" aria-hidden="true"></i>
+            <span>Registrar pago</span>
+          </button>
+          <button class="rentas-action-btn" onclick="startFlow('entrada')">
+            <i class="ti ti-arrow-bar-down" aria-hidden="true"></i>
+            <span>Registrar regreso</span>
+          </button>
+          <button class="rentas-action-btn" onclick="showCotizacionView()">
+            <i class="ti ti-file-dollar" aria-hidden="true"></i>
+            <span>Cotización</span>
+          </button>
         </div>
       </div>
 
@@ -891,14 +912,6 @@
               <span class="rentas-alert-label">Rentas sin cerrar</span>
               <span class="rentas-alert-value red" id="rc-alert-cerrar">—</span>
             </div>
-          </div>
-
-          <div class="rentas-quick-panel">
-            <div class="rentas-panel-title">Acciones rápidas</div>
-            <button class="rentas-mini-btn" onclick="showOrdenView()"><span>Generar orden PDF</span><span>›</span></button>
-            <button class="rentas-mini-btn" onclick="showPagosView()"><span>Registrar pago</span><span>›</span></button>
-            <button class="rentas-mini-btn" onclick="startFlow('entrada')"><span>Registrar regreso</span><span>›</span></button>
-            <button class="rentas-mini-btn" onclick="showRentasActivas()"><span>Rentas activas</span><span>›</span></button>
           </div>
         </div>
       </div>
@@ -2612,38 +2625,41 @@ function rentasCentroRenderTabla(rows) {
     return;
   }
 
-  table.innerHTML = `<table class="rentas-table">
-    <thead>
-      <tr>
-        <th>Folio</th>
-        <th>Cliente</th>
-        <th>Fecha salida</th>
-        <th>Fecha regreso</th>
-        <th>Estado</th>
-        <th>Pago</th>
-        <th>Total</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${rows.map(r => {
-        const f = r.fields;
-        const estado = rentasCentroEstadoBadge(f);
-        const pago = rentasCentroPagoBadge(f);
-        const propsInfo = r.propsTexto ? `<div class="rentas-muted">${rentasCentroEsc(r.propsTexto)}</div>` : '';
-        return `<tr onclick="rentasVerDetalle('${r.id}')">
-          <td><div class="rentas-folio">${rentasCentroEsc(f[F.ID_RENTA] || 'Sin folio')}</div></td>
-          <td><div>${rentasCentroEsc(r.cliente)}</div>${propsInfo}</td>
-          <td>${rentasCentroEsc(f[F.FECHA_SALIDA] || '—')}</td>
-          <td>${rentasCentroEsc(f[F.FECHA_REGRESO] || '—')}</td>
-          <td><span class="rentas-badge ${estado.cls}">${rentasCentroEsc(estado.label)}</span></td>
-          <td><span class="rentas-badge ${pago.cls}">${rentasCentroEsc(pago.label)}</span></td>
-          <td><span class="rentas-money">${rentasCentroMoney(f[F.MONTO_TOTAL] || 0)}</span></td>
-          <td><button class="rentas-row-action" onclick="event.stopPropagation();rentasVerDetalle('${r.id}')">Ver</button></td>
-        </tr>`;
-      }).join('')}
-    </tbody>
-  </table>`;
+  table.innerHTML = `<div class="rentas-card-grid">
+    ${rows.map(r => {
+      const f = r.fields;
+      const estado = rentasCentroEstadoBadge(f);
+      const pago = rentasCentroPagoBadge(f);
+      const propsInfo = r.propsTexto ? rentasCentroEsc(r.propsTexto) : 'Sin props vinculados';
+      return `<div class="rentas-op-card" onclick="rentasVerDetalle('${r.id}')">
+        <div class="rentas-op-top">
+          <div>
+            <div class="rentas-folio">${rentasCentroEsc(f[F.ID_RENTA] || 'Sin folio')}</div>
+            <div class="rentas-client">${rentasCentroEsc(r.cliente)}</div>
+          </div>
+          <div class="rentas-money">${rentasCentroMoney(f[F.MONTO_TOTAL] || 0)}</div>
+        </div>
+        <div class="rentas-muted">${propsInfo}</div>
+        <div class="rentas-card-meta">
+          <div>
+            <div class="rentas-meta-label">Salida</div>
+            <div class="rentas-meta-value">${rentasCentroEsc(f[F.FECHA_SALIDA] || '—')}</div>
+          </div>
+          <div>
+            <div class="rentas-meta-label">Regreso</div>
+            <div class="rentas-meta-value">${rentasCentroEsc(f[F.FECHA_REGRESO] || '—')}</div>
+          </div>
+        </div>
+        <div class="rentas-card-bottom">
+          <div class="rentas-card-badges">
+            <span class="rentas-badge ${estado.cls}">${rentasCentroEsc(estado.label)}</span>
+            <span class="rentas-badge ${pago.cls}">${rentasCentroEsc(pago.label)}</span>
+          </div>
+          <button class="rentas-row-action" onclick="event.stopPropagation();rentasVerDetalle('${r.id}')">Ver</button>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
 }
 
 async function db_generarRentaId() {
