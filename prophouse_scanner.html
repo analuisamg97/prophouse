@@ -483,6 +483,80 @@
   .prop-foto { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:8px; margin-bottom:16px; display:block; background:var(--bg-deep); }
   .prop-foto-placeholder { width:100%; aspect-ratio:4/3; border-radius:8px; margin-bottom:16px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:36px; }
 
+  /* ── SELECTOR DE PROPS (overlay) ───────────────────── */
+  #prop-selector-overlay {
+    display:none; position:fixed; inset:0; z-index:200;
+    background:rgba(10,9,8,0.75); backdrop-filter:blur(2px);
+    align-items:flex-end; justify-content:center;
+  }
+  #prop-selector-overlay.open { display:flex; }
+  .prop-selector-sheet {
+    background:var(--bg-deep); border:1px solid var(--border);
+    border-radius:16px 16px 0 0; width:100%; max-width:600px;
+    max-height:88vh; display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .prop-sel-header {
+    display:flex; align-items:center; gap:10px;
+    padding:16px 18px 12px; border-bottom:1px solid var(--border);
+    flex-shrink:0;
+  }
+  .prop-sel-title { font-size:14px; color:var(--white); font-family:'Playfair Display',serif; flex:1; }
+  .prop-sel-close {
+    background:none; border:1px solid var(--border); color:var(--text-dim);
+    width:32px; height:32px; border-radius:50%; cursor:pointer;
+    font-size:16px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .prop-sel-toolbar {
+    padding:10px 18px; border-bottom:1px solid var(--border);
+    display:flex; gap:8px; flex-wrap:wrap; flex-shrink:0;
+  }
+  .prop-sel-search {
+    flex:1; min-width:100px; background:var(--bg-card);
+    border:1px solid var(--border); border-radius:4px;
+    color:var(--white); font-family:'DM Mono',monospace;
+    font-size:12px; padding:8px 12px; outline:none;
+  }
+  .prop-sel-search:focus { border-color:var(--gold); }
+  .prop-sel-filtros { display:flex; gap:5px; flex-wrap:wrap; }
+  .prop-sel-grid {
+    overflow-y:auto; padding:14px 18px;
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+    gap:8px; flex:1;
+  }
+  .prop-sel-card {
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:8px; overflow:hidden; cursor:pointer;
+    transition:border-color 0.15s; position:relative;
+  }
+  .prop-sel-card:hover { border-color:var(--gold-dim); }
+  .prop-sel-card.selected { border-color:var(--gold); border-width:2px; }
+  .prop-sel-card.selected::after {
+    content:'✓'; position:absolute; top:5px; right:6px;
+    background:var(--gold); color:var(--bg-deep);
+    width:18px; height:18px; border-radius:50%;
+    font-size:9px; display:flex; align-items:center; justify-content:center;
+    font-weight:700; line-height:18px; text-align:center;
+  }
+  .prop-sel-img { width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:var(--bg-deep); }
+  .prop-sel-noimg { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; background:var(--bg-deep); color:var(--text-muted); font-size:20px; }
+  .prop-sel-body { padding:6px 7px 8px; }
+  .prop-sel-code { font-size:8px; letter-spacing:1px; color:var(--gold); font-family:'DM Mono',monospace; margin-bottom:1px; }
+  .prop-sel-name { font-size:10px; color:var(--white); font-weight:500; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .prop-sel-estado { font-size:8px; color:var(--text-muted); margin-top:3px; }
+  .prop-sel-footer {
+    padding:12px 18px; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:10px; flex-shrink:0;
+  }
+  .prop-sel-count { font-size:11px; color:var(--text-dim); flex:1; }
+  .prop-sel-confirm {
+    background:var(--gold); color:var(--bg-deep); border:none;
+    border-radius:4px; font-family:'DM Mono',monospace; font-size:11px;
+    font-weight:500; letter-spacing:1px; text-transform:uppercase;
+    padding:10px 20px; cursor:pointer;
+  }
+  .prop-sel-confirm:disabled { opacity:0.4; cursor:not-allowed; }
   @media print {
     body { background:white; }
     #app-screen > .header, #orden-view > .view-header, .orden-preview-actions, .btn-preview-home { display:none !important; }
@@ -918,11 +992,12 @@
 
     <div class="setup-label">Props en la renta</div>
     <div id="nr-props-list" style="margin-bottom:8px;"></div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
       <input type="text" class="search-input" id="nr-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') nrAgregarProp()">
       <button class="btn-search" onclick="abrirScannerUniversal('nr-prop-codigo', nrAgregarProp)">📷</button>
       <button class="btn-search" onclick="nrAgregarProp()">＋</button>
     </div>
+    <button onclick="propSelAbrir('nueva-renta')" style="width:100%;background:none;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px;cursor:pointer;margin-bottom:8px;">🗂 Elegir del inventario</button>
     <div id="nr-prop-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;min-height:16px;margin-bottom:12px;"></div>
 
     <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:16px;">
@@ -1306,6 +1381,7 @@
     <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
       <button class="btn-orden-add" onclick="orAddPropRow()">+ Manual</button>
       <button class="btn-orden-add" onclick="orAbrirScanner()" style="border-color:var(--gold);color:var(--gold)">📷 Escanear</button>
+      <button class="btn-orden-add" onclick="propSelAbrir('orden')" style="border-color:var(--blue);color:var(--blue)">🗂 Inventario</button>
     </div>
 
     <!-- Scanner inline para orden -->
@@ -1390,6 +1466,7 @@
     <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
       <button class="btn-orden-add" onclick="cotAddPropRow()">+ Manual</button>
       <button class="btn-orden-add" onclick="cotAbrirScanner()" style="border-color:var(--gold);color:var(--gold)">📷 Escanear</button>
+      <button class="btn-orden-add" onclick="propSelAbrir('cotizacion')" style="border-color:var(--blue);color:var(--blue)">🗂 Inventario</button>
     </div>
     <div id="cot-scanner-section" style="display:none;margin-top:14px;">
       <div class="divider">busca por código</div>
@@ -1451,9 +1528,35 @@
       <button class="btn-search" onclick="abrirScannerUniversal('ep-codigo', epAgregarProp)">📷</button>
       <button class="btn-search" onclick="epAgregarProp()">＋</button>
     </div>
+    <button onclick="propSelAbrir('editar-props')" style="width:100%;background:none;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px;cursor:pointer;margin-bottom:8px;">🗂 Elegir del inventario</button>
     <div id="ep-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;min-height:18px;margin-bottom:16px;"></div>
     <button class="btn-alta-guardar" id="ep-btn-guardar" onclick="epGuardar()">Guardar cambios en Airtable</button>
     <button class="btn-accion btn-secondary" onclick="navBack()" style="margin-top:8px;">Cancelar</button>
+  </div>
+</div>
+
+<!-- SELECTOR DE PROPS — overlay reutilizable -->
+<div id="prop-selector-overlay" onclick="propSelCerrarSiFondo(event)">
+  <div class="prop-selector-sheet">
+    <div class="prop-sel-header">
+      <div class="prop-sel-title">Seleccionar props</div>
+      <button class="prop-sel-close" onclick="propSelCerrar()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="prop-sel-toolbar">
+      <input class="prop-sel-search" id="prop-sel-search" placeholder="Buscar por nombre o código…" oninput="propSelRenderizar()">
+      <div class="prop-sel-filtros">
+        <button class="filtro-btn activo" data-estado="" onclick="propSelFiltro(this)">Todos</button>
+        <button class="filtro-btn" data-estado="Disponible" onclick="propSelFiltro(this)">Disponible</button>
+        <button class="filtro-btn" data-estado="Rentado" onclick="propSelFiltro(this)">Rentado</button>
+      </div>
+    </div>
+    <div class="prop-sel-grid" id="prop-sel-grid">
+      <div class="loading"><div class="spinner"></div>Cargando...</div>
+    </div>
+    <div class="prop-sel-footer">
+      <div class="prop-sel-count" id="prop-sel-count">0 seleccionados</div>
+      <button class="prop-sel-confirm" id="prop-sel-confirm" onclick="propSelConfirmar()" disabled>Agregar →</button>
+    </div>
   </div>
 </div>
 
@@ -4836,6 +4939,207 @@ async function epGuardar() {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Guardar cambios en Airtable';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// SELECTOR DE PROPS — overlay reutilizable
+// ═══════════════════════════════════════════════════════
+let _propSelCaller = '';          // 'nueva-renta' | 'orden' | 'cotizacion' | 'editar-props'
+let _propSelSeleccionados = [];   // [{ id, nombre, codigo, rentaDia }]
+let _propSelFiltroEstado = '';
+let _propSelProps = [];           // cache local de props para el selector
+
+async function propSelAbrir(caller) {
+  _propSelCaller = caller;
+  _propSelSeleccionados = [];
+  _propSelFiltroEstado = '';
+  document.getElementById('prop-sel-search').value = '';
+
+  // Resetear filtros
+  document.querySelectorAll('#prop-selector-overlay .filtro-btn').forEach(b => b.classList.remove('activo'));
+  document.querySelector('#prop-selector-overlay .filtro-btn[data-estado=""]').classList.add('activo');
+
+  // Abrir overlay
+  document.getElementById('prop-selector-overlay').classList.add('open');
+  propSelActualizarBoton();
+
+  // Pre-seleccionar los props que ya están en el form
+  _propSelSeleccionados = propSelGetYaAgregados();
+
+  // Usar cache de galería si está disponible, si no cargar
+  const grid = document.getElementById('prop-sel-grid');
+  if (_galeriaProps.length > 0) {
+    _propSelProps = _galeriaProps;
+    propSelRenderizar();
+  } else {
+    grid.innerHTML = '<div class="loading"><div class="spinner"></div>Cargando inventario...</div>';
+    try {
+      _propSelProps = await db_getProps();
+      _galeriaProps = _propSelProps; // actualizar cache compartido
+      propSelRenderizar();
+    } catch(e) {
+      grid.innerHTML = `<div class="empty-state" style="color:#e74c3c">Error: ${e.message}</div>`;
+    }
+  }
+}
+
+// Devuelve los props ya en el form (para marcarlos como seleccionados al abrir)
+function propSelGetYaAgregados() {
+  if (_propSelCaller === 'nueva-renta') {
+    return nrProps.map(p => ({ id: p.airtableId, nombre: p.nombre, codigo: p.codigo, rentaDia: p.rentaDia }));
+  }
+  if (_propSelCaller === 'orden') {
+    return orPropRows.map(id => ({
+      id: document.getElementById('or-prop-row-' + id)?.dataset?.airtableId || '',
+      nombre: document.getElementById('or-p-nombre-' + id)?.value || '',
+      codigo: document.getElementById('or-p-codigo-' + id)?.value || '',
+      rentaDia: parseFloat(document.getElementById('or-p-precio-' + id)?.value) || 0
+    })).filter(p => p.nombre);
+  }
+  if (_propSelCaller === 'cotizacion') {
+    return cotPropRows.map(id => ({
+      id: '',
+      nombre: document.getElementById('cot-p-nombre-' + id)?.value || '',
+      codigo: document.getElementById('cot-p-codigo-' + id)?.value || '',
+      rentaDia: parseFloat(document.getElementById('cot-p-precio-' + id)?.value) || 0
+    })).filter(p => p.nombre);
+  }
+  if (_propSelCaller === 'editar-props') {
+    return _epPropsActuales.map(p => ({ id: p.id, nombre: p.nombre, codigo: p.codigo, rentaDia: 0 }));
+  }
+  return [];
+}
+
+function propSelCerrar() {
+  document.getElementById('prop-selector-overlay').classList.remove('open');
+}
+
+function propSelCerrarSiFondo(e) {
+  if (e.target === document.getElementById('prop-selector-overlay')) propSelCerrar();
+}
+
+function propSelFiltro(btn) {
+  document.querySelectorAll('#prop-selector-overlay .filtro-btn').forEach(b => b.classList.remove('activo'));
+  btn.classList.add('activo');
+  _propSelFiltroEstado = btn.dataset.estado;
+  propSelRenderizar();
+}
+
+function propSelRenderizar() {
+  const grid = document.getElementById('prop-sel-grid');
+  const query = (document.getElementById('prop-sel-search')?.value || '').toLowerCase().trim();
+
+  const props = _propSelProps.filter(p => {
+    const f = p.fields;
+    const estado = f['Estado'] || '';
+    const nombre = (f['Nombre del prop'] || '').toLowerCase();
+    const codigo = (f['Código único'] || '').toLowerCase();
+    const matchEstado = !_propSelFiltroEstado || estado === _propSelFiltroEstado;
+    const matchQuery = !query || nombre.includes(query) || codigo.includes(query);
+    return matchEstado && matchQuery;
+  });
+
+  if (props.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:24px 0">Sin props que coincidan</div>';
+    return;
+  }
+
+  const selIds = new Set(_propSelSeleccionados.map(p => p.id).filter(Boolean));
+  const selCodigos = new Set(_propSelSeleccionados.map(p => p.codigo).filter(Boolean));
+
+  grid.innerHTML = props.map(p => {
+    const f = p.fields;
+    const nombre = f['Nombre del prop'] || 'Sin nombre';
+    const codigo = f['Código único'] || '';
+    const estado = f['Estado'] || 'Disponible';
+    const rentaDia = f['Renta x 1 día'] || 0;
+    const isSel = selIds.has(p.id) || selCodigos.has(codigo);
+
+    const fotos = f['Foto principal'];
+    let imgHtml;
+    if (fotos && fotos.length > 0) {
+      const thumb = fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url;
+      imgHtml = `<img class="prop-sel-img" src="${thumb}" alt="${nombre}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                 <div class="prop-sel-noimg" style="display:none">📷</div>`;
+    } else {
+      imgHtml = `<div class="prop-sel-noimg">📷</div>`;
+    }
+
+    const estadoLabel = estado === 'Disponible' ? '● Disponible' : estado === 'Rentado' ? '● Rentado' : `● ${estado}`;
+    const estadoColor = estado === 'Disponible' ? '#2ecc71' : estado === 'Rentado' ? '#e74c3c' : '#f1c40f';
+
+    return `<div class="prop-sel-card ${isSel ? 'selected' : ''}"
+          onclick="propSelToggle('${p.id}', '${nombre.replace(/'/g,"\\'")}', '${codigo}', ${rentaDia}, this)">
+      ${imgHtml}
+      <div class="prop-sel-body">
+        <div class="prop-sel-code">${codigo}</div>
+        <div class="prop-sel-name" title="${nombre}">${nombre}</div>
+        <div class="prop-sel-estado" style="color:${estadoColor}">${estadoLabel}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function propSelToggle(id, nombre, codigo, rentaDia, cardEl) {
+  const idx = _propSelSeleccionados.findIndex(p => p.id === id || p.codigo === codigo);
+  if (idx >= 0) {
+    // Deseleccionar
+    _propSelSeleccionados.splice(idx, 1);
+    cardEl.classList.remove('selected');
+  } else {
+    // Seleccionar
+    _propSelSeleccionados.push({ id, nombre, codigo, rentaDia });
+    cardEl.classList.add('selected');
+  }
+  propSelActualizarBoton();
+}
+
+function propSelActualizarBoton() {
+  const n = _propSelSeleccionados.length;
+  document.getElementById('prop-sel-count').textContent =
+    n === 0 ? 'Ninguno seleccionado' : `${n} prop${n !== 1 ? 's' : ''} seleccionado${n !== 1 ? 's' : ''}`;
+  document.getElementById('prop-sel-confirm').disabled = n === 0;
+}
+
+function propSelConfirmar() {
+  const nuevos = _propSelSeleccionados;
+  propSelCerrar();
+
+  if (_propSelCaller === 'nueva-renta') {
+    nuevos.forEach(p => {
+      if (!nrProps.find(x => x.codigo === p.codigo)) {
+        nrProps.push({ nombre: p.nombre, codigo: p.codigo, rentaDia: p.rentaDia, airtableId: p.id });
+      }
+    });
+    nrRenderProps();
+    nrCalcMonto();
+    showToast(`✓ ${nuevos.length} prop${nuevos.length !== 1 ? 's' : ''} agregado${nuevos.length !== 1 ? 's' : ''}`);
+  } else if (_propSelCaller === 'orden') {
+    nuevos.forEach(p => {
+      // Verificar que no esté ya (por código)
+      const yaExiste = orPropRows.some(id =>
+        document.getElementById('or-p-codigo-' + id)?.value === p.codigo
+      );
+      if (!yaExiste) orAddPropRow(p.nombre, p.codigo, p.rentaDia, p.id);
+    });
+    showToast(`✓ ${nuevos.length} prop${nuevos.length !== 1 ? 's' : ''} agregado${nuevos.length !== 1 ? 's' : ''}`);
+  } else if (_propSelCaller === 'cotizacion') {
+    nuevos.forEach(p => {
+      const yaExiste = cotPropRows.some(id =>
+        document.getElementById('cot-p-codigo-' + id)?.value === p.codigo
+      );
+      if (!yaExiste) cotAddPropRow(p.nombre, p.codigo, p.rentaDia);
+    });
+    showToast(`✓ ${nuevos.length} prop${nuevos.length !== 1 ? 's' : ''} agregado${nuevos.length !== 1 ? 's' : ''}`);
+  } else if (_propSelCaller === 'editar-props') {
+    nuevos.forEach(p => {
+      if (!_epPropsActuales.find(x => x.id === p.id)) {
+        _epPropsActuales.push({ id: p.id, nombre: p.nombre, codigo: p.codigo });
+      }
+    });
+    epRenderLista();
+    showToast(`✓ ${nuevos.length} prop${nuevos.length !== 1 ? 's' : ''} agregado${nuevos.length !== 1 ? 's' : ''}`);
   }
 }
 
