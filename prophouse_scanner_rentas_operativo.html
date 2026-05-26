@@ -960,13 +960,13 @@
       </div>
 
       <div style="padding:0 28px 28px;">
-        <!-- Acciones rápidas -->
-        <div class="rentas-acciones"><div class="action-bar-universal">
-          <button class="abu-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
-          <button class="abu-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
-          <button class="abu-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
-          <button class="abu-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
-          <button class="abu-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
+        <!-- Acciones rápidas — misma clase que Rentas -->
+        <div class="rentas-acciones"><div class="rentas-action-bar">
+          <button class="rentas-action-btn gold" onclick="quickNuevaRenta()"><i class="ti ti-plus" aria-hidden="true"></i><span>Nueva renta</span></button>
+          <button class="rentas-action-btn" onclick="showCotizacionView()"><i class="ti ti-file-dollar" aria-hidden="true"></i><span>Cotización</span></button>
+          <button class="rentas-action-btn" onclick="showPagosView()"><i class="ti ti-credit-card" aria-hidden="true"></i><span>Pago</span></button>
+          <button class="rentas-action-btn" onclick="startFlow('salida')"><i class="ti ti-arrow-bar-up" aria-hidden="true"></i><span>Salida</span></button>
+          <button class="rentas-action-btn" onclick="startFlow('entrada')"><i class="ti ti-arrow-bar-down" aria-hidden="true"></i><span>Entrada</span></button>
         </div></div>
 
         <!-- KPIs — sin hover, solo info -->
