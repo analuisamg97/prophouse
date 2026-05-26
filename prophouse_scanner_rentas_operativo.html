@@ -32,6 +32,7 @@
     --green: #4caf50;
     --blue: #3498db;
     --yellow: #e6a817;
+    --desktop-header-height: 72px;
     /* badges */
     --badge-pend-bg: #3d1a18; --badge-pend-fg: #ff6b6b; --badge-pend-border: #e74c3c;
     --badge-ok-bg: #1b2e1e;   --badge-ok-fg: #51cf66;   --badge-ok-border: #4caf50;
@@ -349,6 +350,10 @@
   .view { display:none; padding:0 24px 24px; }
   .view-header { display:flex; align-items:center; gap:12px; padding:16px 28px 16px; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; }
   .main-view-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 0; border-bottom:1px solid var(--border); margin-bottom:20px; background:var(--bg); position:sticky; top:0; z-index:10; box-sizing:border-box; width:100%; }
+  @media (min-width:768px) {
+    .sidebar-logo { height:var(--desktop-header-height); padding:0 14px; display:flex; flex-direction:column; justify-content:center; }
+    .view-header, .main-view-header { min-height:var(--desktop-header-height); padding-top:0 !important; padding-bottom:0 !important; }
+  }
   .btn-back { background:none; border:1px solid var(--border); color:var(--white); width:36px; height:36px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all 0.15s; } .btn-back:hover { border-color:var(--gold); } .btn-back:active { background:var(--bg-card); }
   .btn-back svg { width:16px; height:16px; stroke:var(--white); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
   .view-title { font-size:22px; letter-spacing:0.3px; color:var(--white); font-family:'Playfair Display',serif; }
