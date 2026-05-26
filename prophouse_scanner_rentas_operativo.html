@@ -162,7 +162,7 @@
   /* DASHBOARD STATS (desktop) */
   /* ── ACTION BAR CENTRALIZADA — aplica en dashboard, rentas, inventario, galería ── */
   .action-bar-universal { display:flex; background:#252320; border:1px solid #3d3b38; border-radius:12px; overflow:hidden; }
-  .abu-btn { display:flex; flex-direction:column; align-items:center; gap:6px; padding:14px 0; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; flex:1; position:relative; transition:background 0.15s; color:var(--white-dim); }
+  .abu-btn { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px; padding:16px 28px; background:transparent; border:none; border-right:1px solid #3d3b38; cursor:pointer; min-width:100px; position:relative; transition:background 0.15s; color:var(--white-dim); }
   .abu-btn:last-child { border-right:none; }
   .abu-btn:hover { background:var(--bg-card); }
   .abu-btn::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--gold); border-radius:2px 2px 0 0; opacity:0; transition:opacity 0.15s; }
@@ -1129,26 +1129,26 @@
         </div>
       </div>
 
-      <div class="rentas-kpis">
-        <div class="rentas-kpi">
-          <div class="rentas-kpi-label">Rentas activas</div>
-          <div class="rentas-kpi-value green" id="rc-kpi-activas">—</div>
-          <div class="rentas-kpi-sub" id="rc-kpi-activas-sub">Cargando...</div>
+      <div class="dash-kpis-bar" style="margin-bottom:16px;">
+        <div class="dash-kpi">
+          <div class="dash-kpi-lbl">Rentas activas</div>
+          <div class="dash-kpi-val gold" id="rc-kpi-activas">—</div>
+          <div class="dash-kpi-sub" id="rc-kpi-activas-sub">Cargando...</div>
         </div>
-        <div class="rentas-kpi">
-          <div class="rentas-kpi-label">Por regresar</div>
-          <div class="rentas-kpi-value gold" id="rc-kpi-regresar">—</div>
-          <div class="rentas-kpi-sub" id="rc-kpi-regresar-sub">Próximos regresos</div>
+        <div class="dash-kpi">
+          <div class="dash-kpi-lbl">Por regresar</div>
+          <div class="dash-kpi-val gold" id="rc-kpi-regresar">—</div>
+          <div class="dash-kpi-sub" id="rc-kpi-regresar-sub">Próximos regresos</div>
         </div>
-        <div class="rentas-kpi">
-          <div class="rentas-kpi-label">Por cobrar</div>
-          <div class="rentas-kpi-value red" id="rc-kpi-cobrar">—</div>
-          <div class="rentas-kpi-sub" id="rc-kpi-cobrar-sub">Saldos pendientes</div>
+        <div class="dash-kpi">
+          <div class="dash-kpi-lbl">Por cobrar</div>
+          <div class="dash-kpi-val gold" id="rc-kpi-cobrar">—</div>
+          <div class="dash-kpi-sub" id="rc-kpi-cobrar-sub">Saldos pendientes</div>
         </div>
-        <div class="rentas-kpi">
-          <div class="rentas-kpi-label">Ingresos del mes</div>
-          <div class="rentas-kpi-value gold" id="rc-kpi-ingresos">—</div>
-          <div class="rentas-kpi-sub" id="rc-kpi-ingresos-sub">Rentas con salida este mes</div>
+        <div class="dash-kpi">
+          <div class="dash-kpi-lbl">Ingresos del mes</div>
+          <div class="dash-kpi-val gold" id="rc-kpi-ingresos">—</div>
+          <div class="dash-kpi-sub" id="rc-kpi-ingresos-sub">Rentas con salida este mes</div>
         </div>
       </div>
 
@@ -3270,8 +3270,15 @@ function rentasCentroActualizarResumen() {
       // Hover y click
       row.className = 'rentas-alert-row' + (clickable ? ' clickable' : '');
       row.onclick = clickable ? () => {
-        const pill = document.querySelector(`#rentas-menu-view .rentas-pill[data-filtro="${def.filtro}"]`);
-        if (pill) { rentasCentroSetFiltro(pill); }
+        // Asegurar que la vista de rentas esté activa antes de filtrar
+        const yaEnRentas = document.getElementById('rentas-menu-view')?.style.display !== 'none';
+        if (!yaEnRentas) navGo('rentas');
+        setTimeout(() => {
+          const pill = document.querySelector(`#rentas-menu-view .rentas-pill[data-filtro="${def.filtro}"]`);
+          if (pill) rentasCentroSetFiltro(pill);
+          // Scroll al top de la lista
+          document.getElementById('rentas-centro-table')?.scrollIntoView({ behavior:'smooth', block:'start' });
+        }, yaEnRentas ? 0 : 400);
       } : null;
     });
   }
