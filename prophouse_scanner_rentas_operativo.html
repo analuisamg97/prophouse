@@ -1568,7 +1568,7 @@
     <div style="font-size:22px;color:var(--gold);letter-spacing:3px;font-weight:500;margin-bottom:4px;" id="nr-success-id">—</div>
     <div style="font-size:11px;color:var(--white);margin-bottom:4px;" id="nr-success-monto">—</div>
     <div style="font-size:10px;color:var(--text-muted);margin-bottom:24px;" id="nr-success-detalle">—</div>
-    <button class="btn-accion" onclick="orAbrirDesdeRenta()" style="background:var(--gold);color:var(--bg-deep);border:none;margin-bottom:8px;">
+    <button class="btn-accion" onclick="orAbrirDesdeRentaNueva()" style="background:var(--gold);color:var(--bg-deep);border:none;margin-bottom:8px;">
       🌅 Generar orden de renta
     </button>
     <button class="btn-accion" onclick="goHome()" style="background:none;border:1px solid var(--border);color:var(--text-muted);">
@@ -1687,6 +1687,9 @@
       <option value="Otro">Otro</option>
     </select>
 
+
+    <div class="setup-label">Quién recibe los props</div>
+    <input type="text" class="setup-input" id="nr-recibe" placeholder="Nombre de quien recibe en set...">
 
     <div class="setup-label">Notas</div>
     <input type="text" class="setup-input" id="nr-notas" placeholder="Detalles de la renta...">
@@ -3235,6 +3238,7 @@ const F = {
   FECHA_REGRESO:   'Fecha de regreso',
   HORA_SALIDA:     'Hora de salida',
   HORA_REGRESO:    'Hora de regreso',
+  QUIEN_RECIBE:    'Quién recibe',
   SUBTOTAL:         'Subtotal',
   MONTO_TOTAL:     'Monto total',
   TOTAL_PAGADO:    'Total pagado',
@@ -3898,7 +3902,7 @@ async function db_crearPago({ rentaRecordId, monto, tipo = 'Pago parcial', metod
   return airtablePost('PAGOS', fields);
 }
 
-async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRegreso = '', subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0 }) {
+async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRegreso = '', subtotal, total, clienteId, propsIds = [], notas = '', ivaAplicado = false, montoIva = 0, quienRecibe = '' }) {
   const fields = {
     [F.ID_RENTA]: rentaId,
     [F.FECHA_SALIDA]: salida,
@@ -3913,6 +3917,7 @@ async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRe
   if (horaSalida) fields[F.HORA_SALIDA] = horaSalida;
   if (horaRegreso) fields[F.HORA_REGRESO] = horaRegreso;
   if (notas) fields['Notas'] = notas;
+  if (quienRecibe) fields[F.QUIEN_RECIBE] = quienRecibe;
   if (clienteId) fields['Cliente'] = [clienteId];
   if (propsIds.length > 0) fields['Props rentados'] = propsIds;
   return airtablePostConCamposOpcionales('RENTAS', fields, [
@@ -3922,6 +3927,7 @@ async function db_crearRenta({ rentaId, salida, regreso, horaSalida = '', horaRe
     F.HORA_SALIDA,
     F.HORA_REGRESO,
     'Notas',
+    F.QUIEN_RECIBE,
     'Fecha de registro'
   ]);
 }
@@ -5002,6 +5008,7 @@ async function showNuevaRenta() {
   if (horaSalidaEl) horaSalidaEl.value = '';
   if (horaRegresoEl) horaRegresoEl.value = '';
   document.getElementById('nr-deposito').value = '';
+  const nrRecibeEl = document.getElementById('nr-recibe'); if (nrRecibeEl) nrRecibeEl.value = '';
   const metodoPagoEl = document.getElementById('nr-metodo-pago');
   if (metodoPagoEl) metodoPagoEl.value = 'Transferencia';
   document.getElementById('nr-notas').value = '';
@@ -5180,6 +5187,8 @@ async function crearNuevaRenta() {
   const fechaRegreso = document.getElementById('nr-fecha-regreso').value;
   const horaSalida = document.getElementById('nr-hora-salida')?.value.trim() || '';
   const horaRegreso = document.getElementById('nr-hora-regreso')?.value.trim() || '';
+  const nrRecibe = document.getElementById('nr-recibe')?.value.trim() || '';
+  window._nrRecibe = nrRecibe;
   const deposito = parseFloat(document.getElementById('nr-deposito').value) || 0;
   const metodoPagoInicial = document.getElementById('nr-metodo-pago')?.value || 'Transferencia';
   const notas = document.getElementById('nr-notas').value;
@@ -5227,7 +5236,8 @@ async function crearNuevaRenta() {
       rentaId, salida: fechaSalida, regreso: fechaRegreso,
       subtotal, total, clienteId, propsIds, notas,
       horaSalida, horaRegreso,
-      ivaAplicado, montoIva: iva
+      ivaAplicado, montoIva: iva,
+      quienRecibe: nrRecibe
     });
 
     if (deposito > 0) {
@@ -5468,7 +5478,7 @@ async function orGenerarOrden() {
   const rentaId = f['ID de renta'] || orRentaIdGenerado || '—';
   orRentaIdGenerado = rentaId;
 
-  const recibe = document.getElementById('or-recibe').value || '—';
+  const recibe = document.getElementById('or-recibe')?.value || currentRenta?.fields?.[F.QUIEN_RECIBE] || window._nrRecibe || '—';
   const salida = f['Fecha de salida'] || document.getElementById('or-fecha-salida').value;
   const regreso = f['Fecha de regreso'] || document.getElementById('or-fecha-regreso').value;
   const pagoDirecto = await db_totalPagadoRenta(currentRenta?.id);
@@ -6895,8 +6905,17 @@ async function orAbrirDesdeRenta() {
 
   // Cargar clientes y preseleccionar el de la renta
   try {
-    await clientesGlobalCargar();
-    orClientesCache = _clientesGlobalCache.map(c => ({ id: c.id, fields: { 'Nombre o empresa': c.nombre } }));
+    await clientesGlobalCargar(true); // force: necesita campos fiscales
+    orClientesCache = _clientesGlobalCache.map(c => ({ id: c.id, fields: {
+      'Nombre o empresa': c.nombre,
+      'Email': c.email || '',
+      'Teléfono': c.tel || '',
+      'RFC': c.rfc || '',
+      'Razón social': c.razon || '',
+      'Régimen fiscal': c.regimen || '',
+      'Dirección fiscal': c.direccion || '',
+      'Código postal': c.cp || ''
+    } }));
     clienteAutocompleteInit('or-cliente-nombre-ac','or-cliente-dropdown','or-cliente-select','or-cliente-tel','or-cliente-email');
     // Preseleccionar cliente de la renta
     const clienteIds = f['Cliente'] || [];
@@ -6928,6 +6947,14 @@ async function orAbrirDesdeRenta() {
   }
 
   orCalcTotales();
+}
+
+// Desde nueva renta: prellenar y generar directamente sin mostrar formulario
+async function orAbrirDesdeRentaNueva() {
+  await orAbrirDesdeRenta();
+  // Saltar el formulario y generar directo
+  document.getElementById('orden-form-section').style.display = 'none';
+  await orGenerarOrden();
 }
 
 // orGenerarId eliminado — usar db_generarRentaId() directamente
@@ -7054,15 +7081,20 @@ let cotPropCounter = [0];
 let _clientesGlobalCache = [];
 let _clientesGlobalLoaded = false;
 
-async function clientesGlobalCargar() {
-  if (_clientesGlobalLoaded) return _clientesGlobalCache;
+async function clientesGlobalCargar(force = false) {
+  if (_clientesGlobalLoaded && !force) return _clientesGlobalCache;
   try {
     const clientes = await db_getClientes();
     _clientesGlobalCache = clientes.map(c => ({
       id: c.id,
       nombre: c.fields['Nombre o empresa'] || '—',
       tel: c.fields['Teléfono'] || '',
-      email: c.fields['Email'] || ''
+      email: c.fields['Email'] || '',
+      rfc: c.fields['RFC'] || '',
+      razon: c.fields['Razón social'] || '',
+      regimen: c.fields['Régimen fiscal'] || '',
+      direccion: c.fields['Dirección fiscal'] || '',
+      cp: c.fields['Código postal'] || ''
     }));
     _clientesGlobalLoaded = true;
   } catch(e) {}
