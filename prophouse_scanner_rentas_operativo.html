@@ -3043,7 +3043,7 @@ async function cargarDashboard() {
               <div class="tl-group-client">${rentasCentroEsc(clientName(f))}</div>
               <div class="tl-group-badges">
                 <span class="tl-group-badge" style="${estadoBadgeCls}">${rentasCentroEsc(estadoRenta)}</span>
-                <span class="tl-group-badge ${_badgeCls}">${_badgeTxt}</span>
+                <span class="tl-group-badge ${_badgeCls}">${esPagado ? 'Pagado' : estadoPago === 'Pago parcial' ? 'Parcial' : 'Pendiente'}</span>
               </div>
             </div>
           </div>
