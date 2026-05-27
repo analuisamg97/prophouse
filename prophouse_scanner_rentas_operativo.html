@@ -3372,6 +3372,16 @@ async function rentaFirstPropThumbHtml(fields = {}) {
   }
 }
 
+function rentasCentroFmtFecha(fecha) {
+  if (!fecha) return '—';
+  const [y, m, d] = fecha.split('-').map(Number);
+  if (!y || !m || !d) return fecha;
+  const date = new Date(y, m - 1, d);
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${dias[date.getDay()]}, ${d} ${meses[m - 1]} ${y}`;
+}
+
 function rentasCentroMoney(n) {
   return '$' + Number(n || 0).toLocaleString('es-MX') + ' MXN';
 }
@@ -3659,7 +3669,7 @@ function rentasCentroRenderTabla(rows) {
         <div class="rentas-card-meta">
           <div>
             <div class="rentas-meta-label">Salida</div>
-            <div class="rentas-meta-value">${rentasCentroEsc(f[F.FECHA_SALIDA] || '—')}</div>
+            <div class="rentas-meta-value">${rentasCentroFmtFecha(f[F.FECHA_SALIDA])}</div>
           </div>
           <div class="rentas-timeline" aria-hidden="true">
             <span class="rentas-time-dot"></span>
@@ -3668,7 +3678,7 @@ function rentasCentroRenderTabla(rows) {
           </div>
           <div>
             <div class="rentas-meta-label">Regreso</div>
-            <div class="rentas-meta-value">${rentasCentroEsc(f[F.FECHA_REGRESO] || '—')}</div>
+            <div class="rentas-meta-value">${rentasCentroFmtFecha(f[F.FECHA_REGRESO])}</div>
           </div>
         </div>
         <div class="rentas-card-bottom">
