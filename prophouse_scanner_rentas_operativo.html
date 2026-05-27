@@ -3617,7 +3617,7 @@ function rentasCentroAplicarFiltros() {
     return true;
   });
 
-  rows.sort((a, b) => String(b.fields[F.FECHA_SALIDA] || '').localeCompare(String(a.fields[F.FECHA_SALIDA] || '')));
+  rows.sort((a, b) => String(a.fields[F.FECHA_SALIDA] || '').localeCompare(String(b.fields[F.FECHA_SALIDA] || '')));
   rentasCentroRenderTabla(rows);
 }
 
