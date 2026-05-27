@@ -6781,16 +6781,18 @@ async function finCargarDatos() {
   const finMes = new Date(y, m, 0).toISOString().split('T')[0];
 
   try {
-    // Ingresos: rentas del mes
-    const rentas = await db_getRentas();
-    const rentasMes = rentas.filter(r => {
-      const salida = r.fields['Fecha de salida'] || '';
-      return salida >= inicioMes && salida <= finMes;
+    // Ingresos: pagos reales cobrados dentro del mes
+    const [pagos, gastos] = await Promise.all([
+      db_getPagos({ maxRecords: 0 }),
+      airtableGetAll('GASTOS')
+    ]);
+    const pagosMes = pagos.filter(p => {
+      const fecha = p.fields[F.PAGO_FECHA] || '';
+      return fecha >= inicioMes && fecha <= finMes;
     });
-    const ingresos = rentasMes.reduce((sum, r) => sum + (r.fields['Monto total'] || 0), 0);
+    const ingresos = pagosMes.reduce((sum, p) => sum + (parseFloat(p.fields[F.PAGO_MONTO]) || 0), 0);
 
     // Gastos del mes
-    const gastos = await airtableGetAll('GASTOS');
     const gastosMes = gastos.filter(r => {
       const mes = r.fields['Mes'] || '';
       return mes === finMesActual;
