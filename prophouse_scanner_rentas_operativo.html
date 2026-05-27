@@ -907,6 +907,7 @@
   .rentas-badge.activa { background:rgba(76,175,80,0.12); color:var(--green); border-color:rgba(76,175,80,0.45); }
   .rentas-badge.enrenta { background:rgba(52,152,219,0.12); color:#3498db; border-color:rgba(52,152,219,0.45); }
   .rentas-badge.regresar { background:rgba(212,168,83,0.13); color:var(--gold); border-color:rgba(212,168,83,0.5); }
+  .rentas-badge.proxima { background:rgba(155,89,182,0.12); color:#b07fd4; border-color:rgba(155,89,182,0.45); }
   .rentas-badge.cobrar { background:rgba(231,76,60,0.12); color:var(--red); border-color:rgba(231,76,60,0.45); }
   .rentas-badge.cotizacion { background:rgba(154,120,48,0.12); color:var(--white-dim); border-color:rgba(212,168,83,0.28); }
   .rentas-badge.cerrada { background:rgba(136,128,112,0.12); color:var(--text-dim); border-color:rgba(136,128,112,0.25); }
@@ -3608,8 +3609,8 @@ function rentasCentroEstadoBadge(f) {
   const diasRegreso = rentasCentroDaysFromToday(f[F.FECHA_REGRESO]);
   const diasSalida = rentasCentroDaysFromToday(f[F.FECHA_SALIDA]);
   const salidaYaOcurrio = diasSalida !== null && diasSalida <= 0;
-  if (rentasCentroIsActiva(f) && salidaYaOcurrio && diasRegreso !== null && diasRegreso <= 3) return { label:'Activa · Próximo regreso', cls:'regresar' };
-  if (rentasCentroIsActiva(f) && diasSalida !== null && diasSalida <= 3 && diasSalida >= 0) return { label:'Activa · Próxima salida', cls:'regresar' };
+  if (rentasCentroIsActiva(f) && salidaYaOcurrio && diasRegreso !== null && diasRegreso <= 3) return { label:'Activa · Próximo regreso', cls:'proxima' };
+  if (rentasCentroIsActiva(f) && diasSalida !== null && diasSalida <= 3 && diasSalida >= 0) return { label:'Activa · Próxima salida', cls:'proxima' };
   if (rentasCentroIsActiva(f)) return { label:'Activa', cls:'activa' };
   const estado = f[F.ESTADO_RENTA] || 'Pendiente';
   return { label:estado, cls:String(estado).toLowerCase().includes('pend') ? 'cobrar' : 'cerrada' };
@@ -5188,7 +5189,7 @@ async function crearNuevaRenta() {
   const horaSalida = document.getElementById('nr-hora-salida')?.value.trim() || '';
   const horaRegreso = document.getElementById('nr-hora-regreso')?.value.trim() || '';
   const nrRecibe = document.getElementById('nr-recibe')?.value.trim() || '';
-  window._nrRecibe = nrRecibe;
+  window._nrRecibe = nrRecibe; // se limpia al abrir otra orden
   const deposito = parseFloat(document.getElementById('nr-deposito').value) || 0;
   const metodoPagoInicial = document.getElementById('nr-metodo-pago')?.value || 'Transferencia';
   const notas = document.getElementById('nr-notas').value;
@@ -6885,6 +6886,7 @@ function orPrecargarDesdRenta(rentaRecord, rentaId, fields) {
 }
 
 async function orAbrirDesdeRenta() {
+  window._nrRecibe = ''; // limpiar para que no contamine desde renta anterior
   // Abrir la vista de orden prellenada con los datos de la renta actual
   showView('orden-view');
   document.getElementById('orden-form-section').style.display = 'block';
@@ -6906,6 +6908,8 @@ async function orAbrirDesdeRenta() {
   document.getElementById('or-fecha-salida').value = f['Fecha de salida'] || new Date().toISOString().split('T')[0];
   document.getElementById('or-fecha-regreso').value = f['Fecha de regreso'] || new Date().toISOString().split('T')[0];
   document.getElementById('or-deposito').value = totalPagado;
+  const _orRecibe = document.getElementById('or-recibe');
+  if (_orRecibe) _orRecibe.value = f[F.QUIEN_RECIBE] || '';
 
   // Pre-set ID de renta para que orGenerarId() no duplique
   window._orRentaIdFijo = rentaId;
