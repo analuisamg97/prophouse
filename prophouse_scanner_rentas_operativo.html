@@ -26,7 +26,6 @@
     --white: #f0ece4;
     --white-dim: #c8c4bc;
     --text-dim: #888070;
-    --white-dim: #c8c4bc;
     --text-muted: #666050;
     --red: #e74c3c;
     --green: #4caf50;
@@ -60,7 +59,6 @@
     -webkit-text-fill-color: var(--white) !important;
     caret-color: var(--white);
   }
-  .setup-input:focus { border-color:var(--gold); }
   .btn-primary { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; }
   .setup-note { font-size:10px; color:var(--text-muted); text-align:center; margin-top:16px; line-height:1.6; }
 
@@ -2232,7 +2230,7 @@
     <div style="display:flex;gap:8px;align-items:stretch;margin-bottom:10px;position:relative;">
       <button type="button" class="crm-new-btn" onclick="cotNuevoClienteToggle()" style="flex-direction:row;gap:6px;padding:0 16px;min-width:unset;min-height:unset;height:auto;white-space:nowrap;"><i class="ti ti-plus" aria-hidden="true" style="font-size:16px;"></i>Nuevo cliente</button>
       <div style="position:relative;flex:1;">
-        <input type="text" class="orden-input" id="cot-cliente-nombre" placeholder="Buscar cliente existente…" style="width:100%;box-sizing:border-box;" oninput="cotBuscarCliente(this.value)" autocomplete="off">
+        <input type="text" class="orden-input" id="cot-cliente-nombre" placeholder="Buscar cliente existente…" style="width:100%;box-sizing:border-box;" autocomplete="off">
         <div id="cot-cliente-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg-card);border:1px solid var(--border-light);border-radius:6px;z-index:100;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);"></div>
       </div>
     </div>
@@ -2904,12 +2902,7 @@ async function cargarDashboard() {
     const danos = danosRes.status === 'fulfilled' ? (danosRes.value.records || []) : [];
 
     // Mapa rentaId → totalPagado calculado desde tabla PAGOS (fuente de verdad)
-    const pagosPorRenta = new Map();
-    pagos.forEach(p => {
-      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
-        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
-      });
-    });
+    const pagosPorRenta = calcPagosPorRenta(pagos);
     // Aplicar pagos reales a todas las rentas
     const rentasConPagos = rentas.map(r => ({
       ...r,
@@ -2922,13 +2915,8 @@ async function cargarDashboard() {
     const en7 = new Date(hoy); en7.setDate(hoy.getDate() + 10);
     const en3 = new Date(hoy); en3.setDate(hoy.getDate() + 3);
     const enAtras = new Date(hoy); enAtras.setDate(hoy.getDate() - 10);
-    const fmtM = n => '$' + Number(n || 0).toLocaleString('es-MX');
-    const parseDate = fecha => {
-      if (!fecha) return null;
-      const parts = String(fecha).split('-').map(Number);
-      if (parts.length < 3 || parts.some(isNaN)) return null;
-      return new Date(parts[0], parts[1] - 1, parts[2]);
-    };
+    const fmtM = n => fmtMoney(n, { suffix: '' });
+    const parseDate = rentasCentroDateValue;
     const inRange = d => d && d >= hoy && d <= en7;
     const clientName = f => {
       const id = (f['Cliente'] || [])[0];
@@ -3349,6 +3337,30 @@ async function airtablePatch(table, recordId, fields) {
   return data;
 }
 
+async function airtablePatchBatch(table, records = []) {
+  if (!TOKEN || !BASE_ID) throw new Error('Sin credenciales');
+  if (!records.length) return [];
+  const results = [];
+  for (let i = 0; i < records.length; i += 10) {
+    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(table)}`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ records: records.slice(i, i + 10) })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) throw new Error('Token inválido o expirado');
+    if (res.status === 403) throw new Error('Sin permisos de escritura — revisa scopes del token');
+    if (res.status === 422) {
+      const detail = data?.error?.message || data?.error?.type || JSON.stringify(data?.error || data);
+      throw new Error('Datos inválidos en ' + table + ': ' + detail);
+    }
+    if (!res.ok) throw new Error(`Error HTTP ${res.status} en ${table}`);
+    if (data.error) throw new Error(data.error.message || data.error.type || 'Error Airtable PATCH batch');
+    results.push(...(data.records || []));
+  }
+  return results;
+}
+
 // Llamada en cada escaneo: actualiza estado, ubicacion y timestamp
 async function registrarVerificacion(recordId, nuevoEstado, nuevaUbicacion) {
   if (!recordId) throw new Error('registrarVerificacion: recordId vacío');
@@ -3538,8 +3550,50 @@ function rentasCentroFmtFecha(fecha) {
   return `${dias[date.getDay()]}, ${d} ${meses[m - 1]} ${y}`;
 }
 
+function fmtMoney(n, { decimales = 0, suffix = ' MXN', dashIfZero = false, round = false } = {}) {
+  const value = Number(n || 0);
+  if (dashIfZero && value <= 0) return '—';
+  const amount = round ? Math.round(value) : value;
+  return '$' + amount.toLocaleString('es-MX', {
+    minimumFractionDigits: decimales,
+    maximumFractionDigits: decimales
+  }) + suffix;
+}
+
+function fmtFechaCorta(fecha) {
+  if (!fecha) return '—';
+  const [y, m, d] = String(fecha).split('-');
+  if (!y || !m || !d) return fecha;
+  const mes = 'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m, 10) - 1];
+  return mes ? `${d} ${mes} ${y}` : fecha;
+}
+
+function fmtFechaSlashCorta(fecha) {
+  if (!fecha) return '—';
+  const [y, m, d] = String(fecha).split('-');
+  return y && m && d ? `${d}/${m}/${y.slice(2)}` : fecha;
+}
+
+function fmtFechaDetalle(fecha) {
+  if (!fecha) return '—';
+  const [y, m, d] = String(fecha).split('-');
+  if (!y || !m || !d) return fecha;
+  const mes = 'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m, 10) - 1];
+  return mes ? `${parseInt(d, 10)} ${mes} ${y}` : fecha;
+}
+
+function calcPagosPorRenta(pagos = []) {
+  const pagosPorRenta = new Map();
+  pagos.forEach(p => {
+    (p.fields?.[F.PAGO_RENTA] || []).forEach(rid => {
+      pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields?.[F.PAGO_MONTO]) || 0));
+    });
+  });
+  return pagosPorRenta;
+}
+
 function rentasCentroMoney(n) {
-  return '$' + Number(n || 0).toLocaleString('es-MX') + ' MXN';
+  return fmtMoney(n);
 }
 
 function rentasCentroDateValue(yyyyMmDd) {
@@ -3647,12 +3701,7 @@ async function rentasCentroCargar() {
       db_getPagos({ maxRecords: 0 })
     ]);
     const clientesMap = new Map(clientes.map(c => [c.id, c.fields[F.NOMBRE_CLIENTE] || '—']));
-    const pagosPorRenta = new Map();
-    pagos.forEach(p => {
-      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
-        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
-      });
-    });
+    const pagosPorRenta = calcPagosPorRenta(pagos);
     const propsMap = new Map(props.map(p => {
       const fotos = p.fields['Foto principal'] || [];
       const thumb = fotos.length ? (fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url) : '';
@@ -4021,15 +4070,7 @@ async function db_crearProp(fields) {
 async function db_actualizarEstadoProps(propsIds, nuevoEstado) {
   if (!propsIds.length) return;
   const updates = propsIds.map(id => ({ id, fields: { 'Estado': nuevoEstado } }));
-  for (let i = 0; i < updates.length; i += 10) {
-    const res = await fetch(`https://api.airtable.com/v0/${BASE_ID}/INVENTARIO`, {
-      method: 'PATCH',
-      headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ records: updates.slice(i, i + 10) })
-    });
-    const d = await res.json();
-    if (d.error) throw new Error(d.error.message);
-  }
+  return airtablePatchBatch('INVENTARIO', updates);
 }
 
 // ── FIND PROP BY CODE ───────────────────────────────────
@@ -4837,7 +4878,7 @@ function rentasEditCalcMonto() {
   const regreso = document.getElementById('er-fecha-regreso')?.value || salida;
   const ivaAplicado = document.getElementById('er-iva')?.checked || false;
   const { dias, subtotal, iva, total } = rentaImportesDesdeProps(rentaEditProps, salida, regreso, ivaAplicado);
-  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  const fmt = n => fmtMoney(n, { decimales: 2 });
   const diasEl = document.getElementById('er-dias');
   if (diasEl) diasEl.textContent = `${dias} día${dias > 1 ? 's' : ''}`;
   const subtotalEl = document.getElementById('er-subtotal');
@@ -4922,12 +4963,7 @@ async function showRentasActivas() {
     }
     // Cargar nombres de clientes y pagos reales para mostrar en cards
     const [clientesAll, pagos] = await Promise.all([db_getClientes(), db_getPagos({ maxRecords: 0 })]);
-    const pagosPorRenta = new Map();
-    pagos.forEach(p => {
-      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
-        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
-      });
-    });
+    const pagosPorRenta = calcPagosPorRenta(pagos);
     document.getElementById('rentas-content').innerHTML = (await Promise.all(rentas.map(async r => {
       const f = rentasCentroMergePago(r.fields, pagosPorRenta.get(r.id) || 0);
       const total = f['Monto total'] || 0;
@@ -5034,7 +5070,6 @@ async function showNuevaRenta() {
   }
 }
 
-function toggleNuevoCliente() {}
 function nrNuevoClienteToggle() {
   const sec = document.getElementById('nr-nuevo-cliente');
   const isOpen = sec.style.display === 'block';
@@ -5099,7 +5134,7 @@ function propsCalcTotales(prefix) {
   const ivaOn = document.getElementById(`${prefix}-iva`)?.checked || false;
   const iva = ivaOn ? subtotal * 0.16 : 0;
   const total = subtotal + iva;
-  const fmt = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+  const fmt = n => fmtMoney(n, { decimales: 2 });
   if (prefix === 'nr') {
     const dias = propsCalcDias('nr-fecha-salida','nr-fecha-regreso');
     document.getElementById('nr-dias-cobrados').textContent = `${dias} día${dias>1?'s':''}`;
@@ -5345,7 +5380,6 @@ async function orSelectorElegirRenta(rentaRecordId) {
   await orAbrirDesdeRentaId(rentaRecordId);
 }
 
-function toggleOrdenNuevoCliente() {}
 function orNuevoClienteToggle() {
   const sec = document.getElementById('or-nuevo-cliente-section');
   const isOpen = sec.style.display === 'block';
@@ -5390,7 +5424,7 @@ function orCalcTotales() {
   const deposito = parseFloat(document.getElementById('or-deposito')?.value) || 0;
   const total = orMontoTotalAirtable > 0 ? orMontoTotalAirtable : subtotal + orMontoIvaActual;
   const saldo = Math.max(0, total - deposito);
-  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' MXN';
+  const fmtM = n => fmtMoney(n, { decimales: 2 });
   const ivaRow = document.getElementById('or-iva-row');
   if (ivaRow) ivaRow.style.display = orMontoIvaActual > 0 ? 'flex' : 'none';
   const ivaEl = document.getElementById('or-t-iva');
@@ -5534,12 +5568,8 @@ async function orGenerarOrden() {
   const airtableStatus = `<div class="airtable-ok">✓ Renta ${rentaId} · Hora Dorada Prop House</div>`;
 
   // Generar documento HTML — solo lectura
-  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' MXN';
-  const fmtF = fecha => {
-    if (!fecha) return '—';
-    const [y, m, d] = fecha.split('-');
-    return `${d} ${'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m)-1]} ${y}`;
-  };
+  const fmtM = n => fmtMoney(n, { decimales: 2 });
+  const fmtF = fmtFechaCorta;
   const saldo = Math.max(0, totalOrden - deposito);
   const estadoPago = deposito >= totalOrden ? 'badge-pagado">PAGADO' : 'badge-pendiente">PENDIENTE';
   const hoy = new Date().toISOString().split('T')[0];
@@ -5689,7 +5719,7 @@ function orCompartirWhatsApp() {
   const deposito = parseFloat(document.getElementById('or-deposito')?.value) || 0;
   const total = orMontoTotalAirtable > 0 ? orMontoTotalAirtable : subtotal + orMontoIvaActual;
   const saldo = Math.max(0, total - deposito);
-  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+  const fmtM = n => fmtMoney(n, { decimales: 2 });
 
   const texto = `🌅 *Hora Dorada Prop House*\n📋 *Orden de Renta: ${orRentaIdGenerado}*\n\n📤 Salida: ${salida}\n📥 Regreso: ${regreso}\n\n💰 Total: ${fmtM(total)}\n✅ Total pagado: ${fmtM(deposito)}\n⏳ Saldo: ${fmtM(saldo)}\n\nPara cualquier duda: 81 1717 0541`;
 
@@ -5839,8 +5869,8 @@ function crmRenderizar() {
   });
   const el = document.getElementById('crm-content');
 
-  const fmtM = n => n > 0 ? '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }) : '—';
-  const fmtD = d => { if (!d) return '—'; const [y,m,dd] = d.split('-'); return `${dd}/${m}/${y.slice(2)}`; };
+  const fmtM = n => fmtMoney(n, { dashIfZero: true, suffix: '' });
+  const fmtD = fmtFechaSlashCorta;
   const tipoBadge = c => c.esVip
     ? `<span class="crm-tipo-badge vip">VIP</span>`
     : c.tipo ? `<span class="crm-tipo-badge">${rentasCentroEsc(c.tipo)}</span>` : '<span style="color:#444038;font-size:11px;">—</span>';
@@ -5899,13 +5929,8 @@ async function crmAbrirDetalle(clienteId) {
 
   document.getElementById('cd-titulo').textContent = c.nombre;
   const f = c.fields;
-  const fmtM = n => n > 0 ? '$' + Number(n).toLocaleString('es-MX', { minimumFractionDigits: 0 }) + ' MXN' : '—';
-  const fmtD = d => {
-    if (!d) return '—';
-    const [y, m, dd] = d.split('-');
-    const meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    return `${parseInt(dd)} ${meses[parseInt(m)-1]} ${y}`;
-  };
+  const fmtM = n => fmtMoney(n, { dashIfZero: true });
+  const fmtD = fmtFechaDetalle;
   const iniciales = c.nombre.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
   const rentasOrden = [...c.rentas].sort((a,b) =>
     String(b.fields['Fecha de salida']||'').localeCompare(String(a.fields['Fecha de salida']||'')));
@@ -6366,12 +6391,7 @@ async function showPagosView(clienteId = null) {
       return;
     }
     const pagos = await db_getPagos({ maxRecords: 0 });
-    const pagosPorRenta = new Map();
-    pagos.forEach(p => {
-      (p.fields[F.PAGO_RENTA] || []).forEach(rid => {
-        pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
-      });
-    });
+    const pagosPorRenta = calcPagosPorRenta(pagos);
     // Enriquecer con nombres de clientes
     const clientesAll = await db_getClientes();
     const clientesMap = new Map(clientesAll.map(c => [c.id, c.fields['Nombre o empresa'] || '—']));
@@ -6491,7 +6511,7 @@ function pagosCalcEstado() {
   const saldo = Math.max(0, total - pagadoNuevo);
   const estado = db_calcEstadoPago(total, pagadoNuevo);
 
-  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+  const fmtM = n => fmtMoney(n, { decimales: 2 });
   document.getElementById('pagos-pagado-actual').textContent = fmtM(pagadoActual);
   document.getElementById('pagos-nuevo-preview').textContent = fmtM(nuevoPago);
   document.getElementById('pagos-saldo').textContent = fmtM(saldo);
@@ -6755,7 +6775,7 @@ async function finCargarDatos() {
   document.getElementById('fin-ganancia').textContent = '…';
   document.getElementById('fin-lista-gastos').innerHTML = '<div class="loading"><div class="spinner"></div>Cargando...</div>';
 
-  const fmtM = n => '$' + Math.round(n).toLocaleString('es-MX') + ' MXN';
+  const fmtM = n => fmtMoney(n, { round: true });
   const [y, m] = finMesActual.split('-').map(Number);
   const inicioMes = new Date(y, m - 1, 1).toISOString().split('T')[0];
   const finMes = new Date(y, m, 0).toISOString().split('T')[0];
@@ -7156,8 +7176,6 @@ async function cotCargarClientesCache() {
   clienteAutocompleteInit('cot-cliente-nombre','cot-cliente-dropdown','cot-cliente-id','cot-cliente-tel','cot-cliente-email');
 }
 
-// Alias viejo (no se usa ya pero por si acaso)
-function cotBuscarCliente() {}
 function cotSeleccionarCliente(id,nombre,tel,email) {
   clienteAutocompleteSeleccionar('cot-cliente-nombre','cot-cliente-dropdown','cot-cliente-id','cot-cliente-tel','cot-cliente-email',id,nombre,tel,email);
 }
@@ -7262,12 +7280,8 @@ function cotGenerarDocumento() {
 
   const iva = ivaOn ? subtotal * 0.16 : 0;
   const total = subtotal + iva;
-  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
-  const fmtF = fecha => {
-    if (!fecha) return '—';
-    const [y, m, d] = fecha.split('-');
-    return `${d} ${'ene,feb,mar,abr,may,jun,jul,ago,sep,oct,nov,dic'.split(',')[parseInt(m) - 1]} ${y}`;
-  };
+  const fmt = n => fmtMoney(n, { decimales: 2 });
+  const fmtF = fmtFechaCorta;
   const hoy = new Date().toISOString().split('T')[0];
   // ID de cotización temporal: COT-YYYYMMDD-HHMM
   const now = new Date();
@@ -7349,7 +7363,7 @@ function cotCompartirWhatsApp() {
   const total = ivaOn ? subtotal * 1.16 : subtotal;
   const cliente = document.getElementById('cot-cliente-nombre').value.trim() || 'Cliente';
   const salida = document.getElementById('cot-fecha-salida').value;
-  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
+  const fmt = n => fmtMoney(n, { decimales: 2 });
   const texto = `🌅 *Hora Dorada Prop House*\n📋 *Cotización para ${cliente}*\n\n📤 Salida est.: ${salida}\n\n💰 Total estimado: ${fmt(total)}\n✅ Adelanto sugerido (50%): ${fmt(total * 0.5)}\n\n📌 Esta cotización es orientativa y no confirma la renta.\nPara reservar: 81 1717 0541`;
   window.open('https://wa.me/?text=' + encodeURIComponent(texto), '_blank');
 }
