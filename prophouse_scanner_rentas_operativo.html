@@ -2824,7 +2824,7 @@ async function cargarDashboard() {
       return mkBadge('adel', SVG.clock, 'Revisar');
     };
 
-    const rentasActivas = rentas.filter(r => r.fields['Estado de la renta'] === 'Activa');
+    const rentasActivas = rentas.filter(r => r.fields['Estado de la renta'] === 'Activa' || r.fields['Estado de la renta'] === 'En renta');
     const rentasMes = rentas.filter(r => (r.fields['Fecha de salida'] || '').startsWith(mesActual));
     const ingresosMes = rentasMes.reduce((s, r) => s + (r.fields['Monto total'] || 0), 0);
     const propsDisp = props.filter(p => p.fields['Estado'] === 'Disponible').length;
@@ -2870,11 +2870,14 @@ async function cargarDashboard() {
         ? `<img class="tl-foto" src="${fotoUrl}" alt="prop" loading="lazy" onerror="this.style.display='none'">`
         : `<div class="tl-foto-ph"><i class="ti ti-camera-off" aria-hidden="true"></i></div>`;
 
-      const saldo = Number(f['Monto a liquidar'] || 0);
-      const estadoPago = f['Estado del pago'] || 'Pendiente';
+      // Calcular saldo localmente como fuente confiable (Monto a liquidar es rollup y puede llegar tarde)
+      const _total = Number(f['Monto total'] || 0);
+      const _pagado = Number(f['Total pagado'] || 0);
+      const saldo = Math.max(0, _total > 0 ? _total - _pagado : Number(f['Monto a liquidar'] || 0));
+      const estadoPago = saldo === 0 ? 'Pagado' : (f['Estado del pago'] || 'Pendiente');
       // Badge de pago usando clases centralizadas
-      const _badgeCls = saldo > 0 ? 'pago-badge-pendiente' : estadoPago === 'Pagado' ? 'pago-badge-pagado' : 'pago-badge-parcial';
-      const _badgeTxt = saldo > 0 ? 'Saldo' : estadoPago === 'Pagado' ? 'Pagado' : 'Parcial';
+      const _badgeCls = saldo > 0 ? 'pago-badge-pendiente' : 'pago-badge-pagado';
+      const _badgeTxt = saldo > 0 ? `Saldo $${Number(saldo).toLocaleString('es-MX')}` : 'Pagado';
       const badgeHtml = `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;" class="${_badgeCls}">${_badgeTxt}</span>`;
 
       if (f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']))) {
