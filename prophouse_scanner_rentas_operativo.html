@@ -926,13 +926,13 @@
   .crm-table { width:100%; border-collapse:collapse; min-width:820px; }
   .crm-table thead tr { border-bottom:1px solid rgba(255,255,255,0.05); }
   .crm-table th { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); padding:10px 14px; text-align:left; font-weight:500; white-space:nowrap; }
-  .crm-table th.right { text-align:right; }
-  .crm-table td { padding:0; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .crm-table th.center { text-align:center; }
+  .crm-table td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; }
   .crm-table tbody tr:last-child td { border-bottom:none; }
-  .crm-row { display:table-row; cursor:pointer; transition:background 0.15s; }
+  .crm-table td.center { text-align:center; }
+  .crm-row { cursor:pointer; transition:background 0.15s; }
   .crm-row:hover td { background:#2c2a28; }
-  .crm-cell { display:table-cell; padding:14px; vertical-align:middle; }
-  .crm-cell.right { text-align:right; }
+  .crm-cell { }
   .crm-name { font-size:13px; color:var(--white); font-weight:700; margin-bottom:2px; }
   .crm-email { font-size:10px; color:var(--text-muted); }
   .crm-tipo-badge { display:inline-block; font-size:8px; letter-spacing:1px; text-transform:uppercase; padding:3px 8px; border-radius:20px; background:rgba(212,168,83,0.1); color:var(--gold); border:1px solid rgba(212,168,83,0.3); white-space:nowrap; }
@@ -5589,20 +5589,30 @@ function crmRenderizar() {
       </div>
       ${rows.length ? `<div class="crm-table-wrap">
       <table class="crm-table">
+        <colgroup>
+          <col style="width:22%">
+          <col style="width:10%">
+          <col style="width:20%">
+          <col style="width:12%">
+          <col style="width:8%">
+          <col style="width:14%">
+          <col style="width:10%">
+          <col style="width:4%">
+        </colgroup>
         <thead><tr>
-          <th>Cliente</th><th>Perfil</th><th>Contacto</th><th>Última renta</th>
-          <th class="right">Rentas</th><th class="right">Total generado</th><th>Estado</th><th></th>
+          <th>Cliente</th><th>Perfil</th><th>Contacto</th><th class="center">Última renta</th>
+          <th class="center">Rentas</th><th class="center">Total generado</th><th class="center">Estado</th><th></th>
         </tr></thead>
         <tbody>${rows.map(c => `
           <tr class="crm-row" onclick="crmAbrirDetalle('${c.id}')">
-            <td class="crm-cell"><div class="crm-name">${rentasCentroEsc(c.nombre)}</div>${c.origen?`<div class="crm-email">${rentasCentroEsc(c.origen)}</div>`:''}</td>
-            <td class="crm-cell">${tipoBadge(c)}</td>
-            <td class="crm-cell">${c.email?`<div class="crm-email">${rentasCentroEsc(c.email)}</div>`:''}${c.tel?`<div class="crm-email">${rentasCentroEsc(c.tel)}</div>`:''}</td>
-            <td class="crm-cell"><span class="crm-date">${fmtD(c.ultimaRenta)}</span></td>
-            <td class="crm-cell right"><span class="crm-num">${c.nRentas}</span></td>
-            <td class="crm-cell right"><span class="crm-money">${fmtM(c.total)}</span></td>
-            <td class="crm-cell">${estadoBadge(c)}</td>
-            <td class="crm-cell"><span class="crm-arr">›</span></td>
+            <td><div class="crm-name">${rentasCentroEsc(c.nombre)}</div>${c.origen?`<div class="crm-email">${rentasCentroEsc(c.origen)}</div>`:''}</td>
+            <td>${tipoBadge(c)}</td>
+            <td>${c.email?`<div class="crm-email">${rentasCentroEsc(c.email)}</div>`:''}${c.tel?`<div class="crm-email">${rentasCentroEsc(c.tel)}</div>`:''}</td>
+            <td class="center"><span class="crm-date">${fmtD(c.ultimaRenta)}</span></td>
+            <td class="center"><span class="crm-num">${c.nRentas}</span></td>
+            <td class="center"><span class="crm-money">${fmtM(c.total)}</span></td>
+            <td class="center">${estadoBadge(c)}</td>
+            <td class="center"><span class="crm-arr">›</span></td>
           </tr>`).join('')}
         </tbody>
       </table>
