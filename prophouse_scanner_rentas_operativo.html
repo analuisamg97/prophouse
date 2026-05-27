@@ -1619,13 +1619,13 @@
     </div>
 
     <div class="setup-label">Fecha de salida</div>
-    <input type="date" class="setup-input" id="nr-fecha-salida" onchange="nrCalcMonto()">
+    <input type="date" class="setup-input" id="nr-fecha-salida" onchange="propsActualizarDias('nr')">
 
     <div class="setup-label">Hora de salida</div>
     <input type="text" class="setup-input" id="nr-hora-salida" placeholder="3:00 PM">
 
     <div class="setup-label">Fecha de regreso</div>
-    <input type="date" class="setup-input" id="nr-fecha-regreso" onchange="nrCalcMonto()">
+    <input type="date" class="setup-input" id="nr-fecha-regreso" onchange="propsActualizarDias('nr')">
 
     <div class="setup-label">Hora de regreso</div>
     <input type="text" class="setup-input" id="nr-hora-regreso" placeholder="10:00 AM">
@@ -1633,14 +1633,28 @@
     <div id="nr-dias-info" style="font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:16px;display:none;"></div>
 
     <div class="setup-label">Props en la renta</div>
-    <div id="nr-props-list" style="margin-bottom:8px;"></div>
-    <div style="display:flex;gap:8px;margin-bottom:8px;">
-      <input type="text" class="search-input" id="nr-prop-codigo" placeholder="Código ej. RT-001" style="flex:1" onkeyup="if(event.key==='Enter') nrAgregarProp()">
-      <button class="btn-search" onclick="abrirScannerUniversal('nr-prop-codigo', nrAgregarProp)">📷</button>
-      <button class="btn-search" onclick="nrAgregarProp()">＋</button>
+    <div class="orden-props-header">
+      <div class="orden-prop-header-label">Prop</div>
+      <div class="orden-prop-header-label">Código</div>
+      <div class="orden-prop-header-label">Días</div>
+      <div class="orden-prop-header-label">$/día</div>
+      <div></div>
     </div>
-    <button onclick="propSelAbrir('nueva-renta')" style="width:100%;background:none;border:1px solid var(--border);border-radius:4px;color:var(--text-dim);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px;cursor:pointer;margin-bottom:8px;">🗂 Elegir del inventario</button>
-    <div id="nr-prop-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;min-height:16px;margin-bottom:12px;"></div>
+    <div id="nr-props-list" style="margin-bottom:8px;"></div>
+    <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;">
+      <button class="btn-orden-add" onclick="nrAddPropRow()">+ Manual</button>
+      <button class="btn-orden-add" onclick="nrAbrirScanner()" style="border-color:var(--gold);color:var(--gold)">📷 Escanear</button>
+      <button class="btn-orden-add" onclick="propSelAbrir('nueva-renta')" style="border-color:var(--blue);color:var(--blue)">🗂 Inventario</button>
+    </div>
+    <div id="nr-scanner-section" style="display:none;margin-top:14px;">
+      <div class="divider">busca por código</div>
+      <div class="search-row">
+        <input type="text" class="search-input" id="nr-prop-codigo" placeholder="RT-001" onkeyup="if(event.key==='Enter') nrScanCode()">
+        <button class="btn-search" onclick="abrirScannerUniversal('nr-prop-codigo', nrScanCode)">📷</button>
+        <button class="btn-search" onclick="nrScanCode()">→</button>
+      </div>
+      <div id="nr-prop-status" style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-top:8px;min-height:16px;"></div>
+    </div>
 
     <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border);margin-bottom:6px;">
@@ -1658,7 +1672,7 @@
     </div>
 
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-      <input type="checkbox" id="nr-iva" style="width:18px;height:18px;accent-color:var(--gold);" onchange="nrCalcMonto()">
+      <input type="checkbox" id="nr-iva" style="width:18px;height:18px;accent-color:var(--gold);" onchange="propsCalcTotales('nr')">
       <label for="nr-iva" style="font-size:11px;color:var(--white);letter-spacing:1px;">Aplicar IVA 16%</label>
     </div>
 
@@ -2250,11 +2264,11 @@
     <div class="orden-form-grid">
       <div class="orden-form-group">
         <div class="orden-label">Salida estimada</div>
-        <input type="date" class="orden-input" id="cot-fecha-salida">
+        <input type="date" class="orden-input" id="cot-fecha-salida" onchange="propsActualizarDias('cot')">
       </div>
       <div class="orden-form-group">
         <div class="orden-label">Regreso estimado</div>
-        <input type="date" class="orden-input" id="cot-fecha-regreso">
+        <input type="date" class="orden-input" id="cot-fecha-regreso" onchange="propsActualizarDias('cot')">
       </div>
     </div>
 
@@ -4978,8 +4992,7 @@ async function showNuevaRenta() {
   // Siempre mostrar form, ocultar éxito
   document.getElementById('nr-success').style.display = 'none';
   document.getElementById('nr-form').style.display = 'block';
-  nrProps = [];
-  nrRenderProps();
+  nrProps = []; nrPropRows = []; nrPropCounter[0] = 0; document.getElementById('nr-props-list').innerHTML = '';
 
   const hoy = new Date().toISOString().split('T')[0];
   document.getElementById('nr-fecha-salida').value = hoy;
@@ -5026,103 +5039,140 @@ function nrNuevoClienteToggle() {
 
 // Calcula días cobrados según la regla:
 // días reales = regreso - salida; cobrados = max(1, días - 1)
-function nrDiasCobrados() {
-  const s = document.getElementById('nr-fecha-salida').value;
-  const r = document.getElementById('nr-fecha-regreso').value;
+// ══════════════════════════════════════════════════════
+// JS: PROPS SHARED — funciones unificadas para nr y cot
+// ══════════════════════════════════════════════════════
+function propsCalcDias(salId, regId) {
+  const s = document.getElementById(salId)?.value;
+  const r = document.getElementById(regId)?.value;
   if (!s || !r) return 1;
   const diff = Math.round((new Date(r) - new Date(s)) / (1000*60*60*24));
-  return Math.max(1, diff - 1);
+  return Math.max(1, diff <= 0 ? 1 : diff - 1);
 }
 
-function nrCalcMonto() {
-  const dias = nrDiasCobrados();
-  const s = document.getElementById('nr-fecha-salida').value;
-  const r = document.getElementById('nr-fecha-regreso').value;
+function propsAddRow(listId, prefix, counter, rows, nombre='', codigo='', precio='', dias=null, airtableId='') {
+  const id = ++counter[0];
+  const d = dias !== null ? dias : propsCalcDias(prefix === 'nr' ? 'nr-fecha-salida' : 'cot-fecha-salida', prefix === 'nr' ? 'nr-fecha-regreso' : 'cot-fecha-regreso');
+  const row = document.createElement('div');
+  row.className = 'orden-prop-row';
+  row.id = `${prefix}-prop-row-${id}`;
+  row.dataset.airtableId = airtableId;
+  row.innerHTML = `
+    <input type="text" class="orden-input" id="${prefix}-p-nombre-${id}" placeholder="Prop" value="${nombre}" style="font-size:11px;padding:7px 8px;">
+    <input type="text" class="orden-input" id="${prefix}-p-codigo-${id}" placeholder="RT-001" value="${codigo}" style="font-size:11px;padding:7px 8px;" readonly>
+    <input type="number" class="orden-input" id="${prefix}-p-dias-${id}" value="${d}" min="1" oninput="propsCalcTotales('${prefix}')" style="font-size:11px;padding:7px 8px;">
+    <input type="number" class="orden-input" id="${prefix}-p-precio-${id}" placeholder="0" value="${precio}" oninput="propsCalcTotales('${prefix}')" style="font-size:11px;padding:7px 8px;">
+    <button class="btn-orden-remove" onclick="propsRemoveRow('${prefix}',${id})">✕</button>
+    <div id="${prefix}-p-sub-${id}" style="grid-column:1/-1;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);padding:2px 4px 4px;"></div>`;
+  document.getElementById(listId).appendChild(row);
+  rows.push(id);
+  if (precio) propsCalcTotales(prefix);
+  return id;
+}
 
-  const infoEl = document.getElementById('nr-dias-info');
-  if (s && r && s !== r) {
-    const diff = Math.round((new Date(r) - new Date(s)) / (1000*60*60*24));
-    infoEl.style.display = 'block';
-    infoEl.textContent = `${diff} día${diff>1?'s':''} calendario → se cobran ${dias} día${dias>1?'s':''}`;
-  } else if (s && r && s === r) {
-    infoEl.style.display = 'block';
-    infoEl.textContent = `Mismo día → se cobra 1 día (mínimo)`;
-  } else {
-    infoEl.style.display = 'none';
-  }
+function propsRemoveRow(prefix, id) {
+  document.getElementById(`${prefix}-prop-row-${id}`)?.remove();
+  if (prefix === 'nr') nrPropRows = nrPropRows.filter(r => r !== id);
+  if (prefix === 'cot') cotPropRows = cotPropRows.filter(r => r !== id);
+  propsCalcTotales(prefix);
+}
 
-  const subtotal = nrProps.reduce((sum, p) => sum + (p.rentaDia * dias), 0);
-  const ivaAplicado = document.getElementById('nr-iva')?.checked || false;
-  const iva = ivaAplicado ? subtotal * 0.16 : 0;
+function propsCalcTotales(prefix) {
+  const rows = prefix === 'nr' ? nrPropRows : cotPropRows;
+  let subtotal = 0;
+  rows.forEach(id => {
+    const dias = parseFloat(document.getElementById(`${prefix}-p-dias-${id}`)?.value) || 0;
+    const precio = parseFloat(document.getElementById(`${prefix}-p-precio-${id}`)?.value) || 0;
+    const sub = dias * precio;
+    subtotal += sub;
+    const subEl = document.getElementById(`${prefix}-p-sub-${id}`);
+    if (subEl) subEl.textContent = sub > 0 ? `${dias} día${dias!==1?'s':''} × $${precio.toLocaleString('es-MX')}/día = $${sub.toLocaleString('es-MX',{minimumFractionDigits:2})} MXN` : '';
+  });
+  const ivaOn = document.getElementById(`${prefix}-iva`)?.checked || false;
+  const iva = ivaOn ? subtotal * 0.16 : 0;
   const total = subtotal + iva;
-  const fmtM = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
-
-  document.getElementById('nr-dias-cobrados').textContent = `${dias} día${dias>1?'s':''}`;
-  const subtotalEl = document.getElementById('nr-subtotal-calc'); if(subtotalEl) subtotalEl.textContent = fmtM(subtotal);
-  const ivaRow = document.getElementById('nr-iva-row');
-  if (ivaRow) ivaRow.style.display = ivaAplicado ? 'flex' : 'none';
-  const ivaCalc = document.getElementById('nr-iva-calc');
-  if (ivaCalc) ivaCalc.textContent = fmtM(iva);
-  document.getElementById('nr-monto-calc').textContent = fmtM(total);
-  return { subtotal, iva, total, ivaAplicado };
+  const fmt = n => '$' + n.toLocaleString('es-MX', {minimumFractionDigits:2}) + ' MXN';
+  if (prefix === 'nr') {
+    const dias = propsCalcDias('nr-fecha-salida','nr-fecha-regreso');
+    document.getElementById('nr-dias-cobrados').textContent = `${dias} día${dias>1?'s':''}`;
+    const subEl = document.getElementById('nr-subtotal-calc'); if(subEl) subEl.textContent = fmt(subtotal);
+    const ivaRow = document.getElementById('nr-iva-row'); if(ivaRow) ivaRow.style.display = ivaOn?'flex':'none';
+    const ivaCalc = document.getElementById('nr-iva-calc'); if(ivaCalc) ivaCalc.textContent = fmt(iva);
+    document.getElementById('nr-monto-calc').textContent = fmt(total);
+  } else {
+    document.getElementById('cot-t-subtotal').textContent = fmt(subtotal);
+    document.getElementById('cot-t-dep-sug').textContent = fmt(total * 0.5);
+    document.getElementById('cot-t-iva').textContent = fmt(iva);
+    document.getElementById('cot-t-total').textContent = fmt(total);
+    document.getElementById('cot-iva-row').style.display = ivaOn ? 'flex' : 'none';
+  }
+  return { subtotal, iva, total, ivaAplicado: ivaOn };
 }
 
-async function nrAgregarProp() {
-  const codigo = document.getElementById('nr-prop-codigo').value.trim().toUpperCase();
-  if (!codigo) return;
-
-  // Evitar duplicados
-  if (nrProps.find(p => p.codigo === codigo)) {
-    document.getElementById('nr-prop-status').textContent = `${codigo} ya está en la lista`;
-    return;
+function propsActualizarDias(prefix) {
+  const salId = prefix === 'nr' ? 'nr-fecha-salida' : 'cot-fecha-salida';
+  const regId = prefix === 'nr' ? 'nr-fecha-regreso' : 'cot-fecha-regreso';
+  const dias = propsCalcDias(salId, regId);
+  const rows = prefix === 'nr' ? nrPropRows : cotPropRows;
+  rows.forEach(id => {
+    const el = document.getElementById(`${prefix}-p-dias-${id}`);
+    if (el) el.value = dias;
+  });
+  propsCalcTotales(prefix);
+  if (prefix === 'nr') {
+    const s = document.getElementById('nr-fecha-salida').value;
+    const r = document.getElementById('nr-fecha-regreso').value;
+    const infoEl = document.getElementById('nr-dias-info');
+    if (s && r && infoEl) {
+      const diff = Math.round((new Date(r) - new Date(s)) / (1000*60*60*24));
+      infoEl.style.display = 'block';
+      infoEl.textContent = s === r ? 'Mismo día → se cobra 1 día (mínimo)' : `${diff} día${diff>1?'s':''} calendario → se cobran ${dias} día${dias>1?'s':''}`;
+    } else if (infoEl) infoEl.style.display = 'none';
   }
+}
 
-  document.getElementById('nr-prop-status').textContent = `Buscando ${codigo}…`;
+// ── NR PROP STATE ──────────────────────────────────────
+let nrPropRows = [];
+let nrPropCounter = [0]; // array so propsAddRow can mutate it
 
+function nrAddPropRow(nombre='', codigo='', precio='', airtableId='') {
+  propsAddRow('nr-props-list', 'nr', nrPropCounter, nrPropRows, nombre, codigo, precio, null, airtableId);
+}
+
+function nrAbrirScanner() {
+  const sec = document.getElementById('nr-scanner-section');
+  sec.style.display = sec.style.display === 'none' ? 'block' : 'none';
+}
+
+async function nrScanCode() {
+  const code = document.getElementById('nr-prop-codigo').value.trim().toUpperCase();
+  if (!code) return;
+  document.getElementById('nr-prop-codigo').value = '';
+  document.getElementById('nr-prop-status').textContent = `Buscando ${code}…`;
   try {
-    const prop = await findPropByCode(codigo);
-
-    if (!prop) {
-      document.getElementById('nr-prop-status').textContent = `No se encontró "${codigo}" en inventario`;
-      return;
-    }
-
-    const nombre = prop.fields['Nombre del prop'] || codigo;
-    const rentaDia = prop.fields['Renta x 1 día'] || 0;
-
-    nrProps.push({ nombre, codigo, rentaDia, airtableId: prop.id });
-    document.getElementById('nr-prop-codigo').value = '';
+    const prop = await findPropByCode(code);
+    if (!prop) { document.getElementById('nr-prop-status').textContent = `No encontrado: ${code}`; return; }
+    const nombre = prop.fields['Nombre del prop'] || code;
+    const precio = prop.fields['Renta x 1 día'] || 0;
+    nrAddPropRow(nombre, code, precio, prop.id);
     document.getElementById('nr-prop-status').textContent = `✓ ${nombre} agregado`;
-    nrRenderProps();
-    nrCalcMonto();
     setTimeout(() => { document.getElementById('nr-prop-status').textContent = ''; }, 2000);
   } catch(e) {
-    console.error('Error buscando prop:', e);
     document.getElementById('nr-prop-status').textContent = `Error: ${e.message}`;
   }
 }
 
-function nrRemoveProp(codigo) {
-  nrProps = nrProps.filter(p => p.codigo !== codigo);
-  nrRenderProps();
-  nrCalcMonto();
+function nrDiasCobrados() {
+  return propsCalcDias('nr-fecha-salida','nr-fecha-regreso');
 }
 
-function nrRenderProps() {
-  const list = document.getElementById('nr-props-list');
-  if (nrProps.length === 0) {
-    list.innerHTML = '<div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-bottom:8px;">Sin props agregados aún</div>';
-    return;
-  }
-  list.innerHTML = nrProps.map(p => `
-    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-card);border:1px solid var(--border);border-radius:4px;padding:8px 12px;margin-bottom:6px;">
-      <div>
-        <div style="font-size:11px;color:var(--white);">${p.nombre}</div>
-        <div style="font-size:9px;color:var(--gold);letter-spacing:1px;">${p.codigo} · $${p.rentaDia.toLocaleString()}/día</div>
-      </div>
-      <button onclick="nrRemoveProp('${p.codigo}')" style="background:none;border:none;color:var(--text-muted);font-size:14px;cursor:pointer;padding:0 4px;">✕</button>
-    </div>`).join('');
+function nrCalcMonto() {
+  propsActualizarDias('nr');
+  return propsCalcTotales('nr');
 }
+
+// nrAgregarProp kept as alias for scanner compat
+async function nrAgregarProp() { await nrScanCode(); }
 
 async function crearNuevaRenta() {
   const clienteSelect = document.getElementById('nr-cliente-select').value; // hidden field set by autocomplete
@@ -5140,7 +5190,11 @@ async function crearNuevaRenta() {
   const diasCobrados = nrDiasCobrados();
   const calcResult = nrCalcMonto() || {};
   const { subtotal = 0, iva = 0, total = 0, ivaAplicado = false } = calcResult;
-  const propsIds = nrProps.map(p => p.airtableId).filter(Boolean);
+  // Read props from shared DOM rows
+  const propsIds = nrPropRows.map(id => {
+    const row = document.getElementById('nr-prop-row-' + id);
+    return row?.dataset?.airtableId || null;
+  }).filter(Boolean);
 
   if (deposito > total) { showToast('El pago inicial supera el total de la renta', true); return; }
 
@@ -6991,7 +7045,7 @@ async function galeríaAbrirDetalle(recordId) {
 // COTIZACIONES
 // ═══════════════════════════════════════════════════════
 let cotPropRows = [];
-let cotPropCounter = 0;
+let cotPropCounter = [0];
 
 // ══════════════════════════════════════════════════════
 // JS: AUTOCOMPLETE DE CLIENTE — reutilizable en toda la app
@@ -7071,7 +7125,7 @@ function showCotizacionView() {
   showView('cotizacion-view');
   // Limpiar form
   cotPropRows = [];
-  cotPropCounter = 0;
+  cotPropCounter[0] = 0;
   document.getElementById('cot-props-list').innerHTML = '';
   document.getElementById('cot-cliente-nombre').value = '';
   document.getElementById('cot-cliente-tel').value = '';
@@ -7095,49 +7149,13 @@ function showCotizacionView() {
   cotCalcTotales();
 }
 
-function cotAddPropRow(nombre = '', codigo = '', precio = '') {
-  const id = ++cotPropCounter;
-  const row = document.createElement('div');
-  row.className = 'orden-prop-row';
-  row.id = 'cot-prop-row-' + id;
-  row.innerHTML = `
-    <input type="text" class="orden-input" id="cot-p-nombre-${id}" placeholder="Prop" value="${nombre}" style="font-size:11px;padding:7px 8px;">
-    <input type="text" class="orden-input" id="cot-p-codigo-${id}" placeholder="RT-001" value="${codigo}" style="font-size:11px;padding:7px 8px;" readonly>
-    <input type="number" class="orden-input" id="cot-p-dias-${id}" value="1" min="1" oninput="cotCalcTotales()" style="font-size:11px;padding:7px 8px;">
-    <input type="number" class="orden-input" id="cot-p-precio-${id}" placeholder="0" value="${precio}" oninput="cotCalcTotales()" style="font-size:11px;padding:7px 8px;">
-    <button class="btn-orden-remove" onclick="cotRemovePropRow(${id})">✕</button>
-    <div id="cot-p-sub-${id}" style="grid-column:1/-1;text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--gold);padding:2px 4px 4px;"></div>`;
-  document.getElementById('cot-props-list').appendChild(row);
-  cotPropRows.push(id);
-  if (precio) cotCalcTotales();
+// cotización uses shared system — kept as aliases
+function cotAddPropRow(nombre='', codigo='', precio='') {
+  propsAddRow('cot-props-list', 'cot', cotPropCounter, cotPropRows, nombre, codigo, precio);
 }
-
-function cotRemovePropRow(id) {
-  document.getElementById('cot-prop-row-' + id)?.remove();
-  cotPropRows = cotPropRows.filter(r => r !== id);
-  cotCalcTotales();
-}
-
-function cotCalcTotales() {
-  let subtotal = 0;
-  cotPropRows.forEach(id => {
-    const dias = parseFloat(document.getElementById('cot-p-dias-' + id)?.value) || 0;
-    const precio = parseFloat(document.getElementById('cot-p-precio-' + id)?.value) || 0;
-    const sub = dias * precio;
-    subtotal += sub;
-    const subEl = document.getElementById('cot-p-sub-' + id);
-    if (subEl) subEl.textContent = sub > 0 ? `${dias} día${dias !== 1 ? 's' : ''} × $${precio.toLocaleString('es-MX')} = $${sub.toLocaleString('es-MX', {minimumFractionDigits:2})} MXN` : '';
-  });
-  const ivaOn = document.getElementById('cot-iva')?.checked;
-  const iva = ivaOn ? subtotal * 0.16 : 0;
-  const total = subtotal + iva;
-  const fmt = n => '$' + n.toLocaleString('es-MX', { minimumFractionDigits: 2 }) + ' MXN';
-  document.getElementById('cot-t-subtotal').textContent = fmt(subtotal);
-  document.getElementById('cot-t-dep-sug').textContent = fmt(total * 0.5);
-  document.getElementById('cot-t-iva').textContent = fmt(iva);
-  document.getElementById('cot-t-total').textContent = fmt(total);
-  document.getElementById('cot-iva-row').style.display = ivaOn ? 'flex' : 'none';
-}
+function cotRemovePropRow(id) { propsRemoveRow('cot', id); }
+function cotActualizarDias() { propsActualizarDias('cot'); }
+function cotCalcTotales() { propsCalcTotales('cot'); }
 
 function cotAbrirScanner() {
   const sec = document.getElementById('cot-scanner-section');
@@ -7460,7 +7478,12 @@ async function propSelAbrir(caller) {
 // Devuelve los props ya en el form (para marcarlos como seleccionados al abrir)
 function propSelGetYaAgregados() {
   if (_propSelCaller === 'nueva-renta') {
-    return nrProps.map(p => ({ id: p.airtableId, nombre: p.nombre, codigo: p.codigo, rentaDia: p.rentaDia }));
+    return nrPropRows.map(id => ({
+    id: null,
+    nombre: document.getElementById('nr-p-nombre-' + id)?.value || '',
+    codigo: document.getElementById('nr-p-codigo-' + id)?.value || '',
+    rentaDia: parseFloat(document.getElementById('nr-p-precio-' + id)?.value) || 0
+  }));
   }
   if (_propSelCaller === 'orden') {
     return orPropRows.map(id => ({
@@ -7589,12 +7612,12 @@ function propSelConfirmar() {
 
   if (_propSelCaller === 'nueva-renta') {
     nuevos.forEach(p => {
-      if (!nrProps.find(x => x.codigo === p.codigo)) {
-        nrProps.push({ nombre: p.nombre, codigo: p.codigo, rentaDia: p.rentaDia, airtableId: p.id });
-      }
+      const yaExiste = nrPropRows.some(id =>
+        document.getElementById('nr-p-codigo-' + id)?.value === p.codigo
+      );
+      if (!yaExiste) nrAddPropRow(p.nombre, p.codigo, p.rentaDia, p.id);
     });
-    nrRenderProps();
-    nrCalcMonto();
+    propsCalcTotales('nr');
     showToast(`✓ ${nuevos.length} prop${nuevos.length !== 1 ? 's' : ''} agregado${nuevos.length !== 1 ? 's' : ''}`);
   } else if (_propSelCaller === 'orden') {
     nuevos.forEach(p => {
