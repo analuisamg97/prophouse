@@ -237,6 +237,20 @@
   .tl-dot.in { background:var(--green); }
   .tl-empty { padding:20px 14px; text-align:center; font-size:11px; color:#444038; }
   .tl-arr { font-size:14px; color:#444038; }
+  /* Grouped timeline */
+  .tl-group { border:1px solid rgba(212,168,83,0.15); border-radius:8px; margin:8px 12px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; }
+  .tl-group:hover { border-color:rgba(212,168,83,0.35); }
+  .tl-group-hdr { background:rgba(212,168,83,0.05); padding:9px 12px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(212,168,83,0.1); }
+  .tl-group-foto { width:36px; height:36px; border-radius:5px; object-fit:cover; background:var(--bg-deep); border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#444038; font-size:14px; }
+  .tl-group-foto img { width:100%; height:100%; object-fit:cover; border-radius:5px; display:block; }
+  .tl-group-meta { flex:1; min-width:0; }
+  .tl-group-id { font-size:10px; color:var(--gold); font-family:'DM Mono',monospace; letter-spacing:1px; }
+  .tl-group-client { font-size:12px; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tl-group-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .tl-group-row:last-child { border-bottom:none; }
+  .tl-group-date { min-width:48px; text-align:center; flex-shrink:0; }
+  .tl-group-day { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
+  .tl-group-num { font-family:'Playfair Display',serif; font-size:16px; color:var(--white); line-height:1.1; }
 
   /* ALERTAS */
   .al-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); gap:10px; }
@@ -2940,8 +2954,13 @@ async function cargarDashboard() {
     const fechaEl = document.getElementById('dash-fecha-hoy');
     if (fechaEl) fechaEl.textContent = `${dias[ahora.getDay()]} ${ahora.getDate()} ${meses[ahora.getMonth()]} ${ahora.getFullYear()}`;
 
+    const nActiva = rentasConPagos.filter(r => r.fields['Estado de la renta'] === 'Activa').length;
+    const nEnRenta = rentasConPagos.filter(r => r.fields['Estado de la renta'] === 'En renta').length;
     document.getElementById('ds-rentas').textContent = rentasActivas.length;
-    document.getElementById('ds-rentas-sub').textContent = `${rentasActivas.length === 1 ? '1 renta activa' : rentasActivas.length + ' rentas activas'}`;
+    const subParts = [];
+    if (nActiva > 0) subParts.push(`${nActiva} activa${nActiva !== 1 ? 's' : ''}`);
+    if (nEnRenta > 0) subParts.push(`${nEnRenta} en renta`);
+    document.getElementById('ds-rentas-sub').textContent = subParts.length ? subParts.join(' · ') : 'sin rentas abiertas';
     document.getElementById('ds-ingresos').textContent = fmtM(ingresosMes);
     document.getElementById('ds-mes').textContent = `${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][ahora.getMonth()]} ${ahora.getFullYear()}`;
     document.getElementById('ds-props').textContent = propsDisp;
@@ -2971,37 +2990,54 @@ async function cargarDashboard() {
       const _badgeTxt = esPagado ? 'Pagado' : estadoPago === 'Pago parcial' ? `Parcial · $${Number(saldoReal).toLocaleString('es-MX')} rest.` : 'Pendiente';
       const badgeHtml = `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;" class="${_badgeCls}">${_badgeTxt}</span>`;
 
-      if (f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']))) {
+      const tieneSalida = f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']));
+      const tieneRegreso = f['Fecha de regreso'] && inRange(parseDate(f['Fecha de regreso']));
+      if (!tieneSalida && !tieneRegreso) return;
+
+      // Build rows for salida and/or regreso
+      let rows = '';
+      let fechaMin = null;
+      if (tieneSalida) {
         const fechaD = parseDate(f['Fecha de salida']);
-        movimientos.push({
-          fecha: f['Fecha de salida'], fechaD,
-          html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
-            ${fotoHtml}
-            <div style="text-align:center"><div class="tl-day">${rentasCentroEsc(dayLabel(f['Fecha de salida']))}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
-            <div><div class="tl-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div><div class="tl-client">${rentasCentroEsc(clientName(f))}</div>
-              <div class="tl-sub"><span class="tl-dot out"></span>Salida · ${rentasCentroEsc(f['Hora de salida'] || 'Hora pendiente')} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
-          </div>`
-        });
+        if (!fechaMin || fechaD < fechaMin) fechaMin = fechaD;
+        rows += `<div class="tl-group-row">
+          <div class="tl-group-date"><div class="tl-group-day">${rentasCentroEsc(dayLabel(f['Fecha de salida']))}</div><div class="tl-group-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+          <div class="tl-sub" style="margin:0;"><span class="tl-dot out"></span>Salida · ${rentasCentroEsc(f['Hora de salida'] || 'Por confirmar')}</div>
+        </div>`;
       }
-      if (f['Fecha de regreso'] && inRange(parseDate(f['Fecha de regreso']))) {
+      if (tieneRegreso) {
         const fechaD = parseDate(f['Fecha de regreso']);
-        movimientos.push({
-          fecha: f['Fecha de regreso'], fechaD,
-          html: `<div class="tl-row" onclick="rentasVerDetalle('${r.id}')">
-            ${fotoHtml}
-            <div style="text-align:center"><div class="tl-day">${rentasCentroEsc(dayLabel(f['Fecha de regreso']))}</div><div class="tl-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
-            <div><div class="tl-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div><div class="tl-client">${rentasCentroEsc(clientName(f))}</div>
-              <div class="tl-sub"><span class="tl-dot in"></span>Regreso · ${rentasCentroEsc(f['Hora de regreso'] || 'Hora pendiente')} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div></div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">${badgeHtml}<span class="tl-arr">›</span></div>
-          </div>`
-        });
+        if (!fechaMin || fechaD < fechaMin) fechaMin = fechaD;
+        rows += `<div class="tl-group-row">
+          <div class="tl-group-date"><div class="tl-group-day">${rentasCentroEsc(dayLabel(f['Fecha de regreso']))}</div><div class="tl-group-num">${fechaD ? fechaD.getDate() : '—'}</div></div>
+          <div class="tl-sub" style="margin:0;"><span class="tl-dot in"></span>Regreso · ${rentasCentroEsc(f['Hora de regreso'] || 'Por confirmar')}</div>
+        </div>`;
       }
+
+      const fotoEl = fotoUrl
+        ? `<div class="tl-group-foto"><img src="${fotoUrl}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
+        : `<div class="tl-group-foto"><i class="ti ti-camera-off" aria-hidden="true"></i></div>`;
+
+      movimientos.push({
+        fecha: f['Fecha de salida'] || f['Fecha de regreso'],
+        fechaD: fechaMin,
+        html: `<div class="tl-group" onclick="rentasVerDetalle('${r.id}')">
+          <div class="tl-group-hdr">
+            ${fotoEl}
+            <div class="tl-group-meta">
+              <div class="tl-group-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
+              <div class="tl-group-client">${rentasCentroEsc(clientName(f))} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">${badgeHtml}<span class="tl-arr">›</span></div>
+          </div>
+          ${rows}
+        </div>`
+      });
     });
     movimientos.sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
     const timelineEl = document.getElementById('ds-timeline-list');
     if (timelineEl) timelineEl.innerHTML = movimientos.length
-      ? movimientos.slice(0, 5).map(m => m.html).join('') + (movimientos.length === 0 ? '' : '')
+      ? movimientos.slice(0, 5).map(m => m.html).join('')
       : '<div class="tl-empty">Sin movimientos esta semana</div>';
 
     // ── ALERTAS con íconos y hover selectivo ─────────────────────────────────
@@ -3011,7 +3047,11 @@ async function cargarDashboard() {
       { label:'Props en reparación', sub:'Piezas fuera de rotación', value:propsRep, icoClass:'gold', ico:'ti-tool', onclick:`navGo('inventario')` },
       { label:'Rentas sin cerrar', sub:'Regresos atrasados por confirmar', value:rentasSinCerrar.length, icoClass:'red', ico:'ti-alert-circle', onclick:`navGo('rentas')` },
     ];
-    document.getElementById('ds-alertas-list').innerHTML = alertaDefs.map(a => {
+    document.getElementById('ds-alertas-list').innerHTML = alertaDefs.filter(a => {
+      // Ocultar alertas con value 0 que no aportan info ('Rentas sin cerrar' vacío)
+      if (a.label === 'Rentas sin cerrar' && a.value === 0) return false;
+      return true;
+    }).map(a => {
       const clickable = a.value > 0;
       return `<div class="al-row ${clickable ? 'clickable' : ''}" ${clickable ? `onclick="${a.onclick}"` : ''}>
         <div class="al-ico ${clickable ? a.icoClass : 'dim'}"><i class="ti ${a.ico}" aria-hidden="true"></i></div>
