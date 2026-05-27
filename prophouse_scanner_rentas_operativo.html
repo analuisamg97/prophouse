@@ -238,19 +238,22 @@
   .tl-empty { padding:20px 14px; text-align:center; font-size:11px; color:#444038; }
   .tl-arr { font-size:14px; color:#444038; }
   /* Grouped timeline */
-  .tl-group { border:1px solid rgba(212,168,83,0.15); border-radius:8px; margin:8px 12px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; }
-  .tl-group:hover { border-color:rgba(212,168,83,0.35); }
-  .tl-group-hdr { background:rgba(212,168,83,0.05); padding:9px 12px; display:flex; align-items:center; gap:10px; border-bottom:1px solid rgba(212,168,83,0.1); }
-  .tl-group-foto { width:36px; height:36px; border-radius:5px; object-fit:cover; background:var(--bg-deep); border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#444038; font-size:14px; }
+  .tl-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:4px 12px 8px; }
+  .tl-group { border:1px solid rgba(212,168,83,0.15); border-radius:8px; overflow:hidden; cursor:pointer; transition:border-color 0.15s; }
+  .tl-group:hover { border-color:rgba(212,168,83,0.4); }
+  .tl-group-hdr { background:rgba(212,168,83,0.05); padding:9px 10px; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(212,168,83,0.08); }
+  .tl-group-foto { width:32px; height:32px; border-radius:5px; background:var(--bg-deep); border:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; color:#444038; font-size:13px; overflow:hidden; }
   .tl-group-foto img { width:100%; height:100%; object-fit:cover; border-radius:5px; display:block; }
   .tl-group-meta { flex:1; min-width:0; }
-  .tl-group-id { font-size:10px; color:var(--gold); font-family:'DM Mono',monospace; letter-spacing:1px; }
+  .tl-group-id { font-size:9px; color:var(--gold); font-family:'DM Mono',monospace; letter-spacing:1px; }
   .tl-group-client { font-size:12px; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .tl-group-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.04); }
+  .tl-group-badges { display:flex; gap:4px; flex-wrap:wrap; margin-top:3px; }
+  .tl-group-badge { font-size:8px; letter-spacing:1px; padding:2px 7px; border-radius:20px; font-weight:700; font-family:'DM Mono',monospace; white-space:nowrap; }
+  .tl-group-row { display:flex; align-items:center; gap:8px; padding:7px 10px; border-bottom:1px solid rgba(255,255,255,0.04); }
   .tl-group-row:last-child { border-bottom:none; }
-  .tl-group-date { min-width:48px; text-align:center; flex-shrink:0; }
-  .tl-group-day { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
-  .tl-group-num { font-family:'Playfair Display',serif; font-size:16px; color:var(--white); line-height:1.1; }
+  .tl-group-date { min-width:40px; text-align:center; flex-shrink:0; }
+  .tl-group-day { font-family:'DM Mono',monospace; font-size:7px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
+  .tl-group-num { font-family:'Playfair Display',serif; font-size:15px; color:var(--white); line-height:1.1; }
 
   /* ALERTAS */
   .al-row { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04); gap:10px; }
@@ -2898,8 +2901,9 @@ async function cargarDashboard() {
     const ahora = new Date();
     const mesActual = ahora.toISOString().slice(0, 7);
     const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-    const en7 = new Date(hoy); en7.setDate(hoy.getDate() + 7);
+    const en7 = new Date(hoy); en7.setDate(hoy.getDate() + 10);
     const en3 = new Date(hoy); en3.setDate(hoy.getDate() + 3);
+    const enAtras = new Date(hoy); enAtras.setDate(hoy.getDate() - 10);
     const fmtM = n => '$' + Number(n || 0).toLocaleString('es-MX');
     const parseDate = fecha => {
       if (!fecha) return null;
@@ -2990,8 +2994,12 @@ async function cargarDashboard() {
       const _badgeTxt = esPagado ? 'Pagado' : estadoPago === 'Pago parcial' ? `Parcial · $${Number(saldoReal).toLocaleString('es-MX')} rest.` : 'Pendiente';
       const badgeHtml = `<span style="display:inline-flex;align-items:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:4px 9px;border-radius:20px;font-weight:700;" class="${_badgeCls}">${_badgeTxt}</span>`;
 
-      const tieneSalida = f['Fecha de salida'] && inRange(parseDate(f['Fecha de salida']));
-      const tieneRegreso = f['Fecha de regreso'] && inRange(parseDate(f['Fecha de regreso']));
+      const estadoR = f['Estado de la renta'] || '';
+      const esActiva = estadoR === 'Activa' || estadoR === 'En renta';
+      // Mostrar salida si: fecha futura dentro del rango, o renta activa con salida reciente
+      const tieneSalida = f['Fecha de salida'] && (inRange(parseDate(f['Fecha de salida'])) || (esActiva && estadoR === 'Activa'));
+      // Mostrar regreso si: fecha futura dentro del rango, o En renta (props ya salieron, esperando regreso)
+      const tieneRegreso = f['Fecha de regreso'] && (inRange(parseDate(f['Fecha de regreso'])) || estadoR === 'En renta');
       if (!tieneSalida && !tieneRegreso) return;
 
       // Build rows for salida and/or regreso
@@ -3018,6 +3026,12 @@ async function cargarDashboard() {
         ? `<div class="tl-group-foto"><img src="${fotoUrl}" alt="" loading="lazy" onerror="this.style.display='none'"></div>`
         : `<div class="tl-group-foto"><i class="ti ti-camera-off" aria-hidden="true"></i></div>`;
 
+      // Estado de renta badge
+      const estadoRenta = f['Estado de la renta'] || '';
+      const estadoBadgeCls = estadoRenta === 'En renta' ? 'background:rgba(52,152,219,0.1);color:#3498db;border:1px solid rgba(52,152,219,0.3);'
+        : estadoRenta === 'Activa' ? 'background:rgba(76,175,80,0.1);color:#4caf50;border:1px solid rgba(76,175,80,0.3);'
+        : 'background:rgba(136,128,112,0.1);color:var(--text-dim);border:1px solid rgba(136,128,112,0.2);';
+
       movimientos.push({
         fecha: f['Fecha de salida'] || f['Fecha de regreso'],
         fechaD: fechaMin,
@@ -3026,9 +3040,12 @@ async function cargarDashboard() {
             ${fotoEl}
             <div class="tl-group-meta">
               <div class="tl-group-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
-              <div class="tl-group-client">${rentasCentroEsc(clientName(f))} · ${propsIds.length} prop${propsIds.length !== 1 ? 's' : ''}</div>
+              <div class="tl-group-client">${rentasCentroEsc(clientName(f))}</div>
+              <div class="tl-group-badges">
+                <span class="tl-group-badge" style="${estadoBadgeCls}">${rentasCentroEsc(estadoRenta)}</span>
+                <span class="tl-group-badge ${_badgeCls}">${_badgeTxt}</span>
+              </div>
             </div>
-            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">${badgeHtml}<span class="tl-arr">›</span></div>
           </div>
           ${rows}
         </div>`
@@ -3037,7 +3054,7 @@ async function cargarDashboard() {
     movimientos.sort((a, b) => String(a.fecha).localeCompare(String(b.fecha)));
     const timelineEl = document.getElementById('ds-timeline-list');
     if (timelineEl) timelineEl.innerHTML = movimientos.length
-      ? movimientos.slice(0, 5).map(m => m.html).join('')
+      ? `<div class="tl-grid">${movimientos.slice(0, 6).map(m => m.html).join('')}</div>`
       : '<div class="tl-empty">Sin movimientos esta semana</div>';
 
     // ── ALERTAS con íconos y hover selectivo ─────────────────────────────────
