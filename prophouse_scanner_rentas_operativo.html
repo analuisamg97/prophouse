@@ -3588,7 +3588,10 @@ function rentasCentroEstadoBadge(f) {
   if (rentasCentroIsCerrada(f)) return { label:'Cerrada', cls:'cerrada' };
   if (rentasCentroIsEnRenta(f)) return { label:'En renta', cls:'enrenta' };
   const diasRegreso = rentasCentroDaysFromToday(f[F.FECHA_REGRESO]);
-  if (rentasCentroIsActiva(f) && diasRegreso !== null && diasRegreso <= 3) return { label:'Activa · Próximo regreso', cls:'regresar' };
+  const diasSalida = rentasCentroDaysFromToday(f[F.FECHA_SALIDA]);
+  const salidaYaOcurrio = diasSalida !== null && diasSalida <= 0;
+  if (rentasCentroIsActiva(f) && salidaYaOcurrio && diasRegreso !== null && diasRegreso <= 3) return { label:'Activa · Próximo regreso', cls:'regresar' };
+  if (rentasCentroIsActiva(f) && diasSalida !== null && diasSalida <= 3 && diasSalida >= 0) return { label:'Activa · Próxima salida', cls:'regresar' };
   if (rentasCentroIsActiva(f)) return { label:'Activa', cls:'activa' };
   const estado = f[F.ESTADO_RENTA] || 'Pendiente';
   return { label:estado, cls:String(estado).toLowerCase().includes('pend') ? 'cobrar' : 'cerrada' };
