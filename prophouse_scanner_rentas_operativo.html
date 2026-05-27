@@ -851,6 +851,7 @@
   .rentas-money { color:var(--white); font-family:'DM Mono',monospace; font-size:11px; white-space:nowrap; }
   .rentas-badge { display:inline-flex; align-items:center; justify-content:center; border-radius:20px; padding:4px 8px; font-size:8px; letter-spacing:1px; text-transform:uppercase; font-family:'DM Mono',monospace; border:1px solid var(--border); white-space:nowrap; }
   .rentas-badge.activa { background:rgba(76,175,80,0.12); color:var(--green); border-color:rgba(76,175,80,0.45); }
+  .rentas-badge.enrenta { background:rgba(52,152,219,0.12); color:#3498db; border-color:rgba(52,152,219,0.45); }
   .rentas-badge.regresar { background:rgba(212,168,83,0.13); color:var(--gold); border-color:rgba(212,168,83,0.5); }
   .rentas-badge.cobrar { background:rgba(231,76,60,0.12); color:var(--red); border-color:rgba(231,76,60,0.45); }
   .rentas-badge.cotizacion { background:rgba(154,120,48,0.12); color:var(--white-dim); border-color:rgba(212,168,83,0.28); }
@@ -3296,7 +3297,7 @@ async function db_buscarOCrearCliente({ nombre, tel = '', email = '' }) {
 // ── RENTAS ───────────────────────────────────────────
 async function db_getRentas({ soloActivas = false, maxRecords = 0 } = {}) {
   const params = soloActivas
-    ? `?filterByFormula=${encodeURIComponent('{Estado de la renta}="Activa"')}&maxRecords=${maxRecords}`
+    ? `?filterByFormula=${encodeURIComponent('OR({Estado de la renta}="Activa",{Estado de la renta}="En renta")')}&maxRecords=${maxRecords}`
     : `?maxRecords=${maxRecords}`;
   return airtableGetAll('RENTAS', params);
 }
@@ -3390,7 +3391,12 @@ function rentasCentroIsCerrada(f) {
 
 function rentasCentroIsActiva(f) {
   const estado = String(f[F.ESTADO_RENTA] || '').toLowerCase();
-  return estado === 'activa' || estado.includes('activa');
+  return estado === 'activa' || estado === 'en renta' || estado.includes('activa');
+}
+
+function rentasCentroIsEnRenta(f) {
+  const estado = String(f[F.ESTADO_RENTA] || '').toLowerCase();
+  return estado === 'en renta';
 }
 
 function rentasCentroSaldo(f) {
@@ -3419,8 +3425,9 @@ function rentasCentroIsPorCobrar(f) {
 function rentasCentroEstadoBadge(f) {
   if (rentasCentroIsCotizacion(f)) return { label:'Cotización', cls:'cotizacion' };
   if (rentasCentroIsCerrada(f)) return { label:'Cerrada', cls:'cerrada' };
+  if (rentasCentroIsEnRenta(f)) return { label:'En renta', cls:'enrenta' };
   const diasRegreso = rentasCentroDaysFromToday(f[F.FECHA_REGRESO]);
-  if (rentasCentroIsActiva(f) && diasRegreso !== null && diasRegreso <= 3) return { label:'Por regresar', cls:'regresar' };
+  if (rentasCentroIsActiva(f) && diasRegreso !== null && diasRegreso <= 3) return { label:'Activa · Próximo regreso', cls:'regresar' };
   if (rentasCentroIsActiva(f)) return { label:'Activa', cls:'activa' };
   const estado = f[F.ESTADO_RENTA] || 'Pendiente';
   return { label:estado, cls:String(estado).toLowerCase().includes('pend') ? 'cobrar' : 'cerrada' };
@@ -3900,26 +3907,39 @@ async function loadRentasFiltradas() {
 
     const rentas = await airtableGetAll('RENTAS', `?filterByFormula=${encodeURIComponent(formula)}`);
 
+    // Filtrar por modo: salida = props aún Disponibles, entrada = props Rentados
+    const rentasFiltradas = await filtrarRentasPorModo(rentas, currentMode);
 
-    if (rentas.length === 0) {
+    if (rentasFiltradas.length === 0) {
+      const modeLabel = currentMode === 'salida' ? 'salida pendiente' : 'entrada pendiente';
       document.getElementById('renta-list-content').innerHTML = `
         <div class="empty-state">
-          No hay rentas en los próximos/anteriores 3 días.<br><br>
+          No hay rentas con ${modeLabel} en los próximos/anteriores 3 días.<br><br>
           <button class="btn-accion btn-secondary" onclick="loadTodasRentas()" style="width:auto;padding:10px 20px;margin-bottom:10px">
             Ver todas las rentas activas
           </button><br>
-          <button class="btn-accion btn-salida" onclick="showNuevaRenta()" style="width:auto;padding:10px 20px;">
-            + Nueva renta
-          </button>
+          ${currentMode === 'salida' ? `<button class="btn-accion btn-salida" onclick="showNuevaRenta()" style="width:auto;padding:10px 20px;">+ Nueva renta</button>` : ''}
         </div>`;
       return;
     }
 
-    renderRentaList(rentas);
+    renderRentaList(rentasFiltradas);
   } catch(e) {
     document.getElementById('renta-list-content').innerHTML =
       '<div class="empty-state" style="color:#e74c3c">Error de conexión</div>';
   }
+}
+
+// Filtra rentas por modo usando el Estado de la renta (fuente de verdad)
+// salida → rentas Activas (props no han salido)
+// entrada → rentas En renta (props ya salieron, esperando regreso)
+function filtrarRentasPorModo(rentas, mode) {
+  return Promise.resolve(rentas.filter(r => {
+    const estado = String(r.fields['Estado de la renta'] || '').toLowerCase();
+    if (mode === 'salida') return estado === 'activa';
+    if (mode === 'entrada') return estado === 'en renta';
+    return false;
+  }));
 }
 
 async function loadTodasRentas() {
@@ -3927,7 +3947,8 @@ async function loadTodasRentas() {
     '<div class="loading"><div class="spinner"></div>Cargando...</div>';
   try {
     const rentas = await db_getRentas({ soloActivas: true, maxRecords: 0 });
-    renderRentaList(rentas);
+    const rentasFiltradas = await filtrarRentasPorModo(rentas, currentMode);
+    renderRentaList(rentasFiltradas);
   } catch(e) {
     showToast('Error de conexión', true);
   }
@@ -4420,10 +4441,10 @@ async function finalizarFlujoRenta() {
     }
 
     await airtablePatchConCamposOpcionales('RENTAS', currentRenta.id, {
-      [F.ESTADO_RENTA]: currentMode === 'entrada' ? 'Cerrada' : 'Activa'
+      [F.ESTADO_RENTA]: currentMode === 'entrada' ? 'Cerrada' : 'En renta'
     }, [F.ESTADO_RENTA]);
 
-    currentRenta.fields[F.ESTADO_RENTA] = currentMode === 'entrada' ? 'Cerrada' : 'Activa';
+    currentRenta.fields[F.ESTADO_RENTA] = currentMode === 'entrada' ? 'Cerrada' : 'En renta';
     showToast('✓ ' + (currentMode === 'salida' ? 'Salida verificada' : 'Entrada verificada y cerrada'));
     setTimeout(() => goHome(), 1500);
   } catch(e) {
@@ -4555,7 +4576,7 @@ async function rentasEditarDatos(rentaRecordId) {
       return `<option value="${c.id}" ${selected}>${nombre}</option>`;
     }).join('');
 
-    const estados = ['Activa', 'Por regresar', 'Cancelada', 'Cancelada con cargo', 'Cerrada'];
+    const estados = ['Activa', 'En renta', 'Cancelada', 'Cancelada con cargo', 'Cerrada'];
     const estadoActual = f[F.ESTADO_RENTA] || 'Activa';
     const estadoOptions = estados.map(e =>
       `<option value="${rentasCentroEsc(e)}" ${e === estadoActual ? 'selected' : ''}>${rentasCentroEsc(e)}</option>`
@@ -4746,7 +4767,7 @@ async function showRentasActivas() {
         <div class="pago-row"><span class="label">Estado pago</span><span class="value" style="color:${pagoEstadoColor(f[F.ESTADO_PAGO])};font-weight:500;">${rentasCentroEsc(f[F.ESTADO_PAGO] || '—')}</span></div>
         <div class="pago-row"><span class="label">Saldo</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">${saldo > 0 ? '$' + Number(saldo || 0).toLocaleString() + ' MXN' : 'SALDADO ✓'}</span></div>
       </div>
-      ${f['Estado de la renta'] === 'Activa' ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
+      ${(f['Estado de la renta'] === 'Activa' || f['Estado de la renta'] === 'En renta') ? `<button onclick="event.stopPropagation();rentasCancelarFlow('${r.id}','${f['Fecha de salida'] || ''}')" style="background:none;border:none;color:#e74c3c;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:0 0 16px 0;display:block;">✕ Cancelar renta</button>` : '<div style="margin-bottom:8px"></div>'}`;
     }))).join('');
   } catch(e) { showToast('Error de conexión', true); }
 }
@@ -5482,7 +5503,7 @@ async function showClientesView({ fromSidebar = false } = {}) {
         clienteDesde: fechas.length ? fechas[0] : null,
         createdAt,
         esVip,
-        tieneActiva: misRentas.some(r => r.fields['Estado de la renta'] === 'Activa'),
+        tieneActiva: misRentas.some(r => r.fields['Estado de la renta'] === 'Activa' || r.fields['Estado de la renta'] === 'En renta'),
         rentas: misRentas,
         search: [f['Nombre o empresa'], f['Email'], f['Teléfono'], f['Origen'], f['Tipo']].join(' ').toLowerCase()
       };
@@ -5645,7 +5666,7 @@ async function crmAbrirDetalle(clienteId) {
   const rentasHtml = rentasOrden.length ? rentasOrden.map(r => {
     const rf = r.fields;
     const estado = rf['Estado de la renta'] || '—';
-    const cls = estado==='Activa'?'activa':estado==='Cerrada'?'cerrada':'cotizacion';
+    const cls = estado==='Activa'?'activa':estado==='En renta'?'enrenta':estado==='Cerrada'?'cerrada':'cotizacion';
     return `<div class="cd-renta-row" onclick="event.stopPropagation();rentasVerDetalle('${r.id}')">
       <div style="flex:1">
         <div class="cd-renta-id">${rf['ID de renta']||'—'}</div>
