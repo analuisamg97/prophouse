@@ -434,6 +434,43 @@
   .pago-row .value.deuda { color:#e74c3c; font-weight:500; }
   .pago-row .value.saldado { color:#2ecc71; }
 
+  /* PAGOS REDESIGN */
+  .pagos-renta-card { background:var(--bg-card); border:1px solid var(--border-light); border-radius:10px; padding:16px; margin-bottom:10px; cursor:pointer; transition:all 0.15s; display:flex; flex-direction:column; gap:10px; }
+  .pagos-renta-card:hover { border-color:var(--gold); background:var(--bg-hover); }
+  .pagos-renta-card-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .pagos-renta-card-thumb { width:44px; height:44px; border-radius:6px; object-fit:cover; flex-shrink:0; background:var(--bg); }
+  .pagos-renta-card-thumb-ph { width:44px; height:44px; border-radius:6px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:16px; flex-shrink:0; }
+  .pagos-renta-card-info { flex:1; min-width:0; }
+  .pagos-renta-card-folio { font-family:'DM Mono',monospace; font-size:11px; color:var(--gold); letter-spacing:1px; margin-bottom:2px; }
+  .pagos-renta-card-cliente { font-size:14px; font-weight:600; color:var(--white); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pagos-renta-card-fechas { font-size:11px; color:var(--text-muted); margin-top:2px; }
+  .pagos-renta-card-montos { display:flex; align-items:center; gap:8px; flex-shrink:0; text-align:right; }
+  .pagos-renta-saldo-tag { font-size:10px; font-family:'DM Mono',monospace; padding:4px 10px; border-radius:20px; font-weight:700; letter-spacing:0.5px; white-space:nowrap; }
+  .pagos-progreso-wrap { display:flex; align-items:center; gap:8px; }
+  .pagos-progreso-bar { flex:1; height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden; }
+  .pagos-progreso-fill { height:100%; border-radius:2px; transition:width 0.3s; }
+  .pagos-progreso-txt { font-size:10px; color:var(--text-muted); font-family:'DM Mono',monospace; white-space:nowrap; }
+
+  /* PAGO FORM REDESIGN */
+  .pagos-info-header { background:var(--bg-card); border:1px solid var(--border-light); border-radius:10px; padding:16px; margin-bottom:20px; display:flex; gap:14px; align-items:flex-start; }
+  .pagos-info-body { flex:1; min-width:0; }
+  .pagos-info-folio { font-family:'DM Mono',monospace; font-size:11px; color:var(--gold); letter-spacing:1px; margin-bottom:3px; }
+  .pagos-info-cliente { font-size:16px; font-weight:700; color:var(--white); margin-bottom:6px; }
+  .pagos-info-fechas { font-size:11px; color:var(--text-muted); margin-bottom:10px; }
+  .pagos-info-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .pagos-info-cell { background:var(--bg); border-radius:6px; padding:8px 10px; }
+  .pagos-info-cell-lbl { font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
+  .pagos-info-cell-val { font-size:13px; font-family:'DM Mono',monospace; color:var(--white); }
+  .pagos-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .pagos-resumen { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:16px 0; }
+  .pagos-resumen-row { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-bottom:1px solid rgba(255,255,255,0.05); font-size:12px; }
+  .pagos-resumen-row:last-child { border-bottom:none; background:rgba(255,255,255,0.03); padding:12px 16px; }
+  .pagos-resumen-lbl { color:var(--text-muted); }
+  .pagos-resumen-val { font-family:'DM Mono',monospace; font-weight:500; color:var(--white); }
+  .pagos-btn-guardar { width:100%; background:var(--gold); color:var(--bg-deep); border:none; border-radius:8px; font-family:'DM Mono',monospace; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:16px; cursor:pointer; margin-bottom:8px; transition:opacity 0.15s; }
+  .pagos-btn-guardar:hover { opacity:0.9; }
+  .pagos-btn-cancelar { width:100%; background:none; border:1px solid var(--border); color:var(--text-muted); border-radius:8px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px; cursor:pointer; }
+
   /* BUTTONS */
   .btn-accion { width:100%; border:none; border-radius:6px; font-family:'DM Mono',monospace; font-size:11px; font-weight:500; letter-spacing:2px; text-transform:uppercase; padding:14px; cursor:pointer; margin-bottom:10px; }
   .btn-salida { background:var(--red); color:white; }
@@ -1807,64 +1844,70 @@
 
   <!-- Formulario de pago -->
   <div id="pagos-form" style="display:none;">
-    <div class="pago-section" id="pagos-renta-info"></div>
+    <!-- Info renta seleccionada -->
+    <div id="pagos-renta-info"></div>
 
-    <div class="section-title">Nuevo pago recibido</div>
-    <div class="alta-field">
-      <div class="alta-label">Monto recibido (MXN)</div>
-      <input type="number" class="alta-input" id="pago-monto" placeholder="0" oninput="pagosCalcEstado()">
-    </div>
-
-    <div class="alta-field">
-      <div class="alta-label">Tipo de pago</div>
-      <select class="alta-select" id="pago-tipo" onchange="pagosCalcEstado()">
-        <option value="Adelanto">Adelanto</option>
-        <option value="Pago parcial">Pago parcial</option>
-        <option value="Liquidación">Liquidación</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </div>
-
-    <div class="alta-field">
-      <div class="alta-label">Método de pago</div>
-      <select class="alta-select" id="pago-metodo">
-        <option value="Transferencia">Transferencia</option>
-        <option value="Efectivo">Efectivo</option>
-        <option value="Tarjeta">Tarjeta</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </div>
-
-    <div class="alta-field">
-      <div class="alta-label">Notas</div>
-      <input type="text" class="alta-input" id="pago-notas" placeholder="Referencia, comentario o detalle...">
-    </div>
-
-    <!-- Preview de estado -->
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;margin:16px 0;">
-      <div style="font-size:9px;letter-spacing:2px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;">Resumen de pago</div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Monto total</span><span id="pagos-total">$0 MXN</span>
+    <!-- Campos del pago -->
+    <div class="section-title" style="margin-top:4px;">Nuevo pago</div>
+    <div class="pagos-form-grid">
+      <div class="alta-field" style="margin-bottom:0">
+        <div class="alta-label">Monto recibido (MXN)</div>
+        <input type="number" class="alta-input" id="pago-monto" placeholder="0.00" oninput="pagosCalcEstado()">
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Total pagado actual</span><span id="pagos-pagado-actual">$0 MXN</span>
+      <div class="alta-field" style="margin-bottom:0">
+        <div class="alta-label">Tipo de pago</div>
+        <select class="alta-select" id="pago-tipo" onchange="pagosCalcEstado()">
+          <option value="Adelanto">Adelanto</option>
+          <option value="Pago parcial">Pago parcial</option>
+          <option value="Liquidación">Liquidación</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Nuevo pago</span><span id="pagos-nuevo-preview">$0 MXN</span>
+    </div>
+    <div class="pagos-form-grid">
+      <div class="alta-field" style="margin-bottom:0">
+        <div class="alta-label">Método de pago</div>
+        <select class="alta-select" id="pago-metodo">
+          <option value="Transferencia">Transferencia</option>
+          <option value="Efectivo">Efectivo</option>
+          <option value="Tarjeta">Tarjeta</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);">
-        <span style="color:var(--text-muted);">Saldo pendiente</span><span id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-size:13px;padding:8px 0;margin-top:4px;">
-        <span>Estado</span>
-        <span id="pagos-estado-preview" style="font-weight:500;letter-spacing:1px;">—</span>
+      <div class="alta-field" style="margin-bottom:0">
+        <div class="alta-label">Notas</div>
+        <input type="text" class="alta-input" id="pago-notas" placeholder="Referencia o detalle...">
       </div>
     </div>
 
-    <button class="btn-alta-guardar" id="pagos-btn-guardar" onclick="pagosGuardar()">
-      Guardar pago
+    <!-- Resumen -->
+    <div class="pagos-resumen">
+      <div class="pagos-resumen-row">
+        <span class="pagos-resumen-lbl">Monto total renta</span>
+        <span class="pagos-resumen-val" id="pagos-total">$0 MXN</span>
+      </div>
+      <div class="pagos-resumen-row">
+        <span class="pagos-resumen-lbl">Ya pagado</span>
+        <span class="pagos-resumen-val" id="pagos-pagado-actual" style="color:#2ecc71;">$0 MXN</span>
+      </div>
+      <div class="pagos-resumen-row">
+        <span class="pagos-resumen-lbl">Este pago</span>
+        <span class="pagos-resumen-val" id="pagos-nuevo-preview" style="color:var(--gold);">$0 MXN</span>
+      </div>
+      <div class="pagos-resumen-row">
+        <span class="pagos-resumen-lbl">Saldo pendiente</span>
+        <span class="pagos-resumen-val" id="pagos-saldo" style="color:#e74c3c;">$0 MXN</span>
+      </div>
+      <div class="pagos-resumen-row">
+        <span style="font-size:13px;font-weight:600;color:var(--white);">Estado resultante</span>
+        <span id="pagos-estado-preview" style="font-weight:700;letter-spacing:1px;font-size:12px;">—</span>
+      </div>
+    </div>
+
+    <button class="pagos-btn-guardar" id="pagos-btn-guardar" onclick="pagosGuardar()">
+      💳 Guardar pago
     </button>
-    <button class="btn-accion" onclick="pagosCancelar()" style="background:none;border:1px solid var(--border);color:var(--text-muted);margin-top:8px;">
+    <button class="pagos-btn-cancelar" onclick="pagosCancelar()">
       Cancelar
     </button>
   </div>
@@ -6149,24 +6192,44 @@ async function showPagosView(clienteId = null) {
         pagosPorRenta.set(rid, (pagosPorRenta.get(rid) || 0) + (parseFloat(p.fields[F.PAGO_MONTO]) || 0));
       });
     });
+    // Enriquecer con nombres de clientes
+    const clientesAll = await db_getClientes();
+    const clientesMap = new Map(clientesAll.map(c => [c.id, c.fields['Nombre o empresa'] || '—']));
+
     document.getElementById('pagos-rentas-list').innerHTML = (await Promise.all(activas.map(async r => {
       const f = rentasCentroMergePago(r.fields, pagosPorRenta.get(r.id) || 0);
       const total = f['Monto total'] || 0;
       const saldo = f['Monto a liquidar'] || 0;
+      const pagado = f['Total pagado'] || 0;
       const estado = f['Estado del pago'] || 'Pendiente';
-      const estadoColor = pagoEstadoColor(estado);
-      const thumb = await rentaFirstPropThumbHtml(f);
-      return `<div class="renta-card" onclick="pagosSeleccionarRenta('${r.id}')">
-        <div class="renta-card-with-thumb">
-          ${thumb}
-          <div>
-            <div class="renta-card-id">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
-            <div class="renta-card-info">
-              Total: <span>$${total.toLocaleString()} MXN</span> &nbsp;·&nbsp;
-              Saldo: <span style="color:${estadoColor}">$${saldo.toLocaleString()} MXN</span><br>
-              Estado: <span style="color:${estadoColor}">${rentasCentroEsc(estado)}</span>
-            </div>
+      const clienteId = (f['Cliente'] || [])[0];
+      const clienteNombre = clienteId ? clientesMap.get(clienteId) || '—' : '—';
+      const pct = total > 0 ? Math.min(100, Math.round((pagado / total) * 100)) : 0;
+      const fillColor = estado === 'Pagado' ? '#2ecc71' : estado === 'Pago parcial' ? '#f1c40f' : '#e74c3c';
+      const badgeCls = estado === 'Pagado' ? 'pago-badge-pagado' : estado === 'Pago parcial' ? 'pago-badge-parcial' : 'pago-badge-pendiente';
+      const saldoTxt = estado === 'Pagado' ? 'Saldado ✓' : `$${Number(saldo).toLocaleString('es-MX')} pendiente`;
+      const fotos = f['Foto principal'];
+      const thumbUrl = fotos?.length ? (fotos[0].thumbnails?.small?.url || fotos[0].url) : null;
+      const thumbHtml = thumbUrl
+        ? `<img class="pagos-renta-card-thumb" src="${rentasCentroEsc(thumbUrl)}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="pagos-renta-card-thumb-ph" style="display:none"><i class="ti ti-camera"></i></div>`
+        : `<div class="pagos-renta-card-thumb-ph"><i class="ti ti-camera"></i></div>`;
+
+      return `<div class="pagos-renta-card" onclick="pagosSeleccionarRenta('${r.id}')">
+        <div class="pagos-renta-card-top">
+          ${thumbHtml}
+          <div class="pagos-renta-card-info">
+            <div class="pagos-renta-card-folio">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
+            <div class="pagos-renta-card-cliente">${rentasCentroEsc(clienteNombre)}</div>
+            <div class="pagos-renta-card-fechas">${rentasCentroFmtFecha(f['Fecha de salida'])} → ${rentasCentroFmtFecha(f['Fecha de regreso'])}</div>
           </div>
+          <div class="pagos-renta-card-montos">
+            <span class="pagos-renta-saldo-tag ${badgeCls}">${rentasCentroEsc(saldoTxt)}</span>
+          </div>
+        </div>
+        <div class="pagos-progreso-wrap">
+          <div class="pagos-progreso-bar"><div class="pagos-progreso-fill" style="width:${pct}%;background:${fillColor};"></div></div>
+          <span class="pagos-progreso-txt">${pct}% pagado · $${Number(total).toLocaleString('es-MX')} MXN total</span>
         </div>
       </div>`;
     }))).join('');
@@ -6185,15 +6248,45 @@ async function pagosSeleccionarRenta(recordId) {
     const saldo = f['Monto a liquidar'] || 0;
     const pagado = f['Total pagado'] || 0;
 
+    // Cargar nombre del cliente
+    let clienteNombrePago = '—';
+    try {
+      const clienteIdPago = (f['Cliente'] || [])[0];
+      if (clienteIdPago) {
+        const clienteRec = await airtableGet('CLIENTES', '/' + clienteIdPago);
+        clienteNombrePago = clienteRec?.fields?.['Nombre o empresa'] || '—';
+      }
+    } catch(e) {}
+    const pctPago = total > 0 ? Math.min(100, Math.round((pagado / total) * 100)) : 0;
+    const fillColorPago = saldo <= 0 ? '#2ecc71' : pagado > 0 ? '#f1c40f' : '#e74c3c';
+
     // Mostrar info de la renta
     document.getElementById('pagos-renta-info').innerHTML = `
-      <div class="pago-title">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
-      <div class="pago-row"><span class="label">Salida</span><span class="value">${rentasCentroEsc(f['Fecha de salida'] || '—')}</span></div>
-      <div class="pago-row"><span class="label">Regreso</span><span class="value">${rentasCentroEsc(f['Fecha de regreso'] || '—')}</span></div>
-      <div class="pago-row"><span class="label">Monto total</span><span class="value">$${Number(total || 0).toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Total pagado</span><span class="value">$${Number(pagado || 0).toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Monto a liquidar</span><span class="value" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'}">$${Number(saldo || 0).toLocaleString()} MXN</span></div>
-      <div class="pago-row"><span class="label">Estado actual</span><span class="value" style="color:${pagoEstadoColor(f['Estado del pago'] || 'Pendiente')};font-weight:500;">${rentasCentroEsc(f['Estado del pago'] || 'Pendiente')}</span></div>`;
+      <div class="pagos-info-header">
+        <div class="pagos-info-body">
+          <div class="pagos-info-folio">${rentasCentroEsc(f['ID de renta'] || '—')}</div>
+          <div class="pagos-info-cliente">${rentasCentroEsc(clienteNombrePago)}</div>
+          <div class="pagos-info-fechas">${rentasCentroFmtFecha(f['Fecha de salida'])} → ${rentasCentroFmtFecha(f['Fecha de regreso'])}</div>
+          <div class="pagos-info-grid">
+            <div class="pagos-info-cell">
+              <div class="pagos-info-cell-lbl">Total renta</div>
+              <div class="pagos-info-cell-val">$${Number(total || 0).toLocaleString('es-MX')} MXN</div>
+            </div>
+            <div class="pagos-info-cell">
+              <div class="pagos-info-cell-lbl">Ya pagado</div>
+              <div class="pagos-info-cell-val" style="color:#2ecc71;">$${Number(pagado || 0).toLocaleString('es-MX')} MXN</div>
+            </div>
+            <div class="pagos-info-cell" style="grid-column:1/-1;">
+              <div class="pagos-info-cell-lbl">Saldo pendiente</div>
+              <div class="pagos-info-cell-val" style="color:${saldo > 0 ? '#e74c3c' : '#2ecc71'};font-size:16px;">$${Number(saldo || 0).toLocaleString('es-MX')} MXN ${saldo <= 0 ? '✓' : ''}</div>
+              <div style="margin-top:8px;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
+                <div style="width:${pctPago}%;height:100%;background:${fillColorPago};border-radius:2px;transition:width 0.3s;"></div>
+              </div>
+              <div style="font-size:9px;color:var(--text-muted);margin-top:4px;">${pctPago}% pagado</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
 
     document.getElementById('pago-monto').value = '';
     document.getElementById('pago-tipo').value = saldo > 0 && pagado > 0 ? 'Liquidación' : 'Adelanto';
