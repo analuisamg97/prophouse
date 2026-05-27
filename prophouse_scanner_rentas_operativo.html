@@ -2190,15 +2190,38 @@
 
   <div id="cot-form-section">
     <div class="section-title" style="margin-top:0">Cliente</div>
-    <div style="position:relative;margin-bottom:8px;">
+    <div style="position:relative;margin-bottom:6px;">
       <input type="text" class="orden-input" id="cot-cliente-nombre" placeholder="Buscar cliente existente…" style="width:100%;" oninput="cotBuscarCliente(this.value)" autocomplete="off">
       <div id="cot-cliente-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg-card);border:1px solid var(--border-light);border-radius:6px;z-index:100;max-height:200px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,0.4);"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-      <input type="text" class="orden-input" id="cot-cliente-tel" placeholder="Teléfono">
-      <input type="text" class="orden-input" id="cot-cliente-email" placeholder="Email">
-    </div>
     <input type="hidden" id="cot-cliente-id">
+    <button type="button" onclick="cotNuevoClienteToggle()" style="background:none;border:none;color:var(--gold);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;padding:0;margin-bottom:10px;display:block;">+ Crear nuevo cliente</button>
+
+    <div id="cot-nuevo-cliente" style="display:none;margin-bottom:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <div class="orden-label">Nombre o empresa</div>
+          <input type="text" class="orden-input" id="cot-nuevo-nombre" placeholder="Productora XYZ">
+        </div>
+        <div>
+          <div class="orden-label">Teléfono</div>
+          <input type="text" class="orden-input" id="cot-cliente-tel" placeholder="81 1234 5678">
+        </div>
+        <div>
+          <div class="orden-label">Email</div>
+          <input type="text" class="orden-input" id="cot-cliente-email" placeholder="cliente@email.com">
+        </div>
+        <div>
+          <div class="orden-label">¿Cómo nos encontró?</div>
+          <select class="orden-input" id="cot-cliente-origen">
+            <option value="">— Seleccionar —</option>
+            <option value="Instagram">Instagram</option>
+            <option value="Recomendación">Recomendación</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
     <div class="section-title">Fechas tentativas</div>
     <div class="orden-form-grid">
@@ -7425,7 +7448,7 @@ function propSelRenderizar() {
     const fotos = f['Foto principal'];
     let imgHtml;
     if (fotos && fotos.length > 0) {
-      const thumb = fotos[0].thumbnails?.small?.url || fotos[0].thumbnails?.large?.url || fotos[0].url;
+      const thumb = fotos[0].thumbnails?.large?.url || fotos[0].thumbnails?.full?.url || fotos[0].url;
       imgHtml = `<div class="prop-sel-img-wrap"><img class="prop-sel-img" src="${rentasCentroEsc(thumb)}" alt="${rentasCentroEsc(nombre)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                  <div class="prop-sel-noimg" style="display:none"><i class="ti ti-camera" aria-hidden="true"></i></div></div>`;
     } else {
