@@ -5758,7 +5758,7 @@ async function crmAbrirDetalle(clienteId) {
       <button class="cd-btn" onclick="showCotizacionView()">
         <i class="ti ti-file-dollar" aria-hidden="true"></i>Cotización
       </button>
-      <button class="cd-btn" onclick="showPagosView()">
+      <button class="cd-btn" onclick="showPagosView('${c.id}')">
         <i class="ti ti-credit-card" aria-hidden="true"></i>Registrar pago
       </button>
     </div>
@@ -6123,7 +6123,7 @@ async function cancelarRenta(rentaRecordId, fechaSalida) {
 // ── PAGOS ────────────────────────────────────────────────
 let pagosRentaActual = null;
 
-async function showPagosView() {
+async function showPagosView(clienteId = null) {
   _navHistory.push(_getCurrentViewId());
   previousView = 'rentas-menu';
   showView('pagos-view');
@@ -6133,7 +6133,11 @@ async function showPagosView() {
 
   try {
     const rentas = await db_getRentas();
-    const activas = rentas.filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
+    let activas = rentas.filter(r => r.fields['Estado de la renta'] !== 'Cancelada');
+    // Si viene de un cliente, filtrar solo sus rentas
+    if (clienteId) {
+      activas = activas.filter(r => (r.fields['Cliente'] || []).includes(clienteId));
+    }
     if (activas.length === 0) {
       document.getElementById('pagos-rentas-list').innerHTML = '<div class="empty-state">No hay rentas registradas</div>';
       return;
