@@ -4769,7 +4769,7 @@ let rentaEditRecordId = null;
 function rentaDiasCobradosEntre(salida, regreso) {
   if (!salida || !regreso) return 1;
   const diff = Math.round((new Date(regreso) - new Date(salida)) / (1000*60*60*24));
-  return Math.max(1, diff - 1);
+  return Math.max(1, diff - 2);
 }
 
 function rentaImportesDesdeProps(props = [], salida, regreso, ivaAplicado) {
@@ -5081,7 +5081,8 @@ function nrNuevoClienteToggle() {
 }
 
 // Calcula días cobrados según la regla:
-// días reales = regreso - salida; cobrados = max(1, días - 1)
+// días reales = regreso - salida; cobrados = max(1, días - 2)
+// (viernes recogen, sábado es la grabación, domingo regresan — solo se cobra el sábado)
 // ══════════════════════════════════════════════════════
 // JS: PROPS SHARED — funciones unificadas para nr y cot
 // ══════════════════════════════════════════════════════
@@ -5090,7 +5091,7 @@ function propsCalcDias(salId, regId) {
   const r = document.getElementById(regId)?.value;
   if (!s || !r) return 1;
   const diff = Math.round((new Date(r) - new Date(s)) / (1000*60*60*24));
-  return Math.max(1, diff <= 0 ? 1 : diff - 1);
+  return Math.max(1, diff <= 0 ? 1 : diff - 2);
 }
 
 function propsAddRow(listId, prefix, counter, rows, nombre='', codigo='', precio='', dias=null, airtableId='') {
